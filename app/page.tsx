@@ -132,6 +132,7 @@ export default function Home() {
       const data = await res.json();
       setResult(data);
     } catch (err: any) {
+      setResult(null);
       setError(err.message || "An unexpected error occurred");
     } finally {
       setLoading(false);
@@ -216,7 +217,7 @@ export default function Home() {
     <div className="min-h-screen bg-[#FAF8F5] text-stone-900 pb-24 pt-6 px-4 sm:px-6 antialiased">
       <div className="max-w-3xl mx-auto space-y-6">
 
-        {/* Masthead Header (Pill removed) */}
+        {/* Masthead Header */}
         <div className="text-center space-y-2 border-b border-stone-200 pb-4 pt-1">
           <h1 className="text-3xl sm:text-4xl font-serif font-bold text-stone-900 tracking-tight">
             ದಾಸ ಬೋಧಿನಿ (Dāsa Bodhini)
@@ -333,9 +334,21 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Descriptive Error / Unrecognized Song Feedback */}
         {error && (
-          <div className="no-print p-3.5 bg-red-50 border border-red-200 text-red-800 rounded-xl text-xs sm:text-sm">
-            {error}
+          <div className="no-print p-4 bg-amber-50 border border-amber-200 text-amber-950 rounded-2xl text-xs sm:text-sm space-y-1.5 shadow-xs">
+            <div className="flex items-center gap-2 font-semibold text-amber-900">
+              <svg className="w-4 h-4 text-amber-700 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+              <span>ಹಾಡು ಕಂಡುಬಂದಿಲ್ಲ • Song Not Identified</span>
+            </div>
+            <p className="text-stone-700 leading-relaxed pl-6">{error}</p>
+            <p className="text-stone-500 text-[11px] pl-6">
+              ಸಲಹೆ: ದಯವಿಟ್ಟು ಹಾಡಿನ ಮೊದಲ ಸಾಲನ್ನು ಸ್ಪಷ್ಟವಾಗಿ ನುಡಿಯಿರಿ / ಟೈಪ್ ಮಾಡಿ ಅಥವಾ ಮೇಲಿನ Presets ಆಯ್ಕೆಗಳನ್ನು ಪ್ರಯತ್ನಿಸಿ.
+            </p>
           </div>
         )}
 
