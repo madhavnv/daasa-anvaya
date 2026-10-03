@@ -2,62 +2,15 @@
 
 import React, { useState, useEffect, useRef } from "react";
 
-interface StanzaItem {
-  stanzaType: string;
-  originalKannada: string;
-  anvayaKannada: string;
-  anvayaEnglish: string;
-}
-
-interface WordItem {
-  wordKannada: string;
-  wordTransliterated: string;
-  meaningKannada: string;
-  meaningEnglish: string;
-}
-
-interface MetaphorItem {
-  motifKannada: string;
-  motifEnglish: string;
-  innerMeaningKannada: string;
-  innerMeaningEnglish: string;
-}
-
-interface AnalysisResult {
-  titleKannada: string;
-  titleEnglish: string;
-  composerKannada: string;
-  composerEnglish: string;
-  ankitaKannada: string;
-  ankitaEnglish: string;
-  historicalContextKannada: string;
-  historicalContextEnglish: string;
-  comprehensiveSummaryKannada: string;
-  comprehensiveSummaryEnglish: string;
-  stanzas: StanzaItem[];
-  pratipadaartha: WordItem[];
-  metaphorsAndMundige: MetaphorItem[];
-  modernTakeawayKannada: string;
-  modernTakeawayEnglish: string;
-  youtubeSearchQuery: string;
-}
-
-const PRESETS = [
-  { label: "Tarakka Bindige", query: "tarakka bindige neerige hogona" },
-  { label: "Manava Janma", query: "manava janma doddadu idanu hani madikoliro" },
-  { label: "Kallu Sakkare", query: "kallu sakkare kolliro neevellaru" },
-  { label: "Jagadoddharana", query: "jagadoddharana aadidalo yashoda" },
-];
-
 export default function Home() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [result, setResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const [fontSize, setFontSize] = useState<string>("normal");
+  const [fontSize, setFontSize] = useState("normal");
   const [isListening, setIsListening] = useState(false);
-  const [speechLang, setSpeechLang] = useState<string>("kn-IN");
+  const [speechLang, setSpeechLang] = useState("kn-IN");
   const recognitionRef = useRef<any>(null);
 
   const [feedbackOpen, setFeedbackOpen] = useState(false);
@@ -65,6 +18,13 @@ export default function Home() {
   const [feedbackText, setFeedbackText] = useState("");
 
   const FEEDBACK_WHATSAPP_NUMBER = "919999999999";
+
+  const PRESETS = [
+    { label: "Tarakka Bindige", query: "tarakka bindige neerige hogona" },
+    { label: "Manava Janma", query: "manava janma doddadu idanu hani madikoliro" },
+    { label: "Kallu Sakkare", query: "kallu sakkare kolliro neevellaru" },
+    { label: "Jagadoddharana", query: "jagadoddharana aadidalo yashoda" }
+  ];
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -398,7 +358,7 @@ export default function Home() {
                 ಪದಾನ್ವಯ ಮತ್ತು ಭಾಗಾರ್ಥ • Stanza Breakdown ({result.stanzas?.length || 0})
               </h3>
 
-              {result.stanzas?.map((stanza, idx) => (
+              {result.stanzas?.map((stanza: any, idx: number) => (
                 <div key={idx} className="bg-white rounded-2xl border border-stone-200 overflow-hidden">
                   <div className="bg-stone-50 border-b border-stone-100 px-4 py-2.5 flex items-center justify-between">
                     <span className="text-xs font-bold uppercase tracking-wider text-amber-950 font-serif">
@@ -463,7 +423,108 @@ export default function Home() {
                   ಪ್ರತಿಪದಾರ್ಥ • Vocabulary Breakdown
                 </span>
                 <div className="divide-y divide-stone-100">
-                  {result.pratipadaartha.map((w, i) => (
+                  {result.pratipadaartha.map((w: any, i: number) => (
                     <div key={i} className="py-2.5 grid grid-cols-1 sm:grid-cols-2 gap-1 text-xs sm:text-sm">
                       <div>
- 
+                        <span className="font-semibold text-stone-900">{w.wordKannada}</span>
+                        <span className="text-stone-400 text-xs ml-1.5 font-mono">({w.wordTransliterated})</span>
+                      </div>
+                      <div className="text-stone-700">
+                        <span className="text-stone-900 font-medium">{w.meaningKannada}</span>
+                        <span className="text-stone-500 block sm:inline sm:ml-2 italic text-xs">"{w.meaningEnglish}"</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Metaphors */}
+            {result.metaphorsAndMundige?.length > 0 && (
+              <div className="bg-white rounded-2xl border border-stone-200 p-5 space-y-3">
+                <span className="text-[11px] uppercase tracking-wider font-bold text-amber-950 block">
+                  ಮುಂಡಿಗೆ & ರೂಪಕಗಳು • Allegories
+                </span>
+                <div className="space-y-2">
+                  {result.metaphorsAndMundige.map((m: any, i: number) => (
+                    <div key={i} className="p-3.5 bg-stone-50 rounded-xl border border-stone-100 text-xs sm:text-sm space-y-1">
+                      <div className="font-semibold text-stone-900">
+                        {m.motifKannada} <span className="text-stone-500 font-normal">({m.motifEnglish})</span>
+                      </div>
+                      <p className="text-stone-700">{m.innerMeaningKannada}</p>
+                      <p className="text-stone-500 italic text-xs">{m.innerMeaningEnglish}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+          </div>
+        )}
+
+      </div>
+
+      {/* Feedback Button */}
+      <div className="no-print fixed bottom-4 right-4 z-40">
+        <button
+          onClick={() => setFeedbackOpen(true)}
+          className="bg-stone-900 hover:bg-black text-amber-100 px-3.5 py-2 rounded-full shadow-lg text-xs font-medium border border-stone-700 transition"
+        >
+          Feedback (ಪ್ರತಿಕ್ರಿಯೆ)
+        </button>
+      </div>
+
+      {/* Feedback Modal */}
+      {feedbackOpen && (
+        <div className="no-print fixed inset-0 z-50 bg-black/40 flex items-end sm:items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-5 shadow-2xl space-y-4 border border-stone-200">
+            <div className="flex justify-between items-center border-b border-stone-100 pb-2">
+              <h3 className="font-serif font-bold text-stone-900 text-base">
+                Beta Feedback
+              </h3>
+              <button
+                onClick={() => setFeedbackOpen(false)}
+                className="text-stone-400 hover:text-stone-700 text-lg"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-stone-500">Category:</label>
+              <select
+                value={feedbackCategory}
+                onChange={(e) => setFeedbackCategory(e.target.value)}
+                className="w-full text-xs p-2.5 border border-stone-200 rounded-lg bg-stone-50"
+              >
+                <option value="Meaning Error">Meaning / Translation error</option>
+                <option value="Voice Audio Issue">Voice / Audio issue</option>
+                <option value="Song Missing">Could not find song</option>
+                <option value="Feature Suggestion">Feature request / Suggestion</option>
+              </select>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-stone-500">Comments:</label>
+              <textarea
+                rows={3}
+                value={feedbackText}
+                onChange={(e) => setFeedbackText(e.target.value)}
+                placeholder="What should we improve?..."
+                className="w-full text-xs p-2.5 border border-stone-200 rounded-lg"
+              />
+            </div>
+
+            <button
+              onClick={sendFeedbackWhatsApp}
+              className="w-full py-2.5 bg-[#1B5E20] hover:bg-[#2E7D32] text-white text-xs font-semibold rounded-xl transition"
+            >
+              Send via WhatsApp
+            </button>
+          </div>
+        </div>
+      )}
+
+    </div>
+  );
+}
