@@ -47,8 +47,7 @@ Analyze the user's input (Kannada script or English/Kanglish phonetics) and retu
   "youtubeSearchQuery": "Song Title Composer rendition"
 }`;
 
-    // Target the current flash model directly via REST
-    const modelEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+    const modelEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`;
 
     const res = await fetch(modelEndpoint, {
       method: "POST",
