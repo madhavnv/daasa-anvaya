@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "ಪಶ್ಚಾತ್ಯ-ಅನ್ವಯ | Dasa Sahitya Decrypter",
-  description: "Decode Haridasa compositions into modern Kannada, English syntax, and allegories",
+  title: "Dāsa Bodhini (ದಾಸ ಬೋಧಿನಿ) — Haridasa Sahitya Decoded",
+  description: "Bilingual reader unlocking sentence syntax, classical vocabulary roots, and practical philosophy of Haridasa compositions.",
   viewport: "width=device-width, initial-scale=1, maximum-scale=1",
 };
 
