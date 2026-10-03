@@ -2,6 +2,13 @@
 
 import { useState, useEffect, useRef } from "react";
 
+interface StanzaItem {
+  stanzaType: string;
+  originalKannada: string;
+  anvayaKannada: string;
+  anvayaEnglish: string;
+}
+
 interface WordItem {
   wordKannada: string;
   wordTransliterated: string;
@@ -23,8 +30,7 @@ interface AnalysisResult {
   composerEnglish: string;
   ankitaKannada: string;
   ankitaEnglish: string;
-  anvayaKannada: string;
-  anvayaEnglish: string;
+  stanzas: StanzaItem[];
   pratipadaartha: WordItem[];
   metaphorsAndMundige: MetaphorItem[];
   modernTakeawayKannada: string;
@@ -45,7 +51,6 @@ export default function Home() {
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Voice state
   const [isListening, setIsListening] = useState(false);
   const [speechLang, setSpeechLang] = useState<"kn-IN" | "en-IN">("kn-IN");
   const recognitionRef = useRef<any>(null);
@@ -105,7 +110,10 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query: textToQuery }),
       });
-      if (!res.ok) throw new Error("Could not decode verse");
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.error || "Could not decode verse");
+      }
       const data = await res.json();
       setResult(data);
     } catch (err: any) {
@@ -117,11 +125,14 @@ export default function Home() {
 
   const shareToWhatsApp = () => {
     if (!result) return;
+    const stanzasSummary = result.stanzas
+      ?.map((s) => `*${s.stanzaType}:*\n${s.anvayaKannada}\n_${s.anvayaEnglish}_`)
+      .join("\n\n");
+
     const text = `🎶 *${result.titleKannada}* (${result.titleEnglish})\n` +
       `✍️ *ರಚನೆ:* ${result.composerKannada} (${result.composerEnglish})\n` +
       `🏷️ *ಅಂಕಿತ:* ${result.ankitaKannada}\n\n` +
-      `📖 *ಅನ್ವಯ (Kannada):*\n${result.anvayaKannada}\n\n` +
-      `💡 *Meaning (English):*\n${result.anvayaEnglish}\n\n` +
+      `${stanzasSummary}\n\n` +
       `✨ *Life Takeaway:*\n${result.modernTakeawayEnglish}\n\n` +
       `_Decoded via Anvaya Studio_`;
 
@@ -145,7 +156,7 @@ export default function Home() {
             ಪಶ್ಚಾತ್ಯ-ಅನ್ವಯ (Anvaya Studio)
           </h1>
           <p className="text-xs sm:text-sm text-stone-600">
-            Dasa Sahitya Decrypter: Sentence Syntax, Vocabulary & Living Philosophy
+            Full-Song Decrypter: Stanza-by-Stanza Syntax, Roots & Deeper Metaphors
           </p>
         </header>
 
@@ -153,10 +164,10 @@ export default function Home() {
         <div className="bg-white p-4 sm:p-5 rounded-2xl shadow-xs border border-stone-200 space-y-3">
           <div className="relative">
             <textarea
-              rows={3}
+              rows={4}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder={isListening ? "Listening... Speak now..." : "Speak or type in Kannada or English..."}
+              placeholder={isListening ? "Listening... Speak now..." : "Paste full song lyrics or type song name in Kannada/English..."}
               className={`w-full p-3 pr-14 text-sm sm:text-base border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-800/40 ${
                 isListening ? "border-amber-500 bg-amber-50/20" : "border-stone-200"
               }`}
@@ -211,11 +222,11 @@ export default function Home() {
               disabled={loading || !input.trim()}
               className="px-5 py-2 bg-amber-900 hover:bg-amber-950 text-amber-50 font-medium rounded-xl text-sm transition disabled:opacity-50 ml-auto"
             >
-              {loading ? "Analyzing..." : "Decode Song"}
+              {loading ? "Analyzing Song..." : "Decode Full Song"}
             </button>
           </div>
 
-          {/* Quick Preset Buttons */}
+          {/* Presets */}
           <div className="flex items-center gap-1.5 flex-wrap pt-2 border-t border-stone-100 text-xs text-stone-500">
             <span>Try:</span>
             {PRESETS.map((p) => (
@@ -279,27 +290,47 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Anvaya Bilingual Cards */}
-            <div className="bg-white p-4 sm:p-5 rounded-2xl border border-stone-200 shadow-xs space-y-3">
-              <span className="text-xs uppercase tracking-wider font-semibold text-amber-900 block">
-                ಅನ್ವಯ • Sentence Flow (Bilingual)
-              </span>
+            {/* Stanza by Stanza Section */}
+            <div className="space-y-3">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-stone-600 px-1">
+                ಪದಾನ್ವಯ • Stanza-by-Stanza Breakdown ({result.stanzas?.length || 0} Stanzas)
+              </h3>
 
-              {/* Kannada Anvaya */}
-              <div className="p-3.5 bg-amber-50/70 rounded-xl border border-amber-100 space-y-1">
-                <span className="text-[11px] font-semibold text-amber-800 block uppercase">ಕನ್ನಡ ವಾಕ್ಯಾರ್ಥ (Spoken Syntax)</span>
-                <p className="text-base sm:text-lg font-serif leading-relaxed text-stone-900">
-                  {result.anvayaKannada}
-                </p>
-              </div>
+              {result.stanzas?.map((stanza, idx) => (
+                <div key={idx} className="bg-white p-4 sm:p-5 rounded-2xl border border-stone-200 shadow-xs space-y-3">
+                  <div className="flex items-center justify-between border-b border-stone-100 pb-2">
+                    <span className="text-xs font-bold uppercase tracking-wide text-amber-900">
+                      {stanza.stanzaType}
+                    </span>
+                  </div>
 
-              {/* English Anvaya */}
-              <div className="p-3.5 bg-stone-50 rounded-xl border border-stone-200 space-y-1">
-                <span className="text-[11px] font-semibold text-stone-600 block uppercase">English Prose Flow</span>
-                <p className="text-xs sm:text-sm leading-relaxed text-stone-800 font-sans">
-                  {result.anvayaEnglish}
-                </p>
-              </div>
+                  {stanza.originalKannada && (
+                    <p className="text-xs sm:text-sm text-stone-500 font-serif italic whitespace-pre-line bg-stone-50 p-2.5 rounded-lg border border-stone-100">
+                      {stanza.originalKannada}
+                    </p>
+                  )}
+
+                  {/* Kannada Anvaya */}
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-semibold text-amber-800 uppercase tracking-wide">
+                      ಅನ್ವಯ (Spoken Kannada Syntax)
+                    </span>
+                    <p className="text-sm sm:text-base font-serif leading-relaxed text-stone-900 bg-amber-50/50 p-3 rounded-xl border border-amber-100/70">
+                      {stanza.anvayaKannada}
+                    </p>
+                  </div>
+
+                  {/* English Anvaya */}
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-semibold text-stone-500 uppercase tracking-wide">
+                      English Meaning & Flow
+                    </span>
+                    <p className="text-xs sm:text-sm leading-relaxed text-stone-700 bg-stone-50/70 p-3 rounded-xl border border-stone-200/70 font-sans">
+                      {stanza.anvayaEnglish}
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
 
             {/* Practical Takeaway Card */}
@@ -315,7 +346,7 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Pratipadaartha (Word Glossary) */}
+            {/* Pratipadaartha (Word Glossary across entire song) */}
             {result.pratipadaartha?.length > 0 && (
               <div className="bg-white p-4 sm:p-5 rounded-2xl border border-stone-200 shadow-xs space-y-2">
                 <span className="text-xs uppercase tracking-wider font-semibold text-amber-900 block">
