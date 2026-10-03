@@ -1,56 +1,48 @@
 import { NextRequest, NextResponse } from "next/server";
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
 const responseSchema = {
-  type: Type.OBJECT,
+  type: SchemaType.OBJECT,
   properties: {
-    titleKannada: { type: Type.STRING, description: "Title in Kannada script" },
-    titleEnglish: { type: Type.STRING, description: "Title in English/IAST transliteration" },
-    composerKannada: { type: Type.STRING, description: "Composer in Kannada" },
-    composerEnglish: { type: Type.STRING, description: "Composer in English" },
-    ankitaKannada: { type: Type.STRING, description: "Mudra/Ankita in Kannada" },
-    ankitaEnglish: { type: Type.STRING, description: "Mudra/Ankita in English" },
-    anvayaKannada: {
-      type: Type.STRING,
-      description: "Syntactic rearrangement in modern spoken Kannada sentence order"
-    },
-    anvayaEnglish: {
-      type: Type.STRING,
-      description: "Prose rearrangement and sentence-by-sentence translation in modern English"
-    },
+    titleKannada: { type: SchemaType.STRING },
+    titleEnglish: { type: SchemaType.STRING },
+    composerKannada: { type: SchemaType.STRING },
+    composerEnglish: { type: SchemaType.STRING },
+    ankitaKannada: { type: SchemaType.STRING },
+    ankitaEnglish: { type: SchemaType.STRING },
+    anvayaKannada: { type: SchemaType.STRING },
+    anvayaEnglish: { type: SchemaType.STRING },
     pratipadaartha: {
-      type: Type.ARRAY,
-      description: "Word-by-word breakdown of classical or Nadugannada terms",
+      type: SchemaType.ARRAY,
       items: {
-        type: Type.OBJECT,
+        type: SchemaType.OBJECT,
         properties: {
-          wordKannada: { type: Type.STRING },
-          wordTransliterated: { type: Type.STRING },
-          meaningKannada: { type: Type.STRING },
-          meaningEnglish: { type: Type.STRING }
+          wordKannada: { type: SchemaType.STRING },
+          wordTransliterated: { type: SchemaType.STRING },
+          meaningKannada: { type: SchemaType.STRING },
+          meaningEnglish: { type: SchemaType.STRING }
         },
         required: ["wordKannada", "wordTransliterated", "meaningKannada", "meaningEnglish"]
       }
     },
     metaphorsAndMundige: {
-      type: Type.ARRAY,
-      description: "Allegorical riddles or philosophical metaphors explained",
+      type: SchemaType.ARRAY,
       items: {
-        type: Type.OBJECT,
+        type: SchemaType.OBJECT,
         properties: {
-          motifKannada: { type: Type.STRING },
-          motifEnglish: { type: Type.STRING },
-          innerMeaningKannada: { type: Type.STRING },
-          innerMeaningEnglish: { type: Type.STRING }
+          motifKannada: { type: SchemaType.STRING },
+          motifEnglish: { type: SchemaType.STRING },
+          innerMeaningKannada: { type: SchemaType.STRING },
+          innerMeaningEnglish: { type: SchemaType.STRING }
         },
         required: ["motifKannada", "motifEnglish", "innerMeaningKannada", "innerMeaningEnglish"]
       }
     },
-    modernTakeawayKannada: { type: Type.STRING, description: "Psychological life takeaway in Kannada" },
-    modernTakeawayEnglish: { type: Type.STRING, description: "Psychological life takeaway in English" },
-    youtubeSearchQuery: { type: Type.STRING, description: "Clean search string for YouTube rendition" }
+    modernTakeawayKannada: { type: SchemaType.STRING },
+    modernTakeawayEnglish: { type: SchemaType.STRING },
+    youtubeSearchQuery: { type: SchemaType.STRING }
   },
   required: [
     "titleKannada",
@@ -77,26 +69,24 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Input query is required" }, { status: 400 });
     }
 
-    const systemPrompt = `You are a bilingual authority on Haridasa Sahitya and Kannada linguistics.
+    const model = genAI.getGenerativeModel({
+      model: "gemini-2.5-flash",
+      generationConfig: {
+        responseMimeType: "application/json",
+        responseSchema: responseSchema as any,
+        temperature: 0.2
+      },
+      systemInstruction: `You are a bilingual authority on Haridasa Sahitya and Kannada linguistics.
 Input can be in Kannada script, informal English/Kanglish phonetics, or an English phrase.
 1. Identify the composition accurately.
 2. Present Kannada and English explanations side-by-side in equal depth.
 3. Perform Anvaya (reordering poetic inversions into natural spoken syntax).
 4. Provide a word-by-word glossary for difficult or classical roots.
-5. Decode philosophical allegories (Mundige/Rupaka) and give a 1-sentence practical life reflection in both languages.`;
-
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: `Analyze this Haridasa composition:\n"""\n${query}\n"""`,
-      config: {
-        systemInstruction: systemPrompt,
-        responseMimeType: "application/json",
-        responseSchema: responseSchema,
-        temperature: 0.2
-      }
+5. Decode philosophical allegories (Mundige/Rupaka) and give a 1-sentence practical life reflection in both languages.`
     });
 
-    const parsed = JSON.parse(response.text || "{}");
+    const result = await model.generateContent(`Analyze this Haridasa composition:\n"""\n${query}\n"""`);
+    const parsed = JSON.parse(result.response.text());
     return NextResponse.json(parsed);
   } catch (error) {
     console.error("API Error:", error);
