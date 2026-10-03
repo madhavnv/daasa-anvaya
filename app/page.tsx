@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 interface StanzaItem {
   stanzaType: string;
@@ -55,21 +55,19 @@ export default function Home() {
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // UX & Font Scaling
+  // Typography Scaling
   const [fontSize, setFontSize] = useState<"normal" | "large" | "xlarge">("normal");
   const [isListening, setIsListening] = useState(false);
   const [speechLang, setSpeechLang] = useState<"kn-IN" | "en-IN">("kn-IN");
   const recognitionRef = useRef<any>(null);
 
-  // Feedback Drawer State
+  // Feedback State
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [feedbackCategory, setFeedbackCategory] = useState("Accuracy / ಅರ್ಥ ಸರಿಯಿಲ್ಲ");
   const [feedbackText, setFeedbackText] = useState("");
-  
-  // REPLACE WITH YOUR PHONE NUMBER FOR DIRECT BETA FEEDBACK VIA WHATSAPP
-  const FEEDBACK_WHATSAPP_NUMBER = "919845509006"; 
 
-  // Setup Web Speech Recognition
+  const FEEDBACK_WHATSAPP_NUMBER = "919845509006";
+
   useEffect(() => {
     if (typeof window !== "undefined") {
       const SpeechRecognition =
@@ -138,7 +136,6 @@ export default function Home() {
     }
   };
 
-  // Indian Speech Synthesis (Filter for native Indian / Kannada voice)
   const speakText = (text: string) => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
     window.speechSynthesis.cancel();
@@ -146,7 +143,6 @@ export default function Home() {
     const utterance = new SpeechSynthesisUtterance(text);
     const voices = window.speechSynthesis.getVoices();
 
-    // Prioritize genuine Indian accent voices
     const indianVoice = voices.find(
       (v) =>
         v.lang === "kn-IN" ||
@@ -158,7 +154,7 @@ export default function Home() {
       utterance.voice = indianVoice;
     }
     utterance.lang = "kn-IN";
-    utterance.rate = 0.82; // Gentle, measured devotional pace
+    utterance.rate = 0.82;
     utterance.pitch = 1.0;
     window.speechSynthesis.speak(utterance);
   };
@@ -189,11 +185,17 @@ export default function Home() {
     setFeedbackText("");
   };
 
-  const textClasses = {
-    normal: { kannada: "text-base leading-relaxed", english: "text-sm leading-relaxed" },
-    large: { kannada: "text-lg leading-relaxed", english: "text-base leading-relaxed" },
-    xlarge: { kannada: "text-xl leading-loose", english: "text-lg leading-relaxed" },
-  }[fontSize];
+  const getKannadaTextClass = () => {
+    if (fontSize === "large") return "text-lg leading-relaxed";
+    if (fontSize === "xlarge") return "text-xl leading-loose";
+    return "text-base leading-relaxed";
+  };
+
+  const getEnglishTextClass = () => {
+    if (fontSize === "large") return "text-base leading-relaxed";
+    if (fontSize === "xlarge") return "text-lg leading-relaxed";
+    return "text-sm leading-relaxed";
+  };
 
   return (
     <main className="min-h-screen bg-[#FAF8F5] text-stone-900 pb-24 pt-6 px-4 sm:px-6 antialiased">
@@ -396,10 +398,10 @@ export default function Home() {
                     ಐತಿಹ್ಯ ಮತ್ತು ಹಿನ್ನೆಲೆ • Historical Context & Setting
                   </span>
                 </div>
-                <p className={`font-serif text-stone-900 ${textClasses.kannada}`}>
+                <p className={`font-serif text-stone-900 ${getKannadaTextClass()}`}>
                   {result.historicalContextKannada}
                 </p>
-                <p className={`text-stone-700 italic font-sans pt-1 border-t border-amber-900/10 ${textClasses.english}`}>
+                <p className={`text-stone-700 italic font-sans pt-1 border-t border-amber-900/10 ${getEnglishTextClass()}`}>
                   {result.historicalContextEnglish}
                 </p>
               </div>
@@ -410,10 +412,10 @@ export default function Home() {
               <span className="text-xs font-bold uppercase tracking-wider text-stone-700 block">
                 ಸಮಗ್ರ ಭಾವಾರ್ಥ • Comprehensive Philosophical Summary
               </span>
-              <p className={`font-serif text-stone-900 bg-stone-50/70 p-3.5 rounded-xl border border-stone-100 ${textClasses.kannada}`}>
+              <p className={`font-serif text-stone-900 bg-stone-50/70 p-3.5 rounded-xl border border-stone-100 ${getKannadaTextClass()}`}>
                 {result.comprehensiveSummaryKannada}
               </p>
-              <p className={`text-stone-700 font-sans leading-relaxed ${textClasses.english}`}>
+              <p className={`text-stone-700 font-sans leading-relaxed ${getEnglishTextClass()}`}>
                 {result.comprehensiveSummaryEnglish}
               </p>
             </div>
@@ -452,5 +454,10 @@ export default function Home() {
                       <span className="text-[10px] font-semibold text-amber-900 uppercase tracking-wider block">
                         ಕನ್ನಡ ವಾಕ್ಯಾನ್ವಯ • Spoken Syntax Flow
                       </span>
-                      <p className={`font-serif text-stone-900 bg-amber-50/40 p-3.5 rounded-xl border border-amber-100/60 ${textClasses.kannada}`}>
-                     
+                      <p className={`font-serif text-stone-900 bg-amber-50/40 p-3.5 rounded-xl border border-amber-100/60 ${getKannadaTextClass()}`}>
+                        {stanza.anvayaKannada}
+                      </p>
+                    </div>
+
+                    <div className="space-y-1">
+       
