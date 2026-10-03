@@ -1,11 +1,52 @@
 import { NextRequest, NextResponse } from "next/server";
 import { COMPLETE_ANKITHA_CATALOG } from "@/lib/ankithaData";
 
-// Format the entire authoritative chronological catalog into a clean reference string
 const ANKITHA_AUTHORITY_REGISTRY = COMPLETE_ANKITHA_CATALOG.map(
   (entry) =>
     `• [${entry.era || "Historical"}] Signature: "${entry.ankitaKannada}" (${entry.ankitaEnglish}) => Composer: ${entry.composerKannada} (${entry.composerEnglish}) [Place: ${entry.location || "Karnataka"}]`
 ).join("\n");
+
+// Active supported model endpoints
+const MODELS = [
+  "gemini-3.8-flash",
+  "gemini-3.8-pro",
+  "gemini-3-flash",
+];
+
+async function callGeminiWithRetry(
+  apiKey: string,
+  model: string,
+  bodyPayload: any,
+  retries = 2,
+  delayMs = 1200
+): Promise<Response> {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(bodyPayload),
+      });
+
+      if (response.ok) return response;
+
+      // Retry on transient capacity issues (503) or rate limits (429)
+      if ((response.status === 503 || response.status === 429) && attempt < retries) {
+        await new Promise((resolve) => setTimeout(resolve, delayMs * (attempt + 1)));
+        continue;
+      }
+
+      return response;
+    } catch (err) {
+      if (attempt === retries) throw err;
+      await new Promise((resolve) => setTimeout(resolve, delayMs * (attempt + 1)));
+    }
+  }
+
+  throw new Error(`Exhausted retries for model: ${model}`);
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -50,12 +91,12 @@ CRITICAL RULES FOR ACCURACY:
      "ಈ ಕೃತಿಯು ನಿರ್ದಿಷ್ಟ ಐತಿಹಾಸಿಕ ಘಟನೆಗಿಂತ ಹೆಚ್ಚಾಗಿ ತತ್ತ್ವಚಿಂತನೆ ಮತ್ತು ಭಕ್ತಿ ಸಮರ್ಪಣೆಯಾಗಿದೆ (This composition is a meditative and philosophical contemplation rather than tied to an isolated historical incident)."
 
 3. SYNTAX REORDERING (ಅನ್ವಯ / ANVAYA):
-   - In metric poetry, words are inverted for raga and tala. Reorder each stanza into natural, spoken Kannada conversational syntax followed by fluent English prose.
+   - Reorder metric poetry into natural, spoken Kannada conversational syntax followed by fluent English prose.
 
 4. MUNDIGE & METAPHORS:
    - Decode allegorical motifs (e.g., water pots, butter churning, oil presses, weaver looms) to reveal their inner spiritual meaning.
 
-You MUST respond strictly with a valid JSON object matching this schema:
+Respond strictly with a valid JSON object matching this schema:
 {
   "titleKannada": "Song title in Kannada",
   "titleEnglish": "Song title in English transliteration",
@@ -97,34 +138,43 @@ You MUST respond strictly with a valid JSON object matching this schema:
 }
 `;
 
-    const userPrompt = `Analyze, decode, and extract syntax for the following composition or query:\n\n${query}`;
-
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [
+    const bodyPayload = {
+      contents: [
+        {
+          role: "user",
+          parts: [
             {
-              role: "user",
-              parts: [{ text: `${systemPrompt}\n\n${userPrompt}` }],
+              text: `${systemPrompt}\n\nAnalyze, decode, and extract syntax for the following composition or query:\n\n${query}`,
             },
           ],
-          generationConfig: {
-            responseMimeType: "application/json",
-            temperature: 0.1,
-          },
-        }),
-      }
-    );
+        },
+      ],
+      generationConfig: {
+        responseMimeType: "application/json",
+        temperature: 0.1,
+      },
+    };
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Gemini API error:", errorText);
+    let response: Response | null = null;
+    let lastErrorText = "";
+
+    // Iterate through active models if high demand (503) occurs
+    for (const model of MODELS) {
+      response = await callGeminiWithRetry(apiKey, model, bodyPayload, 1, 1000);
+
+      if (response.ok) {
+        break;
+      }
+
+      lastErrorText = await response.text();
+      console.warn(`Model ${model} returned error status ${response.status}. Trying next tier...`);
+    }
+
+    if (!response || !response.ok) {
+      console.error("All model tiers failed:", lastErrorText);
       return NextResponse.json(
-        { error: "Failed to communicate with language model" },
-        { status: 502 }
+        { error: "The decoding engine is temporarily experiencing high traffic. Please retry in a few moments." },
+        { status: 503 }
       );
     }
 
@@ -141,7 +191,7 @@ You MUST respond strictly with a valid JSON object matching this schema:
     const parsedData = JSON.parse(rawText);
     return NextResponse.json(parsedData);
   } catch (error: any) {
-    console.error("Decode route exception:", error);
+    console.error("Decode route error:", error);
     return NextResponse.json(
       { error: error.message || "An unexpected error occurred during processing" },
       { status: 500 }
