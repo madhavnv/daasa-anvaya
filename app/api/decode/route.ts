@@ -6,7 +6,6 @@ const ANKITHA_AUTHORITY_REGISTRY = COMPLETE_ANKITHA_CATALOG.map(
     `• [${entry.era || "Historical"}] Signature: "${entry.ankitaKannada}" (${entry.ankitaEnglish}) => Composer: ${entry.composerKannada} (${entry.composerEnglish}) [Place: ${entry.location || "Karnataka"}]`
 ).join("\n");
 
-// Active supported model endpoints
 const MODELS = [
   "gemini-3.8-flash",
   "gemini-3.8-pro",
@@ -32,7 +31,6 @@ async function callGeminiWithRetry(
 
       if (response.ok) return response;
 
-      // Retry on transient capacity issues (503) or rate limits (429)
       if ((response.status === 503 || response.status === 429) && attempt < retries) {
         await new Promise((resolve) => setTimeout(resolve, delayMs * (attempt + 1)));
         continue;
@@ -75,7 +73,17 @@ Use this verified registry to identify composers, their exact signatures, and th
 ${ANKITHA_AUTHORITY_REGISTRY}
 
 CRITICAL RULES FOR ACCURACY:
-1. ANKITA SIGNATURE OVERRIDES EVERYTHING:
+
+1. RELEVANCE & SONG VALIDATION:
+   - First evaluate if the user's input is a Haridasa composition, Kannada devaranama, stotra, or related devotional lyrics/query.
+   - If the input is random gibberish, conversational small talk (e.g., "hi", "how are you"), off-topic questions, code, or unrelated text:
+     Set "isRecognizedSong": false.
+     Set "unrecognizedMessageKannada": "ಈ ಸಾಲುಗಳು ಹರಿದಾಸ ಸಾಹಿತ್ಯ ಅಥವಾ ಭಕ್ತಿ ಕೃತಿಯಂತೆ ಕಂಡುಬರುತ್ತಿಲ್ಲ. ದಯವಿಟ್ಟು ಹಾಡಿನ ಹೆಸರು ಅಥವಾ ಸಾಹಿತ್ಯವನ್ನು ಸರಿಯಾಗಿ ನಮೂದಿಸಿ."
+     Set "unrecognizedMessageEnglish": "This input does not match any recognized Haridasa pada or devotional composition. Please enter a valid song title or lyric."
+     Set all other fields to null or empty arrays.
+   - If it is a recognized song or legitimate devotional verse, set "isRecognizedSong": true.
+
+2. ANKITA SIGNATURE OVERRIDES EVERYTHING:
    - Identify the composer strictly by searching for the unique Ankita Mudra embedded in the song's final stanza (Charana).
    - If the signature contains "ಗುರು ಪುರಂದರ ವಿಠ್ಠಲ", the author is Madhwapati Dasa (son of Purandara Dasa), NEVER Purandara Dasa.
    - If the signature contains "ಶ್ರೀನಿಧಿ ವಿಠ್ಠಲ", the author is Srinivasa Dasa, NOT Gopala Dasa.
@@ -84,20 +92,23 @@ CRITICAL RULES FOR ACCURACY:
    - If the signature contains "ಕಾಗಿನೆಲೆಯಾದಿಕೇಶವ" or "ಬಾದಾದಿಕೇಶವ", the author is Kanaka Dasaru.
    - If no explicit matching Ankita is present in the input text, mark composer as "ಪಾರಂಪರಿಕ / ಅಂಕಿತ ಲಭ್ಯವಿಲ್ಲ (Traditional / Ankita not provided)". NEVER default to Purandara Dasa.
 
-2. HISTORICAL CONTEXT (AITHIHYA) INTEGRITY:
+3. HISTORICAL CONTEXT (AITHIHYA) INTEGRITY:
    - NEVER fabricate artificial or imaginary historical events or backstories.
    - Provide a specific historical legend or life event ONLY if it is an authentic canonical episode recorded in Haridasa Charitre (e.g., Kanaka Dasa at Udupi Kanakana Kindi; Purandara Dasa's renunciation of wealth; Gopala Dasa transferring longevity to Jagannatha Dasa).
    - If the composition is a philosophical reflection, spiritual instruction, or general prayer with no documented historical incident, state:
      "ಈ ಕೃತಿಯು ನಿರ್ದಿಷ್ಟ ಐತಿಹಾಸಿಕ ಘಟನೆಗಿಂತ ಹೆಚ್ಚಾಗಿ ತತ್ತ್ವಚಿಂತನೆ ಮತ್ತು ಭಕ್ತಿ ಸಮರ್ಪಣೆಯಾಗಿದೆ (This composition is a meditative and philosophical contemplation rather than tied to an isolated historical incident)."
 
-3. SYNTAX REORDERING (ಅನ್ವಯ / ANVAYA):
+4. SYNTAX REORDERING (ಅನ್ವಯ / ANVAYA):
    - Reorder metric poetry into natural, spoken Kannada conversational syntax followed by fluent English prose.
 
-4. MUNDIGE & METAPHORS:
+5. MUNDIGE & METAPHORS:
    - Decode allegorical motifs (e.g., water pots, butter churning, oil presses, weaver looms) to reveal their inner spiritual meaning.
 
 Respond strictly with a valid JSON object matching this schema:
 {
+  "isRecognizedSong": true,
+  "unrecognizedMessageKannada": null,
+  "unrecognizedMessageEnglish": null,
   "titleKannada": "Song title in Kannada",
   "titleEnglish": "Song title in English transliteration",
   "composerKannada": "Composer in Kannada",
@@ -158,7 +169,6 @@ Respond strictly with a valid JSON object matching this schema:
     let response: Response | null = null;
     let lastErrorText = "";
 
-    // Iterate through active models if high demand (503) occurs
     for (const model of MODELS) {
       response = await callGeminiWithRetry(apiKey, model, bodyPayload, 1, 1000);
 
@@ -189,6 +199,17 @@ Respond strictly with a valid JSON object matching this schema:
     }
 
     const parsedData = JSON.parse(rawText);
+
+    // Intercept unrecognizable input and return HTTP 422
+    if (parsedData.isRecognizedSong === false) {
+      const message =
+        parsedData.unrecognizedMessageKannada ||
+        parsedData.unrecognizedMessageEnglish ||
+        "ಹಾಡು ಗುರುತಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಸರಿಯಾದ ಸಾಹಿತ್ಯವನ್ನು ನಮೂದಿಸಿ (Song not recognized).";
+
+      return NextResponse.json({ error: message }, { status: 422 });
+    }
+
     return NextResponse.json(parsedData);
   } catch (error: any) {
     console.error("Decode route error:", error);
