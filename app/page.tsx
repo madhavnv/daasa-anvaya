@@ -17,7 +17,7 @@ export default function Home() {
   const [feedbackCategory, setFeedbackCategory] = useState("Accuracy Issue");
   const [feedbackText, setFeedbackText] = useState("");
 
-  const FEEDBACK_WHATSAPP_NUMBER = "919999999999";
+  const FEEDBACK_WHATSAPP_NUMBER = "919845509006";
 
   const PRESETS = [
     { label: "Tarakka Bindige", query: "tarakka bindige neerige hogona" },
