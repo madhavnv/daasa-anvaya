@@ -248,7 +248,7 @@ export default function Home() {
           </div>
         )}
 
-        {/* Results Stream */}
+        {/* Results */}
         {result && (
           <div className="space-y-5">
 
@@ -462,8 +462,8 @@ export default function Home() {
           </div>
         )}
 
-        {/* Beta Mode Disclaimer Footer */}
-        <footer className="no-print pt-8 pb-4 text-center border-t border-stone-200 space-y-2">
+        {/* Beta Mode Disclaimer & Creator Attribution Footer */}
+        <footer className="no-print pt-8 pb-4 text-center border-t border-stone-200 space-y-2.5">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100/70 border border-amber-200 text-amber-950 text-[11px] font-medium">
             <span className="inline-block w-2 h-2 rounded-full bg-amber-600 animate-pulse"></span>
             <span>ಪ್ರಾಯೋಗಿಕ ಆವೃತ್ತಿ • Beta Version</span>
@@ -485,6 +485,15 @@ export default function Home() {
             >
               ದೋಷ ಅಥವಾ ಸಲಹೆ ತಿಳಿಸಿ • Share Feedback
             </button>
+          </div>
+
+          {/* Attribution Credit */}
+          <div className="pt-3 border-t border-stone-200/60 text-stone-500 text-[11px] tracking-wide">
+            <span>ಸಂಕಲನ ಮತ್ತು ತಂತ್ರಜ್ಞಾನ: </span>
+            <strong className="text-stone-800 font-medium">ಮಾಧವ್ ಎನ್ ವಿ</strong>
+            <span className="mx-1.5">•</span>
+            <span>Initiative & Curation by </span>
+            <strong className="text-stone-800 font-medium">Madhav N V</strong>
           </div>
         </footer>
 
