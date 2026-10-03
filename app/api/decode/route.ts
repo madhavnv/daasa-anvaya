@@ -1,157 +1,150 @@
 import { NextRequest, NextResponse } from "next/server";
+import { COMPLETE_ANKITHA_CATALOG } from "@/lib/ankithaData";
 
-// Valid active models
-const MODELS_TO_TRY = [
-  "gemini-3.5-flash-lite",
-  "gemini-2.5-flash",
-  "gemini-3.8-flash"
-];
-
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-// Helper: Safely extract JSON substring even if model adds leading/trailing commentary
-function extractCleanJson(text: string): string {
-  let cleaned = text.trim();
-  // Strip markdown code fences if present
-  cleaned = cleaned.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
-
-  const firstBrace = cleaned.indexOf("{");
-  const lastBrace = cleaned.lastIndexOf("}");
-
-  if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
-    return cleaned.substring(firstBrace, lastBrace + 1);
-  }
-  return cleaned;
-}
+// Format the entire authoritative chronological catalog into a clean reference string
+const ANKITHA_AUTHORITY_REGISTRY = COMPLETE_ANKITHA_CATALOG.map(
+  (entry) =>
+    `• [${entry.era || "Historical"}] Signature: "${entry.ankitaKannada}" (${entry.ankitaEnglish}) => Composer: ${entry.composerKannada} (${entry.composerEnglish}) [Place: ${entry.location || "Karnataka"}]`
+).join("\n");
 
 export async function POST(req: NextRequest) {
   try {
-    const apiKey = process.env.GEMINI_API_KEY?.trim();
+    const { query } = await req.json();
+
+    if (!query || typeof query !== "string" || !query.trim()) {
+      return NextResponse.json(
+        { error: "Query cannot be empty" },
+        { status: 400 }
+      );
+    }
+
+    const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
       return NextResponse.json(
-        { error: "GEMINI_API_KEY environment variable is missing." },
+        { error: "GEMINI_API_KEY environment variable is not configured" },
         { status: 500 }
       );
     }
 
-    const { query } = await req.json();
-    if (!query || typeof query !== "string") {
-      return NextResponse.json({ error: "Input query is required" }, { status: 400 });
-    }
+    const systemPrompt = `
+You are Dāsa Bodhini (ದಾಸ ಬೋಧಿನಿ), a digital scholar of Haridasa Sahitya (spanning the canonical 1263–1983 CE tradition).
 
-    const systemPrompt = `You are a bilingual authority on Haridasa Sahitya and Kannada linguistics.
-Analyze the user's input (a song title, verse, or full song lyrics).
+PRIMARY GROUND-TRUTH ANKITHA REGISTRY (CHRONOLOGICAL 1263–1983 CE):
+Use this verified registry to identify composers, their exact signatures, and their documented periods:
+${ANKITHA_AUTHORITY_REGISTRY}
 
-CRITICAL OUTPUT RULES:
-- Output MUST be strictly valid JSON and NOTHING ELSE.
-- Do NOT include any intro text, conversational remarks, or text outside the JSON object.
-- If full lyrics are provided, break down every stanza (Pallavi, Anupallavi, and all Charanas) in the "stanzas" array.
+CRITICAL RULES FOR ACCURACY:
+1. ANKITA SIGNATURE OVERRIDES EVERYTHING:
+   - Identify the composer strictly by searching for the unique Ankita Mudra embedded in the song's final stanza (Charana).
+   - If the signature contains "ಗುರು ಪುರಂದರ ವಿಠ್ಠಲ", the author is Madhwapati Dasa (son of Purandara Dasa), NEVER Purandara Dasa.
+   - If the signature contains "ಶ್ರೀನಿಧಿ ವಿಠ್ಠಲ", the author is Srinivasa Dasa, NOT Gopala Dasa.
+   - If the signature contains "ರಂಗವಿಠ್ಠಲ", the author is Sri Sripadarajaru.
+   - If the signature contains "ಹಯವದನ", the author is Sri Vadiraja Teertharu.
+   - If the signature contains "ಕಾಗಿನೆಲೆಯಾದಿಕೇಶವ" or "ಬಾದಾದಿಕೇಶವ", the author is Kanaka Dasaru.
+   - If no explicit matching Ankita is present in the input text, mark composer as "ಪಾರಂಪರಿಕ / ಅಂಕಿತ ಲಭ್ಯವಿಲ್ಲ (Traditional / Ankita not provided)". NEVER default to Purandara Dasa.
 
-JSON Structure:
+2. HISTORICAL CONTEXT (AITHIHYA) INTEGRITY:
+   - NEVER fabricate artificial or imaginary historical events or backstories.
+   - Provide a specific historical legend or life event ONLY if it is an authentic canonical episode recorded in Haridasa Charitre (e.g., Kanaka Dasa at Udupi Kanakana Kindi; Purandara Dasa's renunciation of wealth; Gopala Dasa transferring longevity to Jagannatha Dasa).
+   - If the composition is a philosophical reflection, spiritual instruction, or general prayer with no documented historical incident, state:
+     "ಈ ಕೃತಿಯು ನಿರ್ದಿಷ್ಟ ಐತಿಹಾಸಿಕ ಘಟನೆಗಿಂತ ಹೆಚ್ಚಾಗಿ ತತ್ತ್ವಚಿಂತನೆ ಮತ್ತು ಭಕ್ತಿ ಸಮರ್ಪಣೆಯಾಗಿದೆ (This composition is a meditative and philosophical contemplation rather than tied to an isolated historical incident)."
+
+3. SYNTAX REORDERING (ಅನ್ವಯ / ANVAYA):
+   - In metric poetry, words are inverted for raga and tala. Reorder each stanza into natural, spoken Kannada conversational syntax followed by fluent English prose.
+
+4. MUNDIGE & METAPHORS:
+   - Decode allegorical motifs (e.g., water pots, butter churning, oil presses, weaver looms) to reveal their inner spiritual meaning.
+
+You MUST respond strictly with a valid JSON object matching this schema:
 {
-  "titleKannada": "Title in Kannada script",
-  "titleEnglish": "Title in English/IAST",
+  "titleKannada": "Song title in Kannada",
+  "titleEnglish": "Song title in English transliteration",
   "composerKannada": "Composer in Kannada",
   "composerEnglish": "Composer in English",
   "ankitaKannada": "Mudra in Kannada",
   "ankitaEnglish": "Mudra in English",
-  "historicalContextKannada": "Historical context/legend in Kannada",
-  "historicalContextEnglish": "Historical context/legend in English",
-  "comprehensiveSummaryKannada": "Philosophical summary in Kannada",
-  "comprehensiveSummaryEnglish": "Philosophical summary in English",
+  "youtubeSearchQuery": "Optimized YouTube search query for this song",
+  "historicalContextKannada": "Factual context or statement of philosophical contemplation in Kannada",
+  "historicalContextEnglish": "Factual context or statement of philosophical contemplation in English",
+  "comprehensiveSummaryKannada": "Complete song summary in Kannada",
+  "comprehensiveSummaryEnglish": "Complete song summary in English",
   "stanzas": [
     {
-      "stanzaType": "Stanza title (e.g. Pallavi, Charana 1)",
+      "stanzaType": "ಪಲ್ಲವಿ / Pallavi or ಅನುಪಲ್ಲವಿ / Anupallavi or ಚರಣ / Charana",
       "originalKannada": "Original lines in Kannada",
-      "anvayaKannada": "Modern Kannada sentence syntax",
-      "anvayaEnglish": "Modern English prose translation"
+      "anvayaKannada": "Grammatically reordered spoken Kannada sentence",
+      "anvayaEnglish": "Meaning in lucid English prose"
     }
   ],
+  "modernTakeawayKannada": "Practical life reflection in Kannada",
+  "modernTakeawayEnglish": "Practical life reflection in English",
   "pratipadaartha": [
     {
-      "wordKannada": "Word",
+      "wordKannada": "Word in Kannada",
       "wordTransliterated": "Transliteration",
-      "meaningKannada": "Meaning in modern Kannada",
-      "meaningEnglish": "Meaning in English"
+      "meaningKannada": "Kannada meaning",
+      "meaningEnglish": "English meaning"
     }
   ],
   "metaphorsAndMundige": [
     {
-      "motifKannada": "Motif in Kannada",
-      "motifEnglish": "Motif in English",
-      "innerMeaningKannada": "Allegorical meaning in Kannada",
-      "innerMeaningEnglish": "Allegorical meaning in English"
+      "motifKannada": "Symbol in Kannada",
+      "motifEnglish": "Symbol in English",
+      "innerMeaningKannada": "Esoteric meaning in Kannada",
+      "innerMeaningEnglish": "Esoteric meaning in English"
     }
-  ],
-  "modernTakeawayKannada": "Life reflection in Kannada",
-  "modernTakeawayEnglish": "Life reflection in English",
-  "youtubeSearchQuery": "Song Title Composer rendition"
-}`;
+  ]
+}
+`;
 
-    const requestBody = {
-      contents: [
-        {
-          parts: [
+    const userPrompt = `Analyze, decode, and extract syntax for the following composition or query:\n\n${query}`;
+
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [
             {
-              text: `${systemPrompt}\n\nAnalyze this Haridasa composition query:\n"""\n${query}\n"""`
-            }
-          ]
-        }
-      ],
-      generationConfig: {
-        responseMimeType: "application/json",
-        temperature: 0.2
+              role: "user",
+              parts: [{ text: `${systemPrompt}\n\n${userPrompt}` }],
+            },
+          ],
+          generationConfig: {
+            responseMimeType: "application/json",
+            temperature: 0.1,
+          },
+        }),
       }
-    };
+    );
 
-    let lastError: any = null;
-
-    for (const model of MODELS_TO_TRY) {
-      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-
-      try {
-        const res = await fetch(endpoint, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(requestBody)
-        });
-
-        const data = await res.json();
-
-        if (res.ok) {
-          const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (rawText) {
-            try {
-              const cleanJson = extractCleanJson(rawText);
-              const parsed = JSON.parse(cleanJson);
-              return NextResponse.json(parsed);
-            } catch (jsonErr: any) {
-              console.warn(`JSON parse error on model ${model}:`, jsonErr.message);
-              // Continue to next model if parsing failed
-              lastError = `JSON format error: ${jsonErr.message}`;
-              continue;
-            }
-          }
-        }
-
-        console.warn(`Model ${model} returned status ${res.status}:`, data.error?.message);
-        lastError = data.error?.message || `Status ${res.status}`;
-
-        if (res.status === 503) {
-          await sleep(600);
-        }
-      } catch (fetchErr: any) {
-        console.warn(`Fetch exception for ${model}:`, fetchErr.message);
-        lastError = fetchErr.message;
-      }
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Gemini API error:", errorText);
+      return NextResponse.json(
+        { error: "Failed to communicate with language model" },
+        { status: 502 }
+      );
     }
 
-    return NextResponse.json(
-      { error: `Models busy or formatting error. Last issue: ${lastError}` },
-      { status: 503 }
-    );
+    const data = await response.json();
+    const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+    if (!rawText) {
+      return NextResponse.json(
+        { error: "Model returned an empty response" },
+        { status: 500 }
+      );
+    }
+
+    const parsedData = JSON.parse(rawText);
+    return NextResponse.json(parsedData);
   } catch (error: any) {
-    console.error("Server Route Error:", error);
-    return NextResponse.json({ error: error?.message || "Internal server error" }, { status: 500 });
+    console.error("Decode route exception:", error);
+    return NextResponse.json(
+      { error: error.message || "An unexpected error occurred during processing" },
+      { status: 500 }
+    );
   }
 }
