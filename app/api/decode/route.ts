@@ -23,8 +23,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Input query is required" }, { status: 400 });
     }
 
-    const systemPrompt = `You are a bilingual authority on Haridasa Sahitya and Kannada linguistics.
-Analyze the user's input (Kannada script or English/Kanglish phonetics) and return a strictly valid JSON object matching this structure:
+    const systemPrompt = `You are an expert bilingual scholar in Haridasa Sahitya and Kannada linguistics.
+Analyze the user's input (which may be a title, an excerpt, or a FULL song with Pallavi, Anupallavi, and all Charanas).
+
+CRITICAL INSTRUCTIONS:
+1. If the user provides a full song (or an entire composition), you MUST break down and translate EVERY SINGLE STANZA (Pallavi, Anupallavi, and all Charanas). Do NOT truncate, summarize, or stop after the first verse.
+2. For each stanza, provide:
+   - The original verse lines in Kannada
+   - Anvaya in spoken Kannada (natural sentence syntax)
+   - Detailed English prose translation
+3. Provide a combined vocabulary glossary (Pratipadaartha) across all stanzas for archaic or classical roots.
+4. Decode key metaphors and allegories across the whole composition.
+5. Provide a 1-sentence practical life takeaway.
+
+Return a strictly valid JSON object matching this schema:
 {
   "titleKannada": "Title in Kannada script",
   "titleEnglish": "Title in English/IAST",
@@ -32,8 +44,14 @@ Analyze the user's input (Kannada script or English/Kanglish phonetics) and retu
   "composerEnglish": "Composer in English",
   "ankitaKannada": "Mudra in Kannada",
   "ankitaEnglish": "Mudra in English",
-  "anvayaKannada": "Syntactic rearrangement in modern spoken Kannada sentence order",
-  "anvayaEnglish": "Prose translation and flow in clear modern English",
+  "stanzas": [
+    {
+      "stanzaType": "ಪಲ್ಲವಿ (Pallavi) / ಅನುಪಲ್ಲವಿ (Anupallavi) / ಚರಣ ೧ (Charana 1) / etc.",
+      "originalKannada": "Original lines of this stanza in Kannada",
+      "anvayaKannada": "Syntactic prose rearrangement of this stanza in spoken Kannada",
+      "anvayaEnglish": "Prose translation and flow of this stanza in clear modern English"
+    }
+  ],
   "pratipadaartha": [
     {
       "wordKannada": "Word",
@@ -50,8 +68,8 @@ Analyze the user's input (Kannada script or English/Kanglish phonetics) and retu
       "innerMeaningEnglish": "Allegorical meaning in English"
     }
   ],
-  "modernTakeawayKannada": "1-sentence life takeaway in Kannada",
-  "modernTakeawayEnglish": "1-sentence life takeaway in English",
+  "modernTakeawayKannada": "Life takeaway in Kannada",
+  "modernTakeawayEnglish": "Life takeaway in English",
   "youtubeSearchQuery": "Song Title Composer rendition"
 }`;
 
@@ -60,7 +78,7 @@ Analyze the user's input (Kannada script or English/Kanglish phonetics) and retu
         {
           parts: [
             {
-              text: `${systemPrompt}\n\nAnalyze this Haridasa composition:\n"""\n${query}\n"""`
+              text: `${systemPrompt}\n\nAnalyze this complete Haridasa composition:\n"""\n${query}\n"""`
             }
           ]
         }
