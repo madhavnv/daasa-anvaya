@@ -51,10 +51,13 @@ export default function Home() {
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // UX Preferences
+  const [fontSize, setFontSize] = useState<"normal" | "large" | "xlarge">("normal");
   const [isListening, setIsListening] = useState(false);
   const [speechLang, setSpeechLang] = useState<"kn-IN" | "en-IN">("kn-IN");
   const recognitionRef = useRef<any>(null);
 
+  // Setup Web Speech Recognition
   useEffect(() => {
     if (typeof window !== "undefined") {
       const SpeechRecognition =
@@ -112,96 +115,114 @@ export default function Home() {
       });
       if (!res.ok) {
         const errData = await res.json();
-        throw new Error(errData.error || "Could not decode verse");
+        throw new Error(errData.error || "Could not analyze composition");
       }
       const data = await res.json();
       setResult(data);
     } catch (err: any) {
-      setError(err.message || "An error occurred");
+      setError(err.message || "An unexpected error occurred");
     } finally {
       setLoading(false);
     }
   };
 
+  const speakText = (text: string) => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "kn-IN";
+    utterance.rate = 0.85;
+    window.speechSynthesis.speak(utterance);
+  };
+
   const shareToWhatsApp = () => {
     if (!result) return;
-    const stanzasSummary = result.stanzas
-      ?.map((s) => `*${s.stanzaType}:*\n${s.anvayaKannada}\n_${s.anvayaEnglish}_`)
+    const stanzasText = result.stanzas
+      ?.map((s) => `*${s.stanzaType}*\n📖 ${s.anvayaKannada}\n_${s.anvayaEnglish}_`)
       .join("\n\n");
 
     const text = `🎶 *${result.titleKannada}* (${result.titleEnglish})\n` +
       `✍️ *ರಚನೆ:* ${result.composerKannada} (${result.composerEnglish})\n` +
       `🏷️ *ಅಂಕಿತ:* ${result.ankitaKannada}\n\n` +
-      `${stanzasSummary}\n\n` +
-      `✨ *Life Takeaway:*\n${result.modernTakeawayEnglish}\n\n` +
-      `_Decoded via Anvaya Studio_`;
+      `${stanzasText}\n\n` +
+      `✨ *ಜೀವನ ಸಂದೇಶ:* ${result.modernTakeawayKannada}\n\n` +
+      `_Decoded with Dāsa Bodhini (ದಾಸ ಬೋಧಿನಿ)_`;
 
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
   };
 
+  const textClasses = {
+    normal: { kannada: "text-base leading-relaxed", english: "text-sm leading-relaxed" },
+    large: { kannada: "text-lg leading-relaxed", english: "text-base leading-relaxed" },
+    xlarge: { kannada: "text-xl leading-loose", english: "text-lg leading-relaxed" },
+  }[fontSize];
+
   return (
-    <main className="min-h-screen bg-stone-100 text-stone-900 pb-16 pt-6 px-4 sm:px-6">
+    <main className="min-h-screen bg-[#FAF8F5] text-stone-900 pb-20 pt-6 px-4 sm:px-6 antialiased">
       <div className="max-w-3xl mx-auto space-y-6">
 
-        {/* Top Header */}
-        <header className="text-center space-y-1">
-          <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-amber-100 border border-amber-200 text-amber-900 text-xs font-semibold">
-            <span>ಕನ್ನಡ</span>
+        {/* Editorial Masthead */}
+        <header className="text-center space-y-2 border-b border-stone-200/80 pb-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-900/5 border border-amber-900/15 text-amber-900 text-[11px] font-semibold tracking-wider uppercase">
+            <span>ಸಾರ ಬೋಧಿನಿ</span>
             <span>•</span>
-            <span>English</span>
-            <span>•</span>
-            <span>🎙️ Voice</span>
+            <span>Bilingual Dasa Reader</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-serif font-bold text-stone-900">
-            ಪಶ್ಚಾತ್ಯ-ಅನ್ವಯ (Anvaya Studio)
+          
+          <h1 className="text-3xl sm:text-4xl font-serif font-bold text-stone-900 tracking-tight">
+            ದಾಸ ಬೋಧಿನಿ
           </h1>
-          <p className="text-xs sm:text-sm text-stone-600">
-            Full-Song Decrypter: Stanza-by-Stanza Syntax, Roots & Deeper Metaphors
+          <p className="text-xs sm:text-sm text-stone-600 font-sans max-w-md mx-auto">
+            Dāsa Bodhini — Unlocking the syntax, vocabulary roots, and living philosophy of Haridasa Sahitya.
           </p>
         </header>
 
-        {/* Input Card */}
-        <div className="bg-white p-4 sm:p-5 rounded-2xl shadow-xs border border-stone-200 space-y-3">
+        {/* Search & Input Console */}
+        <div className="bg-white rounded-2xl border border-stone-200 shadow-sm p-4 sm:p-5 space-y-3">
           <div className="relative">
             <textarea
               rows={4}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder={isListening ? "Listening... Speak now..." : "Paste full song lyrics or type song name in Kannada/English..."}
-              className={`w-full p-3 pr-14 text-sm sm:text-base border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-800/40 ${
-                isListening ? "border-amber-500 bg-amber-50/20" : "border-stone-200"
+              placeholder={isListening ? "ಕೇಳಿಸಿಕೊಳ್ಳಲಾಗುತ್ತಿದೆ... ಮಾತನಾಡಿ..." : "ಕನ್ನಡ ಅಥವಾ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಹಾಡಿನ ಸಾಲುಗಳನ್ನು ಹಾಕಿ / Paste song or speak..."}
+              className={`w-full p-3.5 pr-14 text-sm sm:text-base border rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-900/30 font-sans transition placeholder:text-stone-400 ${
+                isListening ? "border-amber-700 bg-amber-50/20" : "border-stone-200"
               }`}
             />
+            
             <button
               type="button"
               onClick={toggleListening}
-              className={`absolute right-2.5 bottom-3.5 p-2 rounded-full transition shadow-xs ${
+              title={isListening ? "Stop listening" : "Speak in Kannada or English"}
+              className={`absolute right-3 bottom-4 p-2.5 rounded-full transition shadow-xs ${
                 isListening
                   ? "bg-red-600 text-white animate-pulse"
-                  : "bg-amber-100 hover:bg-amber-200 text-amber-900"
+                  : "bg-stone-100 hover:bg-stone-200 text-stone-800 border border-stone-200"
               }`}
             >
               {isListening ? (
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                   <rect x="6" y="6" width="12" height="12" rx="2" />
                 </svg>
               ) : (
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 003-3V5a3 3 0 10-6 0v6a3 3 0 003 3z" />
                 </svg>
               )}
             </button>
           </div>
 
-          {/* Voice Switcher + Action Button */}
-          <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+          {/* Controls Bar */}
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
             <div className="flex items-center gap-1.5 text-xs text-stone-600">
-              <span>Mic:</span>
+              <span className="font-medium text-stone-500">ಧ್ವನಿ / Mic:</span>
               <button
                 type="button"
                 onClick={() => setSpeechLang("kn-IN")}
-                className={`px-2 py-0.5 rounded border ${
-                  speechLang === "kn-IN" ? "bg-amber-900 text-white border-amber-900 font-medium" : "bg-white border-stone-200"
+                className={`px-2.5 py-1 rounded-md border text-xs transition ${
+                  speechLang === "kn-IN"
+                    ? "bg-stone-900 text-white border-stone-900 font-semibold"
+                    : "bg-stone-50 border-stone-200 text-stone-700 hover:bg-stone-100"
                 }`}
               >
                 ಕನ್ನಡ
@@ -209,8 +230,10 @@ export default function Home() {
               <button
                 type="button"
                 onClick={() => setSpeechLang("en-IN")}
-                className={`px-2 py-0.5 rounded border ${
-                  speechLang === "en-IN" ? "bg-amber-900 text-white border-amber-900 font-medium" : "bg-white border-stone-200"
+                className={`px-2.5 py-1 rounded-md border text-xs transition ${
+                  speechLang === "en-IN"
+                    ? "bg-stone-900 text-white border-stone-900 font-semibold"
+                    : "bg-stone-50 border-stone-200 text-stone-700 hover:bg-stone-100"
                 }`}
               >
                 English
@@ -220,15 +243,15 @@ export default function Home() {
             <button
               onClick={() => handleDecode()}
               disabled={loading || !input.trim()}
-              className="px-5 py-2 bg-amber-900 hover:bg-amber-950 text-amber-50 font-medium rounded-xl text-sm transition disabled:opacity-50 ml-auto"
+              className="px-6 py-2.5 bg-amber-900 hover:bg-amber-950 text-amber-50 font-semibold rounded-xl text-xs sm:text-sm tracking-wide transition shadow-sm disabled:opacity-50 ml-auto"
             >
-              {loading ? "Analyzing Song..." : "Decode Full Song"}
+              {loading ? "ವಿಶ್ಲೇಷಿಸಲಾಗುತ್ತಿದೆ..." : "ಅನ್ವಯ ಆರಂಭಿಸಿ (Decode)"}
             </button>
           </div>
 
-          {/* Presets */}
-          <div className="flex items-center gap-1.5 flex-wrap pt-2 border-t border-stone-100 text-xs text-stone-500">
-            <span>Try:</span>
+          {/* Curated Presets */}
+          <div className="flex items-center gap-1.5 flex-wrap pt-2.5 border-t border-stone-100 text-xs text-stone-500">
+            <span className="font-medium text-stone-400">ಉದಾಹರಣೆಗಳು:</span>
             {PRESETS.map((p) => (
               <button
                 key={p.label}
@@ -237,7 +260,7 @@ export default function Home() {
                   setInput(p.query);
                   handleDecode(p.query);
                 }}
-                className="px-2 py-1 bg-stone-100 hover:bg-stone-200 rounded text-stone-700 transition"
+                className="px-2.5 py-1 bg-stone-100 hover:bg-stone-200 rounded-md text-stone-700 transition border border-stone-200/50"
               >
                 {p.label}
               </button>
@@ -246,122 +269,164 @@ export default function Home() {
         </div>
 
         {error && (
-          <div className="p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm">
+          <div className="p-3.5 bg-red-50/80 border border-red-200 text-red-800 rounded-xl text-xs sm:text-sm">
             {error}
           </div>
         )}
 
-        {/* Results Area */}
+        {/* Results Stream */}
         {result && (
-          <div className="space-y-4">
+          <div className="space-y-5">
 
-            {/* Meta Card */}
-            <div className="bg-amber-900 text-amber-50 p-5 rounded-2xl shadow-xs space-y-3">
-              <div className="flex justify-between items-start gap-3">
+            {/* Typography Scaler Toolbar */}
+            <div className="flex items-center justify-between px-1 text-xs text-stone-500">
+              <span className="font-medium uppercase tracking-wider text-[11px]">ಅಕ್ಷರ ಗಾತ್ರ (Font Size)</span>
+              <div className="inline-flex rounded-lg border border-stone-200 bg-white p-0.5 shadow-2xs">
+                <button
+                  onClick={() => setFontSize("normal")}
+                  className={`px-2.5 py-0.5 rounded text-xs ${fontSize === "normal" ? "bg-stone-900 text-white font-semibold" : "text-stone-600"}`}
+                >
+                  A
+                </button>
+                <button
+                  onClick={() => setFontSize("large")}
+                  className={`px-2.5 py-0.5 rounded text-xs ${fontSize === "large" ? "bg-stone-900 text-white font-semibold" : "text-stone-600"}`}
+                >
+                  A+
+                </button>
+                <button
+                  onClick={() => setFontSize("xlarge")}
+                  className={`px-2.5 py-0.5 rounded text-xs ${fontSize === "xlarge" ? "bg-stone-900 text-white font-semibold" : "text-stone-600"}`}
+                >
+                  A++
+                </button>
+              </div>
+            </div>
+
+            {/* Song Meta Header Card */}
+            <div className="bg-[#2B231D] text-amber-50 p-5 rounded-2xl shadow-sm border border-stone-800 space-y-4">
+              <div className="flex justify-between items-start gap-4">
                 <div>
-                  <h2 className="text-xl sm:text-2xl font-serif font-bold">{result.titleKannada}</h2>
-                  <p className="text-amber-200 text-xs sm:text-sm italic">{result.titleEnglish}</p>
+                  <h2 className="text-2xl sm:text-3xl font-serif font-bold text-amber-100">{result.titleKannada}</h2>
+                  <p className="text-stone-300 text-xs sm:text-sm italic font-sans">{result.titleEnglish}</p>
                 </div>
                 <div className="text-right">
-                  <span className="text-[10px] uppercase tracking-wider text-amber-300 block">ಅಂಕಿತ / Mudra</span>
-                  <span className="text-xs sm:text-sm font-semibold">{result.ankitaKannada}</span>
+                  <span className="text-[10px] uppercase tracking-widest text-amber-400 block font-semibold">ಮುದ್ರೆ / ಅಂಕಿತ</span>
+                  <span className="text-xs sm:text-sm font-serif font-semibold text-amber-100">{result.ankitaKannada}</span>
                 </div>
               </div>
 
-              <div className="flex flex-wrap items-center justify-between border-t border-amber-800/80 pt-2.5 text-xs text-amber-100 gap-2">
-                <span>ರಚನೆ: <strong className="text-white">{result.composerKannada}</strong> ({result.composerEnglish})</span>
-                
+              <div className="flex flex-wrap items-center justify-between border-t border-stone-700/60 pt-3 text-xs gap-3">
+                <span className="text-stone-300">
+                  ರಚನೆ: <strong className="text-white font-medium">{result.composerKannada}</strong> ({result.composerEnglish})
+                </span>
+
                 <div className="flex items-center gap-2">
                   <a
                     href={`https://www.youtube.com/results?search_query=${encodeURIComponent(result.youtubeSearchQuery)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 bg-amber-950/80 px-2.5 py-1 rounded-lg text-amber-200 hover:text-white transition"
+                    className="inline-flex items-center gap-1.5 bg-stone-800 hover:bg-stone-700 border border-stone-600/50 px-3 py-1.5 rounded-lg text-amber-200 transition font-medium"
                   >
-                    ▶ Listen
+                    ▶ ಕೇಳಿ (YouTube)
                   </a>
                   <button
                     onClick={shareToWhatsApp}
-                    className="inline-flex items-center gap-1 bg-emerald-800 hover:bg-emerald-700 text-white px-2.5 py-1 rounded-lg transition"
+                    className="inline-flex items-center gap-1.5 bg-[#1B5E20] hover:bg-[#2E7D32] text-white px-3 py-1.5 rounded-lg transition font-medium"
                   >
-                    WhatsApp
+                    WhatsApp Share
                   </button>
                 </div>
               </div>
             </div>
 
-            {/* Stanza by Stanza Section */}
-            <div className="space-y-3">
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-stone-600 px-1">
-                ಪದಾನ್ವಯ • Stanza-by-Stanza Breakdown ({result.stanzas?.length || 0} Stanzas)
-              </h3>
+            {/* Stanza-by-Stanza Sequential Cards */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between px-1">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-stone-600">
+                  ಪದಾನ್ವಯ ಮತ್ತು ಭಾವಾರ್ಥ ({result.stanzas?.length || 0} ಭಾಗಗಳು)
+                </h3>
+              </div>
 
               {result.stanzas?.map((stanza, idx) => (
-                <div key={idx} className="bg-white p-4 sm:p-5 rounded-2xl border border-stone-200 shadow-xs space-y-3">
-                  <div className="flex items-center justify-between border-b border-stone-100 pb-2">
-                    <span className="text-xs font-bold uppercase tracking-wide text-amber-900">
+                <div key={idx} className="bg-white rounded-2xl border border-stone-200 shadow-2xs overflow-hidden">
+                  
+                  {/* Stanza Header Bar */}
+                  <div className="bg-stone-50 border-b border-stone-100 px-4 py-2.5 flex items-center justify-between">
+                    <span className="text-xs font-bold uppercase tracking-wider text-amber-950 font-serif">
                       {stanza.stanzaType}
                     </span>
+
+                    <button
+                      type="button"
+                      onClick={() => speakText(stanza.anvayaKannada)}
+                      className="inline-flex items-center gap-1 text-[11px] text-stone-600 hover:text-stone-900 bg-white border border-stone-200 px-2 py-0.5 rounded-md transition"
+                      title="Listen in Kannada"
+                    >
+                      🔊 ಉಚ್ಚಾರಣೆ ಕೇಳಿ
+                    </button>
                   </div>
 
-                  {stanza.originalKannada && (
-                    <p className="text-xs sm:text-sm text-stone-500 font-serif italic whitespace-pre-line bg-stone-50 p-2.5 rounded-lg border border-stone-100">
-                      {stanza.originalKannada}
-                    </p>
-                  )}
+                  <div className="p-4 sm:p-5 space-y-3.5">
+                    {stanza.originalKannada && (
+                      <p className="text-xs sm:text-sm text-stone-500 font-serif italic whitespace-pre-line bg-[#FAF9F6] p-3 rounded-xl border border-stone-100">
+                        {stanza.originalKannada}
+                      </p>
+                    )}
 
-                  {/* Kannada Anvaya */}
-                  <div className="space-y-1">
-                    <span className="text-[10px] font-semibold text-amber-800 uppercase tracking-wide">
-                      ಅನ್ವಯ (Spoken Kannada Syntax)
-                    </span>
-                    <p className="text-sm sm:text-base font-serif leading-relaxed text-stone-900 bg-amber-50/50 p-3 rounded-xl border border-amber-100/70">
-                      {stanza.anvayaKannada}
-                    </p>
-                  </div>
+                    {/* Kannada Anvaya */}
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-semibold text-amber-900 uppercase tracking-wider block">
+                        ಕನ್ನಡ ವಾಕ್ಯಾನ್ವಯ (Syntax Flow)
+                      </span>
+                      <p className={`font-serif text-stone-900 bg-amber-50/40 p-3.5 rounded-xl border border-amber-100/60 ${textClasses.kannada}`}>
+                        {stanza.anvayaKannada}
+                      </p>
+                    </div>
 
-                  {/* English Anvaya */}
-                  <div className="space-y-1">
-                    <span className="text-[10px] font-semibold text-stone-500 uppercase tracking-wide">
-                      English Meaning & Flow
-                    </span>
-                    <p className="text-xs sm:text-sm leading-relaxed text-stone-700 bg-stone-50/70 p-3 rounded-xl border border-stone-200/70 font-sans">
-                      {stanza.anvayaEnglish}
-                    </p>
+                    {/* English Anvaya */}
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-semibold text-stone-500 uppercase tracking-wider block">
+                        English Prose Translation
+                      </span>
+                      <p className={`text-stone-700 bg-stone-50 p-3.5 rounded-xl border border-stone-200/60 font-sans ${textClasses.english}`}>
+                        {stanza.anvayaEnglish}
+                      </p>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Practical Takeaway Card */}
-            <div className="bg-stone-50 p-4 rounded-2xl border border-stone-200 space-y-2">
-              <span className="text-xs uppercase tracking-wider font-semibold text-stone-700 block">
-                ಜೀವನ ಸಂದೇಶ • Practical Reflection
+            {/* Practical Living Philosophy */}
+            <div className="bg-white rounded-2xl border border-stone-200 shadow-2xs p-5 space-y-2">
+              <span className="text-[11px] uppercase tracking-wider font-bold text-amber-950 block">
+                ಜೀವನ ಸಂದೇಶ • Practical Living Reflection
               </span>
-              <p className="text-xs sm:text-sm text-stone-800 font-serif leading-relaxed">
+              <p className={`font-serif text-stone-900 leading-relaxed ${textClasses.kannada}`}>
                 {result.modernTakeawayKannada}
               </p>
-              <p className="text-xs sm:text-sm text-stone-600 italic">
+              <p className={`text-stone-600 italic font-sans ${textClasses.english}`}>
                 {result.modernTakeawayEnglish}
               </p>
             </div>
 
-            {/* Pratipadaartha (Word Glossary across entire song) */}
+            {/* Classical Vocabulary Glossary */}
             {result.pratipadaartha?.length > 0 && (
-              <div className="bg-white p-4 sm:p-5 rounded-2xl border border-stone-200 shadow-xs space-y-2">
-                <span className="text-xs uppercase tracking-wider font-semibold text-amber-900 block">
-                  ಪ್ರತಿಪದಾರ್ಥ • Vocabulary Breakdown
+              <div className="bg-white rounded-2xl border border-stone-200 shadow-2xs p-5 space-y-3">
+                <span className="text-[11px] uppercase tracking-wider font-bold text-amber-950 block">
+                  ಪ್ರತಿಪದಾರ್ಥ • Classical Roots & Vocabulary
                 </span>
-                <div className="divide-y divide-stone-100 text-xs sm:text-sm">
+                <div className="divide-y divide-stone-100">
                   {result.pratipadaartha.map((w, i) => (
-                    <div key={i} className="py-2.5 grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                    <div key={i} className="py-2.5 grid grid-cols-1 sm:grid-cols-2 gap-1 text-xs sm:text-sm">
                       <div>
                         <span className="font-semibold text-stone-900">{w.wordKannada}</span>
                         <span className="text-stone-400 text-xs ml-1.5 font-mono">({w.wordTransliterated})</span>
                       </div>
                       <div className="text-stone-700">
                         <span className="text-stone-900 font-medium">{w.meaningKannada}</span>
-                        <span className="text-stone-500 block sm:inline sm:ml-2 italic text-xs sm:text-sm">"{w.meaningEnglish}"</span>
+                        <span className="text-stone-500 block sm:inline sm:ml-2 italic text-xs">"{w.meaningEnglish}"</span>
                       </div>
                     </div>
                   ))}
@@ -369,20 +434,20 @@ export default function Home() {
               </div>
             )}
 
-            {/* Metaphors & Mundige */}
+            {/* Esoteric Metaphors (Mundige) */}
             {result.metaphorsAndMundige?.length > 0 && (
-              <div className="bg-white p-4 sm:p-5 rounded-2xl border border-stone-200 shadow-xs space-y-2.5">
-                <span className="text-xs uppercase tracking-wider font-semibold text-amber-900 block">
-                  ಮುಂಡಿಗೆ & ರೂಪಕ • Allegorical Insights
+              <div className="bg-white rounded-2xl border border-stone-200 shadow-2xs p-5 space-y-3">
+                <span className="text-[11px] uppercase tracking-wider font-bold text-amber-950 block">
+                  ಮುಂಡಿಗೆ & ರೂಪಕಗಳು • Allegorical Insights
                 </span>
                 <div className="space-y-2">
                   {result.metaphorsAndMundige.map((m, i) => (
-                    <div key={i} className="p-3 bg-stone-50 rounded-xl border border-stone-100 text-xs sm:text-sm space-y-1">
+                    <div key={i} className="p-3.5 bg-stone-50 rounded-xl border border-stone-100 text-xs sm:text-sm space-y-1">
                       <div className="font-semibold text-stone-900">
                         {m.motifKannada} <span className="text-stone-500 font-normal">({m.motifEnglish})</span>
                       </div>
                       <p className="text-stone-700">{m.innerMeaningKannada}</p>
-                      <p className="text-stone-500 italic text-[11px] sm:text-xs">{m.innerMeaningEnglish}</p>
+                      <p className="text-stone-500 italic text-xs">{m.innerMeaningEnglish}</p>
                     </div>
                   ))}
                 </div>
