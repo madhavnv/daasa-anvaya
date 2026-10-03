@@ -14,16 +14,16 @@ export default function Home() {
   const recognitionRef = useRef<any>(null);
 
   const [feedbackOpen, setFeedbackOpen] = useState(false);
-  const [feedbackCategory, setFeedbackCategory] = useState("Accuracy Issue");
+  const [feedbackCategory, setFeedbackCategory] = useState("Accuracy / ಅರ್ಥ ಸರಿಯಿಲ್ಲ");
   const [feedbackText, setFeedbackText] = useState("");
 
   const FEEDBACK_WHATSAPP_NUMBER = "919845509006";
 
   const PRESETS = [
-    { label: "Tarakka Bindige", query: "tarakka bindige neerige hogona" },
-    { label: "Manava Janma", query: "manava janma doddadu idanu hani madikoliro" },
-    { label: "Kallu Sakkare", query: "kallu sakkare kolliro neevellaru" },
-    { label: "Jagadoddharana", query: "jagadoddharana aadidalo yashoda" }
+    { label: "Tarakka Bindige (ತಾರಕ್ಕ ಬಿಂದಿಗೆ)", query: "ತಾರಕ್ಕ ಬಿಂದಿಗೆ ನೀರಿಗೆ ಹೋಗೋಣ" },
+    { label: "Manava Janma (ಮಾನವ ಜನ್ಮ)", query: "manava janma doddadu idanu hani madikoliro" },
+    { label: "Kallu Sakkare (ಕಲ್ಲು ಸಕ್ಕರೆ)", query: "ಕಲ್ಲು ಸಕ್ಕರೆ ಕೊಳ್ಳಿರೋ ನೀವೆಲ್ಲರು" },
+    { label: "Jagadoddharana (ಜಗದೋದ್ಧಾರನ)", query: "jagadoddharana aadidalo yashoda" }
   ];
 
   useEffect(() => {
@@ -152,7 +152,7 @@ export default function Home() {
     <div className="min-h-screen bg-[#FAF8F5] text-stone-900 pb-24 pt-6 px-4 sm:px-6 antialiased">
       <div className="max-w-3xl mx-auto space-y-6">
 
-        {/* Header */}
+        {/* Masthead Header */}
         <div className="text-center space-y-2 border-b border-stone-200 pb-5">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-900/5 border border-amber-900/15 text-amber-900 text-xs font-semibold uppercase">
             <span>Dasa Bodhini</span>
@@ -248,7 +248,7 @@ export default function Home() {
           </div>
         )}
 
-        {/* Results */}
+        {/* Results Stream */}
         {result && (
           <div className="space-y-5">
 
@@ -462,9 +462,35 @@ export default function Home() {
           </div>
         )}
 
+        {/* Beta Mode Disclaimer Footer */}
+        <footer className="no-print pt-8 pb-4 text-center border-t border-stone-200 space-y-2">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100/70 border border-amber-200 text-amber-950 text-[11px] font-medium">
+            <span className="inline-block w-2 h-2 rounded-full bg-amber-600 animate-pulse"></span>
+            <span>ಪ್ರಾಯೋಗಿಕ ಆವೃತ್ತಿ • Beta Version</span>
+          </div>
+
+          <p className="text-xs text-stone-600 max-w-md mx-auto leading-relaxed">
+            ಇದು ಪ್ರಾಯೋಗಿಕ ಆವೃತ್ತಿಯಾಗಿದ್ದು (Beta), ಅನುವಾದ ಮತ್ತು ಅನ್ವಯಗಳಲ್ಲಿ ಸಣ್ಣಪುಟ್ಟ ದೋಷಗಳು ಕಂಡುಬರಬಹುದು. ತಪ್ಪುಗಳಿದ್ದಲ್ಲಿ ದಯವಿಟ್ಟು ನಮಗೆ ತಿಳಿಸಿ.
+          </p>
+
+          <p className="text-[11px] text-stone-500 max-w-md mx-auto italic leading-normal">
+            Dāsa Bodhini is currently in community beta. Outputs are AI-assisted and may occasionally contain syntax or interpretive nuances. We welcome your corrections.
+          </p>
+
+          <div className="pt-1">
+            <button
+              type="button"
+              onClick={() => setFeedbackOpen(true)}
+              className="text-xs text-amber-900 font-semibold underline underline-offset-4 hover:text-amber-950 transition"
+            >
+              ದೋಷ ಅಥವಾ ಸಲಹೆ ತಿಳಿಸಿ • Share Feedback
+            </button>
+          </div>
+        </footer>
+
       </div>
 
-      {/* Feedback Button */}
+      {/* Floating Feedback Button */}
       <div className="no-print fixed bottom-4 right-4 z-40">
         <button
           onClick={() => setFeedbackOpen(true)}
@@ -480,7 +506,7 @@ export default function Home() {
           <div className="bg-white rounded-2xl max-w-md w-full p-5 shadow-2xl space-y-4 border border-stone-200">
             <div className="flex justify-between items-center border-b border-stone-100 pb-2">
               <h3 className="font-serif font-bold text-stone-900 text-base">
-                Beta Feedback
+                Beta Feedback (ಪ್ರತಿಕ್ರಿಯೆ)
               </h3>
               <button
                 onClick={() => setFeedbackOpen(false)}
@@ -491,26 +517,26 @@ export default function Home() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-stone-500">Category:</label>
+              <label className="text-xs font-semibold text-stone-500">Category (ವಿಭಾಗ):</label>
               <select
                 value={feedbackCategory}
                 onChange={(e) => setFeedbackCategory(e.target.value)}
                 className="w-full text-xs p-2.5 border border-stone-200 rounded-lg bg-stone-50"
               >
-                <option value="Meaning Error">Meaning / Translation error</option>
-                <option value="Voice Audio Issue">Voice / Audio issue</option>
-                <option value="Song Missing">Could not find song</option>
-                <option value="Feature Suggestion">Feature request / Suggestion</option>
+                <option value="Meaning / ಅರ್ಥ ಅಥವಾ ಅನ್ವಯ ದೋಷ">Meaning / Translation error</option>
+                <option value="Voice / ಧ್ವನಿ ಸರಿ ಇಲ್ಲ">Voice / Audio issue</option>
+                <option value="Song Missing / ಹಾಡು ಸಿಗಲಿಲ್ಲ">Could not find song</option>
+                <option value="Suggestion / ಸಲಹೆ">Feature request / Suggestion</option>
               </select>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-stone-500">Comments:</label>
+              <label className="text-xs font-semibold text-stone-500">Comments (ವಿವರ):</label>
               <textarea
                 rows={3}
                 value={feedbackText}
                 onChange={(e) => setFeedbackText(e.target.value)}
-                placeholder="What should we improve?..."
+                placeholder="ಯಾವ ಹಾಡಿನಲ್ಲಿ ಏನು ಸರಿಪಡಿಸಬೇಕು? / What should we improve?..."
                 className="w-full text-xs p-2.5 border border-stone-200 rounded-lg"
               />
             </div>
@@ -519,7 +545,7 @@ export default function Home() {
               onClick={sendFeedbackWhatsApp}
               className="w-full py-2.5 bg-[#1B5E20] hover:bg-[#2E7D32] text-white text-xs font-semibold rounded-xl transition"
             >
-              Send via WhatsApp
+              WhatsApp ಮೂಲಕ ಕಳುಹಿಸಿ (Send via WhatsApp)
             </button>
           </div>
         </div>
