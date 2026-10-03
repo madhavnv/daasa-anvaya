@@ -1,14 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const MODELS_TO_TRY = [
-  "gemini-2.5-flash-lite",
-  "gemini-2.5-flash",
+  "gemini-3.5-flash-lite",
   "gemini-3.8-flash-lite",
-  "gemini-3.8-flash",
-  "gemini-2.5-pro"
+  "gemini-3.8-flash"
 ];
 
-// Helper to pause briefly between 503 retries
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export async function POST(req: NextRequest) {
@@ -100,9 +97,8 @@ Analyze the user's input (Kannada script or English/Kanglish phonetics) and retu
         console.warn(`Model ${model} returned status ${res.status}:`, data.error?.message);
         lastError = data.error?.message || `Status ${res.status}`;
 
-        // If 503, sleep 800ms to let traffic burst subside before asking the next model
         if (res.status === 503) {
-          await sleep(800);
+          await sleep(600);
         }
       } catch (err: any) {
         console.warn(`Fetch exception for ${model}:`, err.message);
@@ -111,7 +107,7 @@ Analyze the user's input (Kannada script or English/Kanglish phonetics) and retu
     }
 
     return NextResponse.json(
-      { error: `Traffic surge across models. Last message: ${lastError}` },
+      { error: `Models currently busy. Last message: ${lastError}` },
       { status: 503 }
     );
   } catch (error: any) {
