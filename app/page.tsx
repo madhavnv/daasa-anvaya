@@ -152,13 +152,16 @@ export default function Home() {
     <div className="min-h-screen bg-[#FAF8F5] text-stone-900 pb-24 pt-6 px-4 sm:px-6 antialiased">
       <div className="max-w-3xl mx-auto space-y-6">
 
-        {/* Masthead Header */}
-        <div className="text-center space-y-2 border-b border-stone-200 pb-5">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-900/5 border border-amber-900/15 text-amber-900 text-xs font-semibold uppercase">
-            <span>Dasa Bodhini</span>
-            <span>•</span>
-            <span>Bilingual Portal</span>
-          </div>
+                {/* Masthead Header */}
+        <div className="text-center space-y-2 border-b border-stone-200 pb-4 pt-1">
+          <h1 className="text-3xl sm:text-4xl font-serif font-bold text-stone-900 tracking-tight">
+            ದಾಸ ಬೋಧಿನಿ (Dāsa Bodhini)
+          </h1>
+          <p className="text-xs sm:text-sm text-stone-600 max-w-lg mx-auto leading-relaxed">
+            ದಾಸ ಸಾಹಿತ್ಯದ ಸರಳ ಅನ್ವಯ, ಇತಿಹಾಸ ಮತ್ತು ಭಾವಾರ್ಥ • Haridasa Sahitya Decoded
+          </p>
+        </div>
+
           
           <h1 className="text-3xl sm:text-4xl font-serif font-bold text-stone-900">
             ದಾಸ ಬೋಧಿನಿ (Dāsa Bodhini)
