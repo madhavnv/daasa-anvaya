@@ -23,18 +23,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Input query is required" }, { status: 400 });
     }
 
-    const systemPrompt = `You are an expert bilingual scholar in Haridasa Sahitya and Kannada linguistics.
-Analyze the user's input (which may be a title, an excerpt, or a FULL song with Pallavi, Anupallavi, and all Charanas).
+    const systemPrompt = `You are a distinguished bilingual scholar in Haridasa Sahitya, Kannada linguistics, and Vijayanagara/Kalyana-Karnataka history.
+Analyze the user's input (a title, an excerpt, or full song lyrics).
 
-CRITICAL INSTRUCTIONS:
-1. If the user provides a full song (or an entire composition), you MUST break down and translate EVERY SINGLE STANZA (Pallavi, Anupallavi, and all Charanas). Do NOT truncate, summarize, or stop after the first verse.
-2. For each stanza, provide:
-   - The original verse lines in Kannada
-   - Anvaya in spoken Kannada (natural sentence syntax)
-   - Detailed English prose translation
-3. Provide a combined vocabulary glossary (Pratipadaartha) across all stanzas for archaic or classical roots.
-4. Decode key metaphors and allegories across the whole composition.
-5. Provide a 1-sentence practical life takeaway.
+CRITICAL REQUIREMENTS:
+1. Provide the traditional HISTORICAL CONTEXT & BACKGROUND (ಐತಿಹ್ಯ / ಹಿನ್ನೆಲೆ): When, where, and in what life situation or emotional crisis was this composition composed? (e.g. Purandara Dasa renouncing wealth in Hampi, Kanakadasa outside the Udupi temple, Vadiraja Tirtha at Sode, etc.). If exact historical date is unknown, provide the accepted traditional lore/mutt sampradaya narrative.
+2. Provide a COMPREHENSIVE PHILOSOPHICAL SUMMARY: A rich, multi-sentence executive summary explaining the central thesis of the song in both Kannada and English.
+3. BREAK DOWN EVERY STANZA (Pallavi, Anupallavi, and all Charanas) with original Kannada, modern spoken Kannada sentence syntax (Anvaya), and fluent English translation.
+4. Extract vocabulary (Pratipadaartha) and explain allegories/Mundige.
+5. Provide a practical life lesson for modern professionals.
 
 Return a strictly valid JSON object matching this schema:
 {
@@ -44,12 +41,16 @@ Return a strictly valid JSON object matching this schema:
   "composerEnglish": "Composer in English",
   "ankitaKannada": "Mudra in Kannada",
   "ankitaEnglish": "Mudra in English",
+  "historicalContextKannada": "Detailed historical context, setting, and legend behind this composition in Kannada",
+  "historicalContextEnglish": "Detailed historical context, setting, and legend behind this composition in English",
+  "comprehensiveSummaryKannada": "Rich philosophical and devotional summary of the song in Kannada",
+  "comprehensiveSummaryEnglish": "Rich philosophical and devotional summary of the song in English",
   "stanzas": [
     {
       "stanzaType": "ಪಲ್ಲವಿ (Pallavi) / ಅನುಪಲ್ಲವಿ (Anupallavi) / ಚರಣ ೧ (Charana 1) / etc.",
-      "originalKannada": "Original lines of this stanza in Kannada",
-      "anvayaKannada": "Syntactic prose rearrangement of this stanza in spoken Kannada",
-      "anvayaEnglish": "Prose translation and flow of this stanza in clear modern English"
+      "originalKannada": "Original lines in Kannada",
+      "anvayaKannada": "Modern Kannada sentence syntax",
+      "anvayaEnglish": "Modern English prose translation"
     }
   ],
   "pratipadaartha": [
@@ -68,8 +69,8 @@ Return a strictly valid JSON object matching this schema:
       "innerMeaningEnglish": "Allegorical meaning in English"
     }
   ],
-  "modernTakeawayKannada": "Life takeaway in Kannada",
-  "modernTakeawayEnglish": "Life takeaway in English",
+  "modernTakeawayKannada": "Life reflection in Kannada",
+  "modernTakeawayEnglish": "Life reflection in English",
   "youtubeSearchQuery": "Song Title Composer rendition"
 }`;
 
@@ -78,7 +79,7 @@ Return a strictly valid JSON object matching this schema:
         {
           parts: [
             {
-              text: `${systemPrompt}\n\nAnalyze this complete Haridasa composition:\n"""\n${query}\n"""`
+              text: `${systemPrompt}\n\nAnalyze this Haridasa composition:\n"""\n${query}\n"""`
             }
           ]
         }
