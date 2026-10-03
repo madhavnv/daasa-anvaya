@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const MODELS_TO_TRY = [
-  "gemini-3.8-flash",
+  "gemini-2.5-flash-lite",
+  "gemini-2.5-flash",
   "gemini-3.8-flash-lite",
-  "gemini-2.5-flash"
+  "gemini-3.8-flash",
+  "gemini-2.5-pro"
 ];
+
+// Helper to pause briefly between 503 retries
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export async function POST(req: NextRequest) {
   try {
@@ -71,7 +76,6 @@ Analyze the user's input (Kannada script or English/Kanglish phonetics) and retu
 
     let lastError: any = null;
 
-    // Fallback loop through models
     for (const model of MODELS_TO_TRY) {
       const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
@@ -93,20 +97,23 @@ Analyze the user's input (Kannada script or English/Kanglish phonetics) and retu
           }
         }
 
-        // If 503 (high demand) or 404, capture and cycle to the next model
         console.warn(`Model ${model} returned status ${res.status}:`, data.error?.message);
         lastError = data.error?.message || `Status ${res.status}`;
+
+        // If 503, sleep 800ms to let traffic burst subside before asking the next model
+        if (res.status === 503) {
+          await sleep(800);
+        }
       } catch (err: any) {
-        console.warn(`Fetch error for ${model}:`, err.message);
+        console.warn(`Fetch exception for ${model}:`, err.message);
         lastError = err.message;
       }
     }
 
     return NextResponse.json(
-      { error: `Models currently busy. Last error: ${lastError}` },
+      { error: `Traffic surge across models. Last message: ${lastError}` },
       { status: 503 }
     );
-
   } catch (error: any) {
     console.error("Server Route Error:", error);
     return NextResponse.json({ error: error?.message || "Internal server error" }, { status: 500 });
