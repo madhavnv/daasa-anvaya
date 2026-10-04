@@ -31,13 +31,6 @@ interface DecodeResult {
   compositionType: "ಕೀರ್ತನೆ / ದೇವರನಾಮ" | "ಸೂಳಾದಿ" | "ಉಗಾಭೋಗ" | "ಮುಂಡಿಗೆ";
   ragaTradition?: string;
   talaTradition?: string;
-  classicalRendition?: {
-    artist: string;
-    raga: string;
-    tala: string;
-    searchQuery: string;
-    sourceNote?: string;
-  };
   comprehensiveSummaryKannada: string;
   comprehensiveSummaryEnglish: string;
   modernTakeawayKannada: string;
@@ -75,7 +68,7 @@ export default function Home() {
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<any>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-  
+
   // Results Scroll Anchor
   const resultsRef = useRef<HTMLDivElement | null>(null);
 
@@ -128,8 +121,8 @@ export default function Home() {
     {
       title: "ಕಂಡು ಕಂಡು ನೀ ಎನ್ನ",
       genre: "ದೇವರನಾಮ",
-      caption: "ವ್ಯಾಸರಾಜರ ಅನನ್ಯ ಶರಣಾಗತಿ ಕೀರ್ತನೆ",
-      query: "ಕಂಡು ಕಂಡು ನೀ ಎನ್ನ ಕೈಬಿಡುವರೆ ವ್ಯಾಸರಾಜರು ಶ್ರೀವ್ಯಾಸವಿಠ್ಠಲ",
+      caption: "ಪುರಂದರದಾಸರ ಅನನ್ಯ ಶರಣಾಗತಿ ಕೀರ್ತನೆ",
+      query: "ಕಂಡು ಕಂಡು ನೀ ಎನ್ನ ಕೈ ಬಿಡುವರೇ ಕೃಷ್ಣಾ ಪುಂಡರೀಕಾಕ್ಷ ಶ್ರೀ ಪುರುಷೋತ್ತಮ ಹರಿ ಪುರಂದರವಿಠಲ",
     },
     {
       title: "ಆವ ರೋಗವೋ ಧನ್ವಂತ್ರಿ",
@@ -297,12 +290,11 @@ export default function Home() {
       setResult(data);
       setActiveTab("summary");
 
-      // Auto-scroll to results after completion
       setTimeout(() => {
         resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 100);
     } catch (err: any) {
-      setError(err.message || "ನೆಟ್‌‌ವರ್ಕ್ ಅಥವಾ ಸರ್ವರ್ ಸಮಸ್ಯೆ. ದಯವಿಟ್ಟು ಮರುಪ್ರಯತ್ನಿಸಿ.");
+      setError(err.message || "ನೆಟ್‌ವರ್ಕ್ ಅಥವಾ ಸರ್ವರ್ ಸಮಸ್ಯೆ. ದಯವಿಟ್ಟು ಮರುಪ್ರಯತ್ನಿಸಿ.");
     } finally {
       setLoading(false);
     }
@@ -449,7 +441,7 @@ export default function Home() {
             </span>
           </div>
 
-          {/* Dedicated High-Visibility In-Progress Decoding Banner */}
+          {/* In-Progress Status Banner */}
           {loading && (
             <div className="bg-gradient-to-r from-amber-50 via-amber-100/60 to-amber-50 border border-amber-300/80 rounded-xl p-4 flex items-center justify-between gap-3 shadow-xs animate-pulse">
               <div className="flex items-center gap-3">
@@ -475,7 +467,7 @@ export default function Home() {
             </div>
           )}
 
-          {/* Quick Curated Presets with Genre Badges and Captions */}
+          {/* Presets Grid */}
           <div className="pt-3 border-t border-stone-100 space-y-2">
             <span className="text-[11px] font-semibold text-stone-500 uppercase tracking-wider block">
               ಪ್ರಮುಖ ಕೃತಿಗಳ ಸಂಕಲನ (Quick Presets):
@@ -589,37 +581,6 @@ export default function Home() {
                   <p className="text-stone-600 text-xs italic font-sans">
                     {result.historicalContextEnglish}
                   </p>
-                </div>
-
-                {/* Classical Rendition YouTube Bar */}
-                <div className="bg-[#FAF6EE] border border-amber-900/15 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-amber-900"></span>
-                      <h3 className="font-serif font-bold text-amber-950 text-sm">
-                        ಶಾಸ್ತ್ರೀಯ ಗಾಯನ <span className="text-xs font-sans text-stone-500 font-normal">| Classical Rendition</span>
-                      </h3>
-                    </div>
-                    <p className="text-xs text-stone-600">
-                      {result.classicalRendition?.artist ? `ಗಾಯಕರು: ${result.classicalRendition.artist}` : "ಪ್ರಾಮಾಣಿಕ ಹರಿದಾಸ ಸಂಗೀತ ಸಂಪ್ರದಾಯದ ಗಾಯನ"}
-                      {result.classicalRendition?.sourceNote && ` • ${result.classicalRendition.sourceNote}`}
-                    </p>
-                  </div>
-
-                  <a
-                    href={`https://www.youtube.com/results?search_query=${encodeURIComponent(
-                      result.classicalRendition?.searchQuery ||
-                      `${result.titleEnglish} ${result.composerEnglish} classical rendition`
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-red-700 hover:bg-red-800 text-white text-xs font-semibold transition shadow-2xs hover:shadow-xs active:scale-95 shrink-0 cursor-pointer"
-                  >
-                    <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
-                      <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
-                    </svg>
-                    <span>ಗಾಯನ ಆಲಿಸಿ (YouTube)</span>
-                  </a>
                 </div>
 
                 {/* Toolbar: Font Sizing, Indian Voice Recitation & PDF Export */}
@@ -866,78 +827,78 @@ export default function Home() {
                                 <td className="py-3 px-4 text-stone-500 font-sans italic text-xs">{row.transliteration}</td>
                                 <td className="py-3 px-4 text-stone-800 font-serif">{row.meaningKannada}</td>
                                 <td className="py-3 pl-4 text-stone-600 font-sans">{row.meaningEnglish}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
 
-                    <div className="sm:hidden space-y-2.5 divide-y divide-stone-100">
-                      {stanza.wordByWordBreakdown.map((row, idx) => (
-                        <div key={idx} className="pt-2.5 space-y-1">
-                          <div className="flex items-center justify-between">
-                            <span className="font-serif font-bold text-amber-950 text-sm">{row.kannadaWord}</span>
-                            <span className="text-stone-400 font-sans italic text-xs">({row.transliteration})</span>
+                      <div className="sm:hidden space-y-2.5 divide-y divide-stone-100">
+                        {stanza.wordByWordBreakdown.map((row, idx) => (
+                          <div key={idx} className="pt-2.5 space-y-1">
+                            <div className="flex items-center justify-between">
+                              <span className="font-serif font-bold text-amber-950 text-sm">{row.kannadaWord}</span>
+                              <span className="text-stone-400 font-sans italic text-xs">({row.transliteration})</span>
+                            </div>
+                            <p className="text-xs text-stone-800 font-serif font-medium">{row.meaningKannada}</p>
+                            <p className="text-[11px] text-stone-500 font-sans italic">{row.meaningEnglish}</p>
                           </div>
-                          <p className="text-xs text-stone-800 font-serif font-medium">{row.meaningKannada}</p>
-                          <p className="text-[11px] text-stone-500 font-sans italic">{row.meaningEnglish}</p>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* TAB 4: MUNDIGE & ALLEGORIES */}
-            {activeTab === "mundige" && result.metaphorsAndMundige && (
-              <div className="space-y-4">
-                <div className="bg-amber-950/5 border border-amber-950/15 p-4 rounded-xl text-xs sm:text-sm text-amber-950 space-y-1">
-                  <p className="font-serif font-bold">ಮುಂಡಿಗೆಯ ವೈಶಿಷ್ಟ್ಯ (The Nature of Haridasa Riddles):</p>
-                  <p className="text-stone-700 leading-relaxed">
-                    ಮುಂಡಿಗೆಗಳಲ್ಲಿ ಬಾಹ್ಯವಾಗಿ ಪ್ರಾಪಂಚಿಕ ಅಥವಾ ಜನಪದ ಕಥೆಗಳಂತೆ ಕಾಣುವ ಸಾಲುಗಳು ಅಂತರಂಗದಲ್ಲಿ ಕುಂಡಲಿನೀ ಯೋಗ, ನವದ್ವಾರ ಶರೀರ ಮತ್ತು ವೇದಾಂತ ತತ್ತ್ವಗಳನ್ನು ಬೋಧಿಸುತ್ತವೆ.
-                  </p>
+                  ))}
                 </div>
+              )}
 
-                {result.metaphorsAndMundige.map((m, idx) => (
-                  <div key={idx} className="bg-white rounded-2xl border border-stone-200/80 p-5 sm:p-6 space-y-4 shadow-xs ring-1 ring-stone-900/5">
-                    <div className="border-b border-stone-100 pb-3">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-amber-900 block font-sans">
-                        ಮುಂಡಿಗೆ ರೂಪಕ #{idx + 1}
-                      </span>
-                      <h3 className="font-serif font-bold text-stone-900 text-lg sm:text-xl mt-0.5">
-                        {m.allegoryKannada}
-                      </h3>
-                      <p className="text-xs text-stone-500 italic font-sans">{m.allegoryEnglish}</p>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="bg-stone-50/70 p-4 rounded-xl border border-stone-200/60 space-y-1">
-                        <span className="text-[10px] font-bold text-stone-600 uppercase tracking-wide block font-sans">
-                          ಬಾಹ್ಯ ಲೌಕಿಕ ಕಥೆ (Laukika / Surface Story)
-                        </span>
-                        <p className="text-stone-800 text-xs sm:text-sm font-serif leading-relaxed">
-                          {m.outerMeaningKannada}
-                        </p>
-                        <p className="text-stone-500 text-xs italic font-sans">{m.outerMeaningEnglish}</p>
-                      </div>
-
-                      <div className="bg-amber-50/60 p-4 rounded-xl border border-amber-900/15 space-y-1">
-                        <span className="text-[10px] font-bold text-amber-950 uppercase tracking-wide block font-sans">
-                          ಅಂತರಂಗ ಯೋಗ & ವೇದಾಂತಾರ್ಥ (Yogic Essence)
-                        </span>
-                        <p className="text-stone-900 text-xs sm:text-sm font-serif leading-relaxed font-medium">
-                          {m.esotericMeaningKannada}
-                        </p>
-                        <p className="text-stone-700 text-xs italic font-sans">{m.esotericMeaningEnglish}</p>
-                      </div>
-                    </div>
+              {/* TAB 4: MUNDIGE & ALLEGORIES */}
+              {activeTab === "mundige" && result.metaphorsAndMundige && (
+                <div className="space-y-4">
+                  <div className="bg-amber-950/5 border border-amber-950/15 p-4 rounded-xl text-xs sm:text-sm text-amber-950 space-y-1">
+                    <p className="font-serif font-bold">ಮುಂಡಿಗೆಯ ವೈಶಿಷ್ಟ್ಯ (The Nature of Haridasa Riddles):</p>
+                    <p className="text-stone-700 leading-relaxed">
+                      ಮುಂಡಿಗೆಗಳಲ್ಲಿ ಬಾಹ್ಯವಾಗಿ ಪ್ರಾಪಂಚಿಕ ಅಥವಾ ಜನಪದ ಕಥೆಗಳಂತೆ ಕಾಣುವ ಸಾಲುಗಳು ಅಂತರಂಗದಲ್ಲಿ ಕುಂಡಲಿನೀ ಯೋಗ, ನವದ್ವಾರ ಶರೀರ ಮತ್ತು ವೇದಾಂತ ತತ್ತ್ವಗಳನ್ನು ಬೋಧಿಸುತ್ತವೆ.
+                    </p>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+
+                  {result.metaphorsAndMundige.map((m, idx) => (
+                    <div key={idx} className="bg-white rounded-2xl border border-stone-200/80 p-5 sm:p-6 space-y-4 shadow-xs ring-1 ring-stone-900/5">
+                      <div className="border-b border-stone-100 pb-3">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-amber-900 block font-sans">
+                          ಮುಂಡಿಗೆ ರೂಪಕ #{idx + 1}
+                        </span>
+                        <h3 className="font-serif font-bold text-stone-900 text-lg sm:text-xl mt-0.5">
+                          {m.allegoryKannada}
+                        </h3>
+                        <p className="text-xs text-stone-500 italic font-sans">{m.allegoryEnglish}</p>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="bg-stone-50/70 p-4 rounded-xl border border-stone-200/60 space-y-1">
+                          <span className="text-[10px] font-bold text-stone-600 uppercase tracking-wide block font-sans">
+                            ಬಾಹ್ಯ ಲೌಕಿಕ ಕಥೆ (Laukika / Surface Story)
+                          </span>
+                          <p className="text-stone-800 text-xs sm:text-sm font-serif leading-relaxed">
+                            {m.outerMeaningKannada}
+                          </p>
+                          <p className="text-stone-500 text-xs italic font-sans">{m.outerMeaningEnglish}</p>
+                        </div>
+
+                        <div className="bg-amber-50/60 p-4 rounded-xl border border-amber-900/15 space-y-1">
+                          <span className="text-[10px] font-bold text-amber-950 uppercase tracking-wide block font-sans">
+                            ಅಂತರಂಗ ಯೋಗ & ವೇದಾಂತಾರ್ಥ (Yogic Essence)
+                          </span>
+                          <p className="text-stone-900 text-xs sm:text-sm font-serif leading-relaxed font-medium">
+                            {m.esotericMeaningKannada}
+                          </p>
+                          <p className="text-stone-700 text-xs italic font-sans">{m.esotericMeaningEnglish}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </main>
 
@@ -971,7 +932,6 @@ export default function Home() {
                   <option value="ಕೃತಿ ವಿಶ್ಲೇಷಣೆ ದೋಷ (Analysis / Anvaya Correction)">ಕೃತಿ ವಿಶ್ಲೇಷಣೆ ದೋಷ (Analysis Correction)</option>
                   <option value="ಅಂಕಿತ ನಾಮ ಸರಿಪಡಿಸುವಿಕೆ (Composer / Ankita Correction)">ಅಂಕಿತ ನಾಮ ಸರಿಪಡಿಸುವಿಕೆ (Ankita Correction)</option>
                   <option value="ಹೊಸ ಕೃತಿ ಸೇರ್ಪಡೆ ಕೋರಿಕೆ (Request Song Addition)">ಹೊಸ ಕೃತಿ ಸೇರ್ಪಡೆ ಕೋರಿಕೆ (Add Song)</option>
-                  <option value="ಶಾಸ್ತ್ರೀಯ ಗಾಯನ ಲಿಂಕ್ ಸಲಹೆ (Audio Rendition Suggestion)">ಶಾಸ್ತ್ರೀಯ ಗಾಯನ ಲಿಂಕ್ ಸಲಹೆ (Rendition Suggestion)</option>
                   <option value="ಸಾಮಾನ್ಯ ಅನಿಸಿಕೆ (General Feedback)">ಸಾಮಾನ್ಯ ಅನಿಸಿಕೆ (General Feedback)</option>
                 </select>
               </div>
