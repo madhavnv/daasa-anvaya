@@ -64,24 +64,24 @@ export default function Home() {
   const [kannadaSize, setKannadaSize] = useState<string>("text-base leading-relaxed");
   const [englishSize, setEnglishSize] = useState<string>("text-sm leading-relaxed");
 
-  // Speech Recognition (Mic)
+  // Speech Recognition (Mic Input)
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<any>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
-  // Indian Recitation / Text-to-Speech State
+  // Robust Indic Speech Synthesis Engine
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
-  const synthRef = useRef<SpeechSynthesis | null>(null);
+  const [loadedVoices, setLoadedVoices] = useState<SpeechSynthesisVoice[]>([]);
 
   // Structured Feedback Modal State
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [feedbackCategory, setFeedbackCategory] = useState("ಕೃತಿ ವಿಶ್ಲೇಷಣೆ ದೋಷ (Analysis Correction)");
   const [feedbackComment, setFeedbackComment] = useState("");
 
+  // Pre-load voices and listen for asynchronous availability
   useEffect(() => {
     if (typeof window !== "undefined") {
-      synthRef.current = window.speechSynthesis;
-
+      // Setup Speech Recognition
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       if (SpeechRecognition) {
         const recognition = new SpeechRecognition();
@@ -99,11 +99,24 @@ export default function Home() {
         recognition.onend = () => setIsListening(false);
         recognitionRef.current = recognition;
       }
+
+      // Setup Speech Synthesis voice pool
+      if ("speechSynthesis" in window) {
+        const populateVoices = () => {
+          const voices = window.speechSynthesis.getVoices();
+          if (voices && voices.length > 0) {
+            setLoadedVoices(voices);
+          }
+        };
+
+        populateVoices();
+        window.speechSynthesis.onvoiceschanged = populateVoices;
+      }
     }
 
     return () => {
-      if (synthRef.current) {
-        synthRef.current.cancel();
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
       }
     };
   }, []);
@@ -124,55 +137,73 @@ export default function Home() {
     }
   };
 
-  // Indian Recitation Engine: Calibrated for traditional Indic cadence
+  // Indian Recitation Engine
   const handleToggleIndianVoice = () => {
-    if (!synthRef.current) {
-      alert("ನಿಮ್ಮ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಧ್ವನಿ ಸೌಲಭ್ಯ ಲಭ್ಯವಿಲ್ಲ.");
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+      alert("ನಿಮ್ಮ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಧ್ವನಿ ಸೌಲಭ್ಯ ಬೆಂಬಲಿತವಾಗಿಲ್ಲ.");
       return;
     }
 
-    if (isPlayingAudio) {
-      synthRef.current.cancel();
+    const synth = window.speechSynthesis;
+
+    // Toggle off if currently active
+    if (isPlayingAudio || synth.speaking) {
+      synth.cancel();
       setIsPlayingAudio(false);
       return;
     }
 
     if (!result) return;
 
-    synthRef.current.cancel();
+    // Reset browser speech queue to prevent internal lockups
+    synth.cancel();
+    if (synth.paused) {
+      synth.resume();
+    }
 
-    // Compose dignified recitation script
     const textToRead = `${result.titleKannada}. ಕರ್ತೃ ${result.composerKannada}. ಅಂಕಿತ ನಾಮ ${result.ankitaKannada}. ತಾತ್ಪರ್ಯ: ${result.comprehensiveSummaryKannada}. ಇಂದಿನ ಬದುಕಿಗೆ ಸಂದೇಶ: ${result.modernTakeawayKannada}`;
 
     const utterance = new SpeechSynthesisUtterance(textToRead);
-    const availableVoices = synthRef.current.getVoices();
 
-    // Priority filter for authentic Indian voice profiles
-    const indicVoice = availableVoices.find(
-      (v) =>
-        v.lang === "kn-IN" ||
-        v.lang.startsWith("kn") ||
-        v.name.toLowerCase().includes("kannada") ||
-        v.name.toLowerCase().includes("india") ||
-        v.lang === "hi-IN"
-    );
+    // Refresh voice list
+    const allVoices = loadedVoices.length > 0 ? loadedVoices : synth.getVoices();
 
-    if (indicVoice) {
-      utterance.voice = indicVoice;
-      utterance.lang = indicVoice.lang;
+    // Priority filter for Indic voices with fallback to avoid silent drops
+    const preferredVoice =
+      allVoices.find((v) => v.lang.toLowerCase().includes("kn")) ||
+      allVoices.find((v) => v.lang === "hi-IN" || v.lang.startsWith("hi")) ||
+      allVoices.find((v) => v.lang === "en-IN" || v.name.toLowerCase().includes("india")) ||
+      allVoices.find((v) => v.default) ||
+      allVoices[0];
+
+    if (preferredVoice) {
+      utterance.voice = preferredVoice;
+      utterance.lang = preferredVoice.lang;
     } else {
       utterance.lang = "kn-IN";
     }
 
     // Traditional Pravachana cadence settings
-    utterance.rate = 0.86;
-    utterance.pitch = 0.96;
+    utterance.rate = 0.88;
+    utterance.pitch = 0.98;
 
-    utterance.onstart = () => setIsPlayingAudio(true);
-    utterance.onend = () => setIsPlayingAudio(false);
-    utterance.onerror = () => setIsPlayingAudio(false);
+    utterance.onstart = () => {
+      setIsPlayingAudio(true);
+    };
 
-    synthRef.current.speak(utterance);
+    utterance.onend = () => {
+      setIsPlayingAudio(false);
+    };
+
+    utterance.onerror = (e) => {
+      console.warn("Speech synthesis error or interrupted:", e);
+      setIsPlayingAudio(false);
+    };
+
+    // 50ms flush timeout ensures cancel() fully clears pending queue in Chrome/Safari
+    setTimeout(() => {
+      synth.speak(utterance);
+    }, 50);
   };
 
   const PRESET_SONGS = [
@@ -192,8 +223,8 @@ export default function Home() {
       return;
     }
 
-    if (synthRef.current) {
-      synthRef.current.cancel();
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
       setIsPlayingAudio(false);
     }
 
@@ -261,6 +292,7 @@ export default function Home() {
             </div>
           </div>
 
+          {/* Feedback Button */}
           <div className="flex items-center">
             <button
               onClick={() => setShowFeedbackModal(true)}
@@ -519,6 +551,7 @@ export default function Home() {
 
                   {/* Indian Voice Pravachana Player Button */}
                   <button
+                    type="button"
                     onClick={handleToggleIndianVoice}
                     className={`px-3.5 py-1.5 rounded-lg border text-xs font-semibold flex items-center gap-1.5 transition shadow-2xs cursor-pointer active:scale-95 ${
                       isPlayingAudio
