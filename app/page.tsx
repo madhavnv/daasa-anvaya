@@ -53,6 +53,13 @@ interface DecodeResult {
   }>;
 }
 
+interface PresetItem {
+  title: string;
+  genre: "ಸೂಳಾದಿ" | "ದೇವರನಾಮ" | "ಮುಂಡಿಗೆ";
+  caption: string;
+  query: string;
+}
+
 export default function Home() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -78,10 +85,73 @@ export default function Home() {
   const [feedbackCategory, setFeedbackCategory] = useState("ಕೃತಿ ವಿಶ್ಲೇಷಣೆ ದೋಷ (Analysis Correction)");
   const [feedbackComment, setFeedbackComment] = useState("");
 
+  // Presets with Genre Badges and Captions
+  const PRESET_SONGS: PresetItem[] = [
+    {
+      title: "ಶ್ರೀ ನರಸಿಂಹ ಸೂಳಾದಿ",
+      genre: "ಸೂಳಾದಿ",
+      caption: "ವಿಜಯದಾಸರ ಸಪ್ತತಾಳ ಅಭಯ ಸ್ತುತಿ",
+      query: "ವೀರ ಸಿಂಹನೆ ನಾರಸಿಂಹನೆ ದಯ ಪಾರಾವಾರನೆ ಭಯ ನಿವಾರಣ ನಿರ್ಗುಣ ಶ್ರೀ ನರಸಿಂಹ ಸೂಳಾದಿ",
+    },
+    {
+      title: "ಶ್ರೀ ದುರ್ಗಾ ಸೂಳಾದಿ",
+      genre: "ಸೂಳಾದಿ",
+      caption: "ವಿಜಯದಾಸರ ದುರ್ಗಾಂತರ್ಗತ ಹರಿ ಸ್ತುತಿ",
+      query: "ದುರ್ಗಾ ದುರ್ಗೆಯೆ ಮಹಾದುಷ್ಟಜನ ಸಂಹಾರೆ ದುರ್ಗಾಂತರ್ಗತ ದುರ್ಗೆ ದುರ್ಲಭೆ ಸುಲಭೆ ಶ್ರೀ ದುರ್ಗಾ ಸೂಳಾದಿ ವಿಜಯದಾಸರು",
+    },
+    {
+      title: "ಶ್ರೀ ವೆಂಕಟೇಶ ಸೂಳಾದಿ",
+      genre: "ಸೂಳಾದಿ",
+      caption: "ಗೋಪಾಲದಾಸರ ತಿರುಪತಿ ಶ್ರೀನಿವಾಸ ಸ್ತುತಿ",
+      query: "ಶ್ರೀ ವೆಂಕಟೇಶ ನಾರಾಯಣ ಪರಮಪುರುಷ ಗೋಪಾಲವಿಠ್ಠಲ ಸೂಳಾದಿ",
+    },
+    {
+      title: "ತಾರಕ್ಕ ಬಿಂದಿಗೆ",
+      genre: "ಮುಂಡಿಗೆ",
+      caption: "ಪುರಂದರದಾಸರ ಕಾಯ-ಯೋಗ ಗೂಢಾರ್ಥ",
+      query: "ತಾರಕ್ಕ ಬಿಂದಿಗೆ ನೀರಿಗೆ ಹೋಗೋಣ ಬಾರೆ ಚೆಲುವೆ ಬಿಂದಿಗೆ ಒಡೆದರೆ ಒಂಬತ್ತು ತೂತು",
+    },
+    {
+      title: "ಮಾನವ ಜನ್ಮ ದೊಡ್ಡದು",
+      genre: "ದೇವರನಾಮ",
+      caption: "ಪುರಂದರದಾಸರ ಪರಮ ವೈರಾಗ್ಯ ಗೀತೆ",
+      query: "ಮಾನವ ಜನ್ಮ ದೊಡ್ಡದು ಇದನು ಹಾನಿ ಮಾಡಲಿಬೇಡಿ ಹುಚ್ಚಪ್ಪಗಳಿರಾ",
+    },
+    {
+      title: "ಯಾರಿಗೆ ಯಾರುಂಟು",
+      genre: "ದೇವರನಾಮ",
+      caption: "ಕನಕದಾಸರ ಸಂಸಾರ ನೀತಿ ಬೋಧೆ",
+      query: "ಯಾರಿಗೆ ಯಾರುಂಟು ಎರವಿನ ಸಂಸಾರ ಕಾಗಿನೆಲೆಯಾದಿಕೇಶವ ಕನಕದಾಸರು",
+    },
+    {
+      title: "ಕಂಡು ಕಂಡು ನೀ ಎನ್ನ",
+      genre: "ದೇವರನಾಮ",
+      caption: "ವ್ಯಾಸರಾಜರ ಅನನ್ಯ ಶರಣಾಗತಿ ಕೀರ್ತನೆ",
+      query: "ಕಂಡು ಕಂಡು ನೀ ಎನ್ನ ಕೈಬಿಡುವರೆ ವ್ಯಾಸರಾಜರು ಶ್ರೀವ್ಯಾಸವಿಠ್ಠಲ",
+    },
+    {
+      title: "ಆವ ರೋಗವೋ ಧನ್ವಂತ್ರಿ",
+      genre: "ದೇವರನಾಮ",
+      caption: "ಪುರಂದರದಾಸರ ಭವರೋಗ ಪರಿಹಾರ ಸ್ತುತಿ",
+      query: "ಆವ ರೋಗವೋ ಎನಗೆ ಧನ್ವಂತ್ರಿ ದಯಮಾಡಿ ಪುರಂದರವಿಠ್ಠಲ",
+    },
+    {
+      title: "ಹಯವದನ ಕರುಣಿಸು",
+      genre: "ದೇವರನಾಮ",
+      caption: "ವಾದಿರಾಜ ತೀರ್ಥರ ದೈವಿಕ ಉಪಾಸನೆ",
+      query: "ಹಯವದನ ವಿಭೋ ಕರುಣಿಸೋ ವಾದಿರಾಜ ತೀರ್ಥರು ಹಯವದನ",
+    },
+    {
+      title: "ಕಲ್ಲು ಸಕ್ಕರೆ ಕೊಳ್ಳಿರೋ",
+      genre: "ದೇವರನಾಮ",
+      caption: "ಪುರಂದರದಾಸರ ಹರಿನಾಮ ಮಾಧುರ್ಯ",
+      query: "ಕಲ್ಲು ಸಕ್ಕರೆ ಕೊಳ್ಳಿರೋ ನೀವೆಲ್ಲರು ಕಲ್ಲು ಸಕ್ಕರೆ ಕೊಳ್ಳಿರೋ ಪುರಂದರವಿಠ್ಠಲ",
+    },
+  ];
+
   // Pre-load voices and listen for asynchronous availability
   useEffect(() => {
     if (typeof window !== "undefined") {
-      // Setup Speech Recognition
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       if (SpeechRecognition) {
         const recognition = new SpeechRecognition();
@@ -100,7 +170,6 @@ export default function Home() {
         recognitionRef.current = recognition;
       }
 
-      // Setup Speech Synthesis voice pool
       if ("speechSynthesis" in window) {
         const populateVoices = () => {
           const voices = window.speechSynthesis.getVoices();
@@ -137,7 +206,6 @@ export default function Home() {
     }
   };
 
-  // Indian Recitation Engine
   const handleToggleIndianVoice = () => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
       alert("ನಿಮ್ಮ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಧ್ವನಿ ಸೌಲಭ್ಯ ಬೆಂಬಲಿತವಾಗಿಲ್ಲ.");
@@ -146,7 +214,6 @@ export default function Home() {
 
     const synth = window.speechSynthesis;
 
-    // Toggle off if currently active
     if (isPlayingAudio || synth.speaking) {
       synth.cancel();
       setIsPlayingAudio(false);
@@ -155,7 +222,6 @@ export default function Home() {
 
     if (!result) return;
 
-    // Reset browser speech queue to prevent internal lockups
     synth.cancel();
     if (synth.paused) {
       synth.resume();
@@ -164,11 +230,8 @@ export default function Home() {
     const textToRead = `${result.titleKannada}. ಕರ್ತೃ ${result.composerKannada}. ಅಂಕಿತ ನಾಮ ${result.ankitaKannada}. ತಾತ್ಪರ್ಯ: ${result.comprehensiveSummaryKannada}. ಇಂದಿನ ಬದುಕಿಗೆ ಸಂದೇಶ: ${result.modernTakeawayKannada}`;
 
     const utterance = new SpeechSynthesisUtterance(textToRead);
-
-    // Refresh voice list
     const allVoices = loadedVoices.length > 0 ? loadedVoices : synth.getVoices();
 
-    // Priority filter for Indic voices with fallback to avoid silent drops
     const preferredVoice =
       allVoices.find((v) => v.lang.toLowerCase().includes("kn")) ||
       allVoices.find((v) => v.lang === "hi-IN" || v.lang.startsWith("hi")) ||
@@ -183,37 +246,20 @@ export default function Home() {
       utterance.lang = "kn-IN";
     }
 
-    // Traditional Pravachana cadence settings
     utterance.rate = 0.88;
     utterance.pitch = 0.98;
 
-    utterance.onstart = () => {
-      setIsPlayingAudio(true);
-    };
-
-    utterance.onend = () => {
-      setIsPlayingAudio(false);
-    };
-
+    utterance.onstart = () => setIsPlayingAudio(true);
+    utterance.onend = () => setIsPlayingAudio(false);
     utterance.onerror = (e) => {
-      console.warn("Speech synthesis error or interrupted:", e);
+      console.warn("Speech synthesis interrupted or failed:", e);
       setIsPlayingAudio(false);
     };
 
-    // 50ms flush timeout ensures cancel() fully clears pending queue in Chrome/Safari
     setTimeout(() => {
       synth.speak(utterance);
     }, 50);
   };
-
-  const PRESET_SONGS = [
-    { label: "ಶ್ರೀ ನರಸಿಂಹ ಸೂಳಾದಿ", query: "ವೀರ ಸಿಂಹನೆ ನಾರಸಿಂಹನೆ ದಯ ಪಾರಾವಾರನೆ ಭಯ ನಿವಾರಣ ನಿರ್ಗುಣ ಶ್ರೀ ನರಸಿಂಹ ಸೂಳಾದಿ" },
-    { label: "ಶ್ರೀ ದುರ್ಗಾ ಸೂಳಾದಿ", query: "ದುರ್ಗಾ ದುರ್ಗೆಯೆ ಮಹಾದುಷ್ಟಜನ ಸಂಹಾರೆ ದುರ್ಗಾಂತರ್ಗತ ದುರ್ಗೆ ದುರ್ಲಭೆ ಸುಲಭೆ ಶ್ರೀ ದುರ್ಗಾ ಸೂಳಾದಿ ವಿಜಯದಾಸರು" },
-    { label: "ಶ್ರೀ ಧನ್ವಂತ್ರಿ ಸೂಳಾದಿ", query: "ಆಯುವೃದ್ಧಿಯಾಗೋದು ಶ್ರೇಯಸ್ಸು ಬರುವುದು ಕಾಯಾ ನಿರ್ಮಲಿನಾ ಕಾರಣವಾಹದೊ ಶ್ರೀ ಧನ್ವಂತ್ರಿ ಸೂಳಾದಿ" },
-    { label: "ತಾರಕ್ಕ ಬಿಂದಿಗೆ (ಮುಂಡಿಗೆ)", query: "ತಾರಕ್ಕ ಬಿಂದಿಗೆ ನೀರಿಗೆ ಹೋಗೋಣ ಬಾರೆ ಚೆಲುವೆ ಬಿಂದಿಗೆ ಒಡೆದರೆ ಒಂಬತ್ತು ತೂತು" },
-    { label: "ಮಾನವ ಜನ್ಮ ದೊಡ್ಡದು", query: "ಮಾನವ ಜನ್ಮ ದೊಡ್ಡದು ಇದನು ಹಾನಿ ಮಾಡಲಿಬೇಡಿ ಹುಚ್ಚಪ್ಪಗಳಿರಾ" },
-    { label: "ಕಲ್ಲು ಸಕ್ಕರೆ ಕೊಳ್ಳಿರೋ", query: "ಕಲ್ಲು ಸಕ್ಕರೆ ಕೊಳ್ಳಿರೋ ನೀವೆಲ್ಲರು ಕಲ್ಲು ಸಕ್ಕರೆ ಕೊಳ್ಳಿರೋ ಪುರಂದರವಿಠ್ಠಲ" },
-  ];
 
   const handleDecode = async (overrideInput?: string) => {
     const textToQuery = (typeof overrideInput === "string" ? overrideInput : input).trim();
@@ -292,7 +338,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Feedback Button */}
           <div className="flex items-center">
             <button
               onClick={() => setShowFeedbackModal(true)}
@@ -394,18 +439,42 @@ export default function Home() {
             </span>
           </div>
 
-          <div className="pt-3 border-t border-stone-100 flex flex-wrap items-center gap-1.5">
-            <span className="text-[11px] font-medium text-stone-500 mr-1">ಪ್ರಮುಖ ರಚನೆಗಳು:</span>
-            {PRESET_SONGS.map((p) => (
-              <button
-                key={p.label}
-                type="button"
-                onClick={() => handleDecode(p.query)}
-                className="px-3 py-1 rounded-full bg-[#FAF8F5] hover:bg-amber-100/70 text-stone-700 hover:text-amber-950 border border-stone-200/80 text-[11px] font-medium transition cursor-pointer active:scale-95"
-              >
-                {p.label}
-              </button>
-            ))}
+          {/* Quick Curated Presets with Genre Badges and Captions */}
+          <div className="pt-3 border-t border-stone-100 space-y-2">
+            <span className="text-[11px] font-semibold text-stone-500 uppercase tracking-wider block">
+              ಪ್ರಮುಖ ಕೃತಿಗಳ ಸಂಕಲನ (Quick Presets):
+            </span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+              {PRESET_SONGS.map((p) => {
+                const badgeColor =
+                  p.genre === "ಸೂಳಾದಿ"
+                    ? "bg-amber-900/10 text-amber-900 border-amber-900/20"
+                    : p.genre === "ಮುಂಡಿಗೆ"
+                    ? "bg-indigo-50 text-indigo-900 border-indigo-200"
+                    : "bg-emerald-50 text-emerald-900 border-emerald-200";
+
+                return (
+                  <button
+                    key={p.title}
+                    type="button"
+                    onClick={() => handleDecode(p.query)}
+                    className="p-2.5 rounded-xl bg-[#FAF8F5] hover:bg-amber-50/70 border border-stone-200/90 hover:border-amber-900/30 text-left transition shadow-2xs hover:shadow-xs cursor-pointer active:scale-98 flex flex-col justify-between gap-1 group"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-serif font-bold text-xs sm:text-sm text-stone-900 group-hover:text-amber-950">
+                        {p.title}
+                      </span>
+                      <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border shrink-0 ${badgeColor}`}>
+                        {p.genre}
+                      </span>
+                    </div>
+                    <span className="text-[11px] text-stone-500 group-hover:text-stone-700 italic">
+                      {p.caption}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </section>
 
@@ -694,7 +763,6 @@ export default function Home() {
                       </span>
                     </div>
 
-                    {/* Section 1: Original Stanza */}
                     <div className="space-y-1.5 pl-3 border-l-2 border-stone-300">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 block font-sans">
                         ಮೂಲ ಸಾಹಿತ್ಯ (Original Stanza)
@@ -707,7 +775,6 @@ export default function Home() {
                       </p>
                     </div>
 
-                    {/* Section 2: Reordered Spoken Syntax (Anvaya) */}
                     <div className="bg-[#FAF8F5] p-4 rounded-xl border-l-4 border-amber-800 border-y border-r border-stone-200/60 space-y-2">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-amber-900 block font-serif">
                         ಅನ್ವಯ ಕ್ರಮ (Reordered Direct Meaning)
@@ -720,7 +787,6 @@ export default function Home() {
                       </p>
                     </div>
 
-                    {/* Section 3: Spiritual Essence */}
                     <div className="space-y-1.5 pl-3 border-l-2 border-emerald-600 pt-1">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 block font-sans">
                         ಆಧ್ಯಾತ್ಮಿಕ ಗೂಢಾರ್ಥ (Inner Significance)
@@ -746,7 +812,6 @@ export default function Home() {
                       {stanza.stanzaType} #{stanza.stanzaNumber} - ಪದಾರ್ಥ ವಿವರಣೆ
                     </span>
 
-                    {/* Desktop/Tablet Table Layout */}
                     <div className="hidden sm:block overflow-x-auto">
                       <table className="w-full text-left text-xs sm:text-sm">
                         <thead>
@@ -770,7 +835,6 @@ export default function Home() {
                       </table>
                     </div>
 
-                    {/* Mobile Responsive Layout */}
                     <div className="sm:hidden space-y-2.5 divide-y divide-stone-100">
                       {stanza.wordByWordBreakdown.map((row, idx) => (
                         <div key={idx} className="pt-2.5 space-y-1">
