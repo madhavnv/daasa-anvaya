@@ -35,7 +35,7 @@ interface DecodeResult {
     artist: string;
     raga: string;
     tala: string;
-    audioUrl?: string;
+    searchQuery: string;
     sourceNote?: string;
   };
   stanzas: StanzaBreakdown[];
@@ -369,67 +369,63 @@ export default function Home() {
                 </p>
               </div>
 
-              {/* Classical Maestro Rendition Player Card */}
-              {result.classicalRendition && (
-                <div className="bg-radial from-amber-50/80 to-[#FBF8F1] border border-amber-900/20 rounded-2xl p-4 sm:p-5 shadow-2xs space-y-3">
-                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-amber-900/10 pb-2.5">
-                    <div className="flex items-center gap-2">
-                      <span className="p-1.5 rounded-lg bg-amber-900/10 text-amber-900">
-                        {/* Veena / Classical Music Icon */}
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
-                        </svg>
-                      </span>
-                      <div>
-                        <h3 className="font-serif font-bold text-amber-950 text-sm sm:text-base flex items-center gap-2">
-                          <span>ಶಾಸ್ತ್ರೀಯ ಗಾಯನ</span>
-                          <span className="text-xs font-sans font-normal text-amber-900/70">| Classical Master Rendition</span>
-                        </h3>
-                        <p className="text-[11px] text-stone-500">
-                          ಪ್ರಾಮಾಣಿಕ ಹರಿದಾಸ ಸಂಪ್ರದಾಯದ ಸಂಗೀತ ಧ್ವನಿಮುದ್ರಿಕೆ
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 text-xs">
-                      <span className="px-2.5 py-0.5 rounded-full bg-amber-900/10 text-amber-950 font-serif font-semibold">
-                        ಗಾಯಕರು: {result.classicalRendition.artist}
-                      </span>
+              {/* One-Click Verified Classical Rendition Discovery Card */}
+              <div className="bg-[#FAF6EE] border border-amber-900/15 rounded-2xl p-4 sm:p-5 shadow-2xs space-y-3">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-amber-900/10 pb-2.5">
+                  <div className="flex items-center gap-2">
+                    <span className="p-1.5 rounded-lg bg-amber-900/10 text-amber-900">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                      </svg>
+                    </span>
+                    <div>
+                      <h3 className="font-serif font-bold text-amber-950 text-sm sm:text-base flex items-center gap-2">
+                        <span>ಶಾಸ್ತ್ರೀಯ ಗಾಯನ</span>
+                        <span className="text-xs font-sans font-normal text-amber-900/70">| Classical Rendition</span>
+                      </h3>
+                      <p className="text-[11px] text-stone-500">
+                        ಪ್ರಾಮಾಣಿಕ ಹರಿದಾಸ ಸಂಗೀತ ಸಂಪ್ರದಾಯದ ಗಾಯನ
+                      </p>
                     </div>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
-                    <div className="text-xs text-stone-600 space-y-0.5">
-                      <div className="flex items-center gap-3">
-                        <span><strong>ರಾಗ:</strong> {result.classicalRendition.raga}</span>
-                        <span><strong>ತಾಳ:</strong> {result.classicalRendition.tala}</span>
-                      </div>
-                      {result.classicalRendition.sourceNote && (
-                        <p className="text-[11px] text-stone-500 italic">
-                          {result.classicalRendition.sourceNote}
-                        </p>
-                      )}
-                    </div>
+                  {result.classicalRendition?.artist && (
+                    <span className="px-2.5 py-0.5 rounded-full bg-amber-900/10 text-amber-950 font-serif font-semibold text-xs">
+                      {result.classicalRendition.artist}
+                    </span>
+                  )}
+                </div>
 
-                    {result.classicalRendition.audioUrl ? (
-                      <div className="w-full sm:w-auto">
-                        <audio
-                          controls
-                          controlsList="nodownload"
-                          className="w-full sm:w-72 h-8 rounded-lg accent-amber-900"
-                          src={result.classicalRendition.audioUrl}
-                        >
-                          ನಿಮ್ಮ ಬ್ರೌಸರ್ ಆಡಿಯೋ ಪ್ಲೇಯರ್ ಬೆಂಬಲಿಸುವುದಿಲ್ಲ.
-                        </audio>
-                      </div>
-                    ) : (
-                      <div className="text-[11px] text-amber-800 bg-amber-100/60 px-3 py-1.5 rounded-lg italic">
-                        ಗಾಯನ ಆವೃತ್ತಿಯನ್ನು ಶೀಘ್ರದಲ್ಲೇ ಅಪ್‌ಲೋಡ್ ಮಾಡಲಾಗುತ್ತದೆ.
-                      </div>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+                  <div className="text-xs text-stone-700 space-y-0.5">
+                    <div className="flex items-center gap-3">
+                      <span><strong>ರಾಗ:</strong> {result.classicalRendition?.raga || result.ragaTradition || "ಶಾಸ್ತ್ರೀಯ ರಾಗ"}</span>
+                      <span><strong>ತಾಳ:</strong> {result.classicalRendition?.tala || result.talaTradition || "ಸಂಪ್ರದಾಯ ತಾಳ"}</span>
+                    </div>
+                    {result.classicalRendition?.sourceNote && (
+                      <p className="text-[11px] text-stone-500 italic">
+                        {result.classicalRendition.sourceNote}
+                      </p>
                     )}
                   </div>
+
+                  {/* One-Click Direct Link to Verified YouTube Recordings */}
+                  <a
+                    href={`https://www.youtube.com/results?search_query=${encodeURIComponent(
+                      result.classicalRendition?.searchQuery ||
+                      `${result.titleEnglish}${result.composerEnglish} classical rendition`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-red-700 hover:bg-red-800 text-white text-xs font-semibold transition shadow-2xs cursor-pointer active:scale-95 shrink-0"
+                  >
+                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                      <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/>
+                    </svg>
+                    <span>ಶಾಸ್ತ್ರೀಯ ಗಾಯನ ಆಲಿಸಿ (Listen on YouTube)</span>
+                  </a>
                 </div>
-              )}
+              </div>
 
               {/* Toolbar: Font Scaling & PDF Export */}
               <div className="flex flex-wrap items-center justify-between gap-3 pt-1 text-xs text-stone-600">
