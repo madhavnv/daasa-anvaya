@@ -1,18 +1,137 @@
 import { NextRequest, NextResponse } from "next/server";
 import { COMPLETE_ANKITHA_CATALOG } from "@/lib/ankithaData";
 
-// Active, verified model tier
 const ACTIVE_MODELS = [
   "gemini-3.8-flash",
   "gemini-3.5-flash-lite"
 ];
 
-// PRE-CACHED CANON: Instant 20ms response, zero API call, zero 503 errors
+// FAST-PATH PRECACHED ENTRIES
 const PRECACHED_SONGS: Record<string, any> = {
-  "tarakka bindige": {
+  "ನಾರಸಿಂಹನೆ": {
     isRecognizedSong: true,
-    titleKannada: "ತಾರಕ್ಕ ಬಿಂದಿಗೆ ನೀರಿಗೆ ಹೋಗೋಣ",
-    titleEnglish: "Tarakka Bindige Neerige Hogona",
+    titleKannada: "ಶ್ರೀ ನರಸಿಂಹ ಸೂಳಾದಿ",
+    titleEnglish: "Sri Narasimha Suladi",
+    composerKannada: "ವಿಜಯ ದಾಸರು",
+    composerEnglish: "Vijaya Dasaru",
+    ankitaKannada: "ವಿಜಯ ವಿಠ್ಠಲ",
+    ankitaEnglish: "Vijaya Vittala",
+    youtubeSearchQuery: "Narasimha Suladi Vijaya Dasa",
+    historicalContextKannada: "ಶ್ರೀ ವಿಜಯದಾಸರು ನರಸಿಂಹದೇವರ ಉಗ್ರ ಮತ್ತು ಶಾಂತ ರೂಪಗಳೆರಡನ್ನೂ ಸಮ್ಮಿಲನಗೊಳಿಸಿ ರಚಿಸಿದ ತಾತ್ವಿಕ ಸೂಳಾದಿ. ಸಂಸಾರದ ಮೂಲ ಬೇರನ್ನೇ ಕಿತ್ತು ಭಕ್ತರನ್ನು ರಕ್ಷಿಸುವ ಕರುಣೆಯನ್ನು ಇಲ್ಲಿ ಕೊಂಡಾಡಲಾಗಿದೆ.",
+    historicalContextEnglish: "Composed by Sri Vijaya Dasa, this Suladi explores both the awe-inspiring, fearsome form of Lord Narasimha and his innate compassion (Karunyapanga) that uproots worldly suffering for surrendered souls.",
+    comprehensiveSummaryKannada: "ಭಯಂಕರವಾದ ಮುಖಮುದ್ರೆಯಿಂದ ದುಷ್ಟ ದೈತ್ಯರನ್ನು ಸಂಹರಿಸುವ ನರಸಿಂಹನು, ಭಕ್ತರ ಪಾಲಿಗೆ ಮಾತ್ರ ಅತಿ ಕರುಣಾಮಯಿ. ಆತನ ಧ್ಯಾನವು ಸಂಸಾರವೆಂಬ ಭವಬಂಧನದ ಬೇರನ್ನೇ ಕೀಳಲು ಸಮರ್ಥವೆಂದು ವಿಜಯದಾಸರು ಸಾರಿದ್ದಾರೆ.",
+    comprehensiveSummaryEnglish: "While Lord Narasimha strikes terror into demonic forces, he remains the supreme refuge for his devotees. He severs the root of existential entanglements and shields seekers under his compassionate gaze.",
+    stanzas: [
+      {
+        stanzaType: "ಸೂಳಾದಿ ಪಾದ",
+        originalKannada: "ವೀರ ಸಿಂಹನೆ ನಾರಸಿಂಹನೆ ದಯ ಪಾರಾ\nವಾರನೆ ಭಯ ನಿವಾರಣ ನಿರ್ಗುಣ",
+        anvayaKannada: "ವೀರ ಸಿಂಹನೂ ನಾರಸಿಂಹನೂ ಆದ ಹೇ ಸ್ವಾಮಿ, ನೀನು ದಯಾಸಾಗರನು ಹಾಗೂ ಭಕ್ತರ ಸಕಲ ಭಯಗಳನ್ನು ನಿವಾರಿಸುವವನು.",
+        anvayaEnglish: "O heroic Lion-Lord Narasimha, boundless ocean of mercy and dispeller of all fear."
+      },
+      {
+        stanzaType: "ಅಂತರ ಪಾದ",
+        originalKannada: "ಸಾರಿದವರ ಸಂಸಾರ ವೃಕ್ಷದ ಮೂಲ\nಬೇರರಿಸಿ ಕೀಳುವ ಬಿರಿದು ಭಯಂಕರ\nಘೋರವತಾರ ಕರಾಳವದನ ಅ-\nಘೋರ ದುರಿತ ಸಂಹಾರ ಮಾಯಾಕಾರ",
+        anvayaKannada: "ನಿನ್ನನ್ನು ಆಶ್ರಯಿಸಿದವರ ಸಂಸಾರವೆಂಬ ವೃಕ್ಷದ ಬೇರುಗಳನ್ನು ಬುಡಸಮೇತ ಕಿತ್ತೊಗೆಯುವ ಭಯಂಕರ ಬಿರುದು ನಿನ್ನದು; ನೀನು ಘೋರಾವತಾರಿಯೂ, ದುರಿತಗಳನ್ನು ನಾಶಮಾಡುವ ಮಾಯಾಕಾರನೂ ಆಗಿರುವೆ.",
+        anvayaEnglish: "Yours is the fierce title that uproots the very tree of worldly transmigration for those who surrender unto You; terrifying in manifestation, yet the absolute destroyer of deep sins."
+      },
+      {
+        stanzaType: "ಅಂತ್ಯ ಪಾದ",
+        originalKannada: "ಅರೌದ್ರನಾಮಕ ವಿಜಯ ವಿಠ್ಠಲ ನರಸಿಂಗ\nವೀರರ ಸಾತುಂಗ ಕಾರುಣ್ಯಪಾಂಗ.",
+        anvayaKannada: "ಅರೌದ್ರ ಎಂಬ ಶಾಂತ ಮಂಗಳಕರ ನಾಮವುಳ್ಳ, ವಿಜಯವಿಠ್ಠಲನಾದ ನರಸಿಂಹನೇ, ನೀನು ಶ್ರೇಷ್ಠ ವೀರರಿಗೆಲ್ಲ ಅಗ್ರಗಣ್ಯನೂ ಕೃಪಾದೃಷ್ಟಿಯುಳ್ಳವನೂ ಆಗಿದ್ದೀಯೆ.",
+        anvayaEnglish: "Bearing the tranquil name Araudra, O Vijaya Vittala Narasimha, You stand supreme among the valiant, showering boundless compassionate grace."
+      }
+    ],
+    modernTakeawayKannada: "ಆಂತರಿಕ ಭಯ ಮತ್ತು ನಕಾರಾತ್ಮಕ ಯೋಚನೆಗಳನ್ನು ಧೈರ್ಯ ಮತ್ತು ದೈವಸಮರ್ಪಣೆಯಿಂದ ಜಯಿಸಬಹುದು.",
+    modernTakeawayEnglish: "Courage and surrender dissolve inner anxieties and uproot lingering existential dread.",
+    pratipadaartha: [
+      { wordKannada: "ಕಾರುಣ್ಯಪಾಂಗ", wordTransliterated: "Karunyapanga", meaningKannada: "ಕೃಪಾದೃಷ್ಟಿ", meaningEnglish: "Compassionate glance" },
+      { wordKannada: "ಅರೌದ್ರ", wordTransliterated: "Araudra", meaningKannada: "ಕ್ರೋಧವಿಲ್ಲದ / ಪ್ರಶಾಂತ", meaningEnglish: "Gentle / Free from wrath" }
+    ],
+    metaphorsAndMundige: [
+      {
+        motifKannada: "ಸಂಸಾರ ವೃಕ್ಷದ ಮೂಲ ಬೇರು",
+        motifEnglish: "Root of the Transmigration Tree",
+        innerMeaningKannada: "ಮಾನವನನ್ನು ಭವಬಂಧನದಲ್ಲಿ ಸಿಲುಕಿಸುವ ಮೂಲ ಕಾಮ-ಕ್ರೋಧ-ಅಜ್ಞಾನಗಳು.",
+        innerMeaningEnglish: "The primal roots of ego and ignorance that bind consciousness to cycle of rebirth."
+      }
+    ]
+  },
+
+  "ದುರ್ಗಾ ದುರ್ಗೆಯೆ": {
+    isRecognizedSong: true,
+    titleKannada: "ಶ್ರೀ ದುರ್ಗಾ ಸೂಳಾದಿ",
+    titleEnglish: "Sri Durga Suladi",
+    composerKannada: "ವಿಜಯ ದಾಸರು",
+    composerEnglish: "Vijaya Dasaru",
+    ankitaKannada: "ವಿಜಯ ವಿಠ್ಠಲ",
+    ankitaEnglish: "Vijaya Vittala",
+    youtubeSearchQuery: "Durga Suladi Vijaya Dasa",
+    historicalContextKannada: "ಕಾಡುಮೇಡುಗಳ ಸಂಕಟ, ಭಯ ಹಾಗೂ ಸಂಸಾರದ ಗೊಂದಲಗಳಿಂದ ಬಿಡುಗಡೆ ಕೋರಿ ಶ್ರೀ ವಿಜಯದಾಸರು ರಚಿಸಿದ ಪ್ರಸಿದ್ಧ ದುರ್ಗಾ ಸ್ತುತಿ.",
+    historicalContextEnglish: "A celebrated composition by Vijaya Dasa seeking divine protection against physical perils, wild elements, and deep existential turbulence.",
+    comprehensiveSummaryKannada: "ಸೃಷ್ಟಿ-ಸ್ಥಿತಿ-ಲಯಗಳಿಗೆ ಸಾಕ್ಷಿಯಾದ ದುರ್ಗಾದೇವಿಯು ಸಕಲ ಆಪತ್ತುಗಳಿಂದ ಪಾರುಮಾಡಿ, ಪರಮಾತ್ಮನಾದ ವಿಜಯವಿಠ್ಠಲನ ಪಾದಕಮಲಗಳಲ್ಲಿ ಆಶ್ರಯ ನೀಡಲೆಂದು ಪ್ರಾರ್ಥಿಸಲಾಗಿದೆ.",
+    comprehensiveSummaryEnglish: "Sri Durga, manifesting the divine energy of Sri Hari, is praised as the protector in perilous journeys who steers the soul toward Vijaya Vittala's sanctuary.",
+    stanzas: [
+      {
+        stanzaType: "ಆರಂಭ ಪಾದ",
+        originalKannada: "ದುರ್ಗಾ ದುರ್ಗೆಯೆ ಮಹದುಷ್ಟಜನ ಸಂಹಾರೆ\nದುರ್ಗಾಂತರ್ಗತ ದುರ್ಗೆ ದುರ್ಲಭೆ ಸುಲಭೆ",
+        anvayaKannada: "ದುಷ್ಟರನ್ನು ಸಂಹರಿಸುವ ದುರ್ಗಾದೇವಿಯೇ, ನೀನು ಜ್ಞಾನಿಗಳಿಗೆ ಸುಲಭವಾಗಿಯೂ ಅಜ್ಞಾನಿಗಳಿಗೆ ದುರ್ಲಭವಾಗಿಯೂ ಇರುವೆ.",
+        anvayaEnglish: "O Goddess Durga, slayer of evil, You are accessible to the sincere yet elusive to the arrogant."
+      },
+      {
+        stanzaType: "ಅಂತ್ಯ ಪಾದ",
+        originalKannada: "ಸ್ವರ್ಗಂಗಾಜನಕ ನಮ್ಮ ವಿಜಯ ವಿಠ್ಠಲನಂಘ್ರಿ\nದುರ್ಗಾಶ್ರಮ ಮಾಡಿ ಬದುಕುವಂತೆ ಮಾಡು ||",
+        anvayaKannada: "ಆಕಾಶಗಂಗೆಯ ಪಿತನಾದ ನಮ್ಮ ವಿಜಯವಿಠ್ಠಲನ ಚರಣಕಮಲಗಳನ್ನೇ ಅಭೇದ್ಯ ಕೋಟೆಯನ್ನಾಗಿಸಿ (ದುರ್ಗ) ನಾವು ಬದುಕುವಂತೆ ಕರುಣಿಸು.",
+        anvayaEnglish: "Make the holy lotus feet of our Vijaya Vittala—father of celestial Ganga—our fortress, that we may abide in peace."
+      }
+    ],
+    modernTakeawayKannada: "ಕಠಿಣ ಸಂಕಷ್ಟದ ಸಮಯದಲ್ಲೂ ಸ್ಥೈರ್ಯ ಮತ್ತು ನಂಬಿಕೆಯನ್ನು ಕಳೆದುಕೊಳ್ಳಬಾರದು.",
+    modernTakeawayEnglish: "Unyielding faith provides shelter when external circumstances feel chaotic or overwhelming.",
+    pratipadaartha: [
+      { wordKannada: "ದುರ್ಗತಿಹಾರೆ", wordTransliterated: "Durgatihaare", meaningKannada: "ಕೆಟ್ಟ ಸ್ಥಿತಿಯನ್ನು ಹೋಗಲಾಡಿಸುವವಳೇ", meaningEnglish: "Remover of misfortune" }
+    ],
+    metaphorsAndMundige: []
+  },
+
+  "ಆಯುವೃದ್ಧಿಯಾಗೋದು": {
+    isRecognizedSong: true,
+    titleKannada: "ಶ್ರೀ ಧನ್ವಂತ್ರಿ ಸೂಳಾದಿ",
+    titleEnglish: "Sri Dhanvantari Suladi",
+    composerKannada: "ವಿಜಯ ದಾಸರು",
+    composerEnglish: "Vijaya Dasaru",
+    ankitaKannada: "ವಿಜಯ ವಿಠ್ಠಲ",
+    ankitaEnglish: "Vijaya Vittala",
+    youtubeSearchQuery: "Dhanvantari Suladi Vijaya Dasa",
+    historicalContextKannada: "ಆರೋಗ್ಯ, ಆಯುಷ್ಯ ಮತ್ತು ದೈಹಿಕ-ಮಾನಸಿಕ ರೋಗಗಳ ಉಪಶಮನಕ್ಕಾಗಿ ಶ್ರೀ ವಿಜಯದಾಸರು ಧನ್ವಂತ್ರಿ ದೇವರನ್ನು ಸ್ತುತಿಸಿದ ಜನಪ್ರಿಯ ಸೂಳಾದಿ.",
+    historicalContextEnglish: "Vijaya Dasa’s devotional hymn invoking Lord Dhanvantari as the celestial healer to bestow vitality, clarity of mind, and freedom from chronic suffering.",
+    comprehensiveSummaryKannada: "ಧನ್ವಂತ್ರಿ ದೇವರ ಸ್ಮರಣೆಯಿಂದ ಆಯುಷ್ಯವು ಹೆಚ್ಚುವುದಲ್ಲದೆ, ದುಷ್ಕರ್ಮದ ಪ್ರಭಾವದಿಂದ ಬರುವ ರೋಗಗಳು ದೂರವಾಗಿ ಕಾಯವು ಪವಿತ್ರವಾಗುತ್ತದೆ ಎಂಬುದು ಈ ಕೃತಿಯ ಮುಖ್ಯ ಸಂದೇಶ.",
+    comprehensiveSummaryEnglish: "Meditating upon Lord Dhanvantari cleanses the physical body, promotes longevity, and removes the root causes of spiritual and somatic ailments.",
+    stanzas: [
+      {
+        stanzaType: "ಆರಂಭ ಪಾದ",
+        originalKannada: "ಆಯುವೃದ್ಧಿಯಾಗೋದು ಶ್ರೇಯಸ್ಸು ಬರುವುದು\nಕಾಯಾ ನಿರ್ಮಲಿನಾ ಕಾರಣವಾಹದೊ",
+        anvayaKannada: "ಧನ್ವಂತ್ರಿಯ ಕೃಪೆಯಿಂದ ಆಯುಷ್ಯ ಹೆಚ್ಚುವುದು, ಶ್ರೇಯಸ್ಸು ದೊರೆಯುವುದು ಹಾಗೂ ಈ ಶರೀರವು ನಿರ್ಮಲವಾಗುವುದು.",
+        anvayaEnglish: "Longevity flourishes, auspicious grace descends, and the physical vessel attains pure vitality."
+      },
+      {
+        stanzaType: "ಅಂತ್ಯ ಪಾದ",
+        originalKannada: "ವಾಯುವಂದಿತ ನಿತ್ಯ ವಿಜಯ ವಿಟ್ಠಲರೇಯಾ\nಪ್ರಿಯನು ಕಾಣೋ ನಮಗೆ ಅನಾದಿ ರೋಗ ಕಳೆವಾ ||",
+        anvayaKannada: "ಮುಖ್ಯಪ್ರಾಣದೇವರಿಂದ ವಂದಿತನಾದ ವಿಜಯವಿಠ್ಠಲನು ನಮ್ಮೆಲ್ಲರ ಅನಾದಿ ಕಾಲದ ಭವರೋಗವನ್ನು ಕಳೆಯುವ ಪ್ರಿಯ ಸ್ವಾಮಿಯಾಗಿದ್ದಾನೆ.",
+        anvayaEnglish: "Adored eternally by Vayu, Lord Vijaya Vittala is our cherished guardian who dissolves the ancient malady of worldly suffering."
+      }
+    ],
+    modernTakeawayKannada: "ಆರೋಗ್ಯ ಮತ್ತು ದೀರ್ಘಾಯುಷ್ಯವನ್ನು ಸಾರ್ಥಕ ಸತ್ಕಾರ್ಯಗಳಿಗಾಗಿ ಬಳಸಬೇಕು.",
+    modernTakeawayEnglish: "Health and vitality are sacred gifts meant to be utilized for constructive living and inner growth.",
+    pratipadaartha: [
+      { wordKannada: "ಕಾಯಾ", wordTransliterated: "Kaaya", meaningKannada: "ದೇಹ", meaningEnglish: "Body / Physical frame" },
+      { wordKannada: "ಅನಾದಿ ರೋಗ", wordTransliterated: "Anaadi Roga", meaningKannada: "ಸಂಸಾರದ ಭವರೋಗ / ಆಂತರಿಕ ಕೊರತೆ", meaningEnglish: "Primordial malady of existential ignorance" }
+    ],
+    metaphorsAndMundige: []
+  },
+
+  "ತಾರಕ್ಕ ಬಿಂದಿಗೆ": {
+    isRecognizedSong: true,
+    titleKannada: "ತಾರಕ್ಕ ಬಿಂದಿಗೆ ನೀರಿಗೆ ಹೋಗೋಣ (ಮುಂಡಿಗೆ)",
+    titleEnglish: "Tarakka Bindige Neerige Hogona (Mundige)",
     composerKannada: "ಪುರಂದರ ದಾಸರು",
     composerEnglish: "Purandara Dasaru",
     ankitaKannada: "ಪುರಂದರ ವಿಠ್ಠಲ",
@@ -46,9 +165,10 @@ const PRECACHED_SONGS: Record<string, any> = {
       { motifKannada: "ಬಿಂದಿಗೆ", motifEnglish: "The Water Pot", innerMeaningKannada: "ನಶ್ವರವಾದ ಮಾನವ ಶರೀರ ಮತ್ತು ಸಂಸ್ಕಾರದ ಪಾತ್ರೆ.", innerMeaningEnglish: "The mortal physical vehicle carrying inner consciousness." }
     ]
   },
-  "manava janma": {
+
+  "ಮಾನವ ಜನ್ಮ": {
     isRecognizedSong: true,
-    titleKannada: "ಮಾನವ ಜನ್ಮ ದೊಡ್ಡದು ಇದನ್ನು ಹಾನಿ ಮಾಡಬೇಡಿ",
+    titleKannada: "ಮಾನವ ಜನ್ಮ ದೊಡ್ಡದು (ದೇವರನಾಮ)",
     titleEnglish: "Manava Janma Doddadu",
     composerKannada: "ಪುರಂದರ ದಾಸರು",
     composerEnglish: "Purandara Dasaru",
@@ -65,6 +185,12 @@ const PRECACHED_SONGS: Record<string, any> = {
         originalKannada: "ಮಾನವ ಜನ್ಮ ದೊಡ್ಡದು ಇದನು ಹಾನಿ ಮಾಡಲಿಬೇಡಿ ಹುಚ್ಚಪ್ಪಗಳಿರಾ",
         anvayaKannada: "ಎಲೈ ಭ್ರಾಂತರೇ, ಮಾನವ ಜನ್ಮವು ಬಹಳ ಶ್ರೇಷ್ಠವಾದುದು; ಇದನ್ನು ವ್ಯರ್ಥವಾಗಿ ಹಾಳು ಮಾಡಿಕೊಳ್ಳಬೇಡಿ.",
         anvayaEnglish: "O misguided minds, this human birth is exceedingly precious; do not squander it away in carelessness."
+      },
+      {
+        stanzaType: "ಚರಣ / Charana",
+        originalKannada: "ವಿಷಯದಾಸೆಗೆ ಬಿದ್ದು ಮರುಳಾಗಬೇಡಿ | ಪುರಂದರವಿಠ್ಠಲನ ಚರಣವ ನೆನೆಯಿರೋ ||",
+        anvayaKannada: "ಕ್ಷಣಿಕ ಇಂದ್ರಿಯ ಸುಖಗಳ ಆಸೆಗೆ ಬಿದ್ದು ಮರುಳಾಗಬೇಡಿ; ಪುರಂದರವಿಠ್ಠಲನ ಪಾದಕಮಲಗಳನ್ನು ಸದಾ ಧ್ಯಾನಿಸಿರಿ.",
+        anvayaEnglish: "Do not lose your clarity chasing ephemeral pleasures; anchor your consciousness upon the lotus feet of Purandara Vittala."
       }
     ],
     modernTakeawayKannada: "ನಮ್ಮ ಸಮಯ ಮತ್ತು ಪ್ರಜ್ಞೆಯನ್ನು ನಿರರ್ಥಕ ವಿಷಯಗಳಲ್ಲಿ ಕಳೆಯದೆ, ಸಾರ್ಥಕ ಬದುಕಿಗಾಗಿ ಬಳಸಬೇಕು.",
@@ -73,6 +199,48 @@ const PRECACHED_SONGS: Record<string, any> = {
       { wordKannada: "ಹಾನಿ", wordTransliterated: "Hani", meaningKannada: "ನಾಶ / ವ್ಯರ್ಥ", meaningEnglish: "Waste / Loss" }
     ],
     metaphorsAndMundige: []
+  },
+
+  "ಕಲ್ಲು ಸಕ್ಕರೆ": {
+    isRecognizedSong: true,
+    titleKannada: "ಕಲ್ಲು ಸಕ್ಕರೆ ಕೊಳ್ಳಿರೋ ನೀವೆಲ್ಲರು (ದೇವರನಾಮ)",
+    titleEnglish: "Kallu Sakkare Kolliro",
+    composerKannada: "ಪುರಂದರ ದಾಸರು",
+    composerEnglish: "Purandara Dasaru",
+    ankitaKannada: "ಪುರಂದರ ವಿಠ್ಠಲ",
+    ankitaEnglish: "Purandara Vittala",
+    youtubeSearchQuery: "Kallu Sakkare Kolliro Purandara Dasa",
+    historicalContextKannada: "ವಿಜಯನಗರದ ಮಾರುಕಟ್ಟೆಯಲ್ಲಿ ವಜ್ರ, ರತ್ನ, ಸಕ್ಕರೆ ವ್ಯಾಪಾರವನ್ನು ನೋಡಿದ ಪುರಂದರದಾಸರು ಲೌಕಿಕ ವ್ಯಾಪಾರವನ್ನು ಹರಿನಾಮದ ಸವಿಗೆ ಹೋಲಿಸಿ ರಚಿಸಿದ ಸುಂದರ ಗೀತೆ.",
+    historicalContextEnglish: "Having witnessed the vibrant jewel and sugar bazaars of Vijayanagara, Purandara Dasa allegorizes commercial trade into the spiritual commerce of divine remembrance.",
+    comprehensiveSummaryKannada: "ಹರಿನಾಮವೆಂಬ ಕಲ್ಲು ಸಕ್ಕರೆಯು ಕರಗುವುದಿಲ್ಲ, ಹುಳ ಹಿಡಿಯುವುದಿಲ್ಲ, ಕಳ್ಳರು ಕದಿಯಲಾಗುವುದಿಲ್ಲ. ಇದು ನಾಲಿಗೆಗೆ ಅಮೃತದಂತಹ ಶಾಶ್ವತ ಸವಿಯನ್ನು ನೀಡುತ್ತದೆ ಎಂದು ಪುರಂದರದಾಸರು ವರ್ಣಿಸಿದ್ದಾರೆ.",
+    comprehensiveSummaryEnglish: "Purandara Dasa invites all to taste the crystallized sugar of the divine name—an asset that neither decays, dissolves, nor can be stolen by thieves.",
+    stanzas: [
+      {
+        stanzaType: "ಪಲ್ಲವಿ / Pallavi",
+        originalKannada: "ಕಲ್ಲು ಸಕ್ಕರೆ ಕೊಳ್ಳಿರೋ ನೀವೆಲ್ಲರು | ಕಲ್ಲು ಸಕ್ಕರೆ ಕೊಳ್ಳಿರೋ ||",
+        anvayaKannada: "ಜನರೇ, ನೀವೆಲ್ಲರೂ ಹರಿನಾಮವೆಂಬ ಈ ದಿವ್ಯ ಕಲ್ಲು ಸಕ್ಕರೆಯನ್ನು ಕೊಳ್ಳಿರಿ.",
+        anvayaEnglish: "O people, partake of this divine rock candy of sacred remembrance!"
+      },
+      {
+        stanzaType: "ಚರಣ / Charana",
+        originalKannada: "ಪುರಂದರವಿಠ್ಠಲನ ನಾಮವೆಂಬ ಸಕ್ಕರೆ | ಸವಿದು ನೋಡಿರೋ ನೀವೆಲ್ಲರು ||",
+        anvayaKannada: "ಪುರಂದರವಿಠ್ಠಲನ ನಾಮವೆಂಬ ಈ ಸಕ್ಕರೆಯ ಸವಿಯನ್ನು ನೀವೆಲ್ಲರೂ ಅನುಭವಿಸಿ ನೋಡಿರಿ.",
+        anvayaEnglish: "Taste for yourselves the supreme sweetness of Purandara Vittala's holy name."
+      }
+    ],
+    modernTakeawayKannada: "ನಿಜವಾದ ನೆಮ್ಮದಿ ಮತ್ತು ಆನಂದವು ಹೊರಗಿನ ಪದಾರ್ಥಗಳಲ್ಲಲ್ಲ, ಶುದ್ಧ ಆಂತರಿಕ ಭಾವದಲ್ಲಿದೆ.",
+    modernTakeawayEnglish: "True and lasting sweetness resides not in external commodities, but in cultivated inner consciousness.",
+    pratipadaartha: [
+      { wordKannada: "ಕಲ್ಲು ಸಕ್ಕರೆ", wordTransliterated: "Kallu Sakkare", meaningKannada: "ಹರಳು ಸಕ್ಕರೆ / ಹರಿನಾಮದ ಸಿಹಿ", meaningEnglish: "Crystallized rock candy (metaphor for divine name)" }
+    ],
+    metaphorsAndMundige: [
+      {
+        motifKannada: "ಕಲ್ಲು ಸಕ್ಕರೆ",
+        motifEnglish: "Crystallized Sugar",
+        innerMeaningKannada: "ಕ್ಷಯವಾಗದ ಶಾಶ್ವತ ಆನಂದ ಮತ್ತು ದೈವನಾಮದ ಮಾಧುರ್ಯ.",
+        innerMeaningEnglish: "The eternal, incorruptible sweetness of meditative awareness."
+      }
+    ]
   }
 };
 
@@ -116,21 +284,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Query cannot be empty" }, { status: 400 });
     }
 
-    // 1. FAST-PATH: Instant response for pre-cached canonical titles
     const normalized = query.toLowerCase().trim();
     for (const [key, cachedData] of Object.entries(PRECACHED_SONGS)) {
-      if (normalized.includes(key)) {
+      if (normalized.includes(key.toLowerCase())) {
         return NextResponse.json(cachedData);
       }
     }
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      return NextResponse.json({ error: "API key not configured" }, { status: 500 });
+      return NextResponse.json({ error: "GEMINI_API_KEY environment variable is not configured" }, { status: 500 });
     }
 
     const systemPrompt = `
-You are Dāsa Bodhini (ದಾಸ ಬೋಧಿನಿ), a scholar of Haridasa Sahitya (1263–1983 CE).
+You are Dāsa Bodhini (ದಾಸ ಬೋಧಿನಿ), a scholar of Haridasa Sahitya (spanning 1263–1983 CE).
 GROUND TRUTH REGISTRY:
 ${ANKITHA_AUTHORITY_REGISTRY}
 
@@ -168,14 +335,11 @@ RULES:
     };
 
     let response: Response | null = null;
-    let lastStatus = 500;
 
-    // 2. RESILIENT FALLBACK: Try 3.8-flash, then drop to 3.5-flash-lite
     for (const model of ACTIVE_MODELS) {
       try {
         response = await callGeminiWithBackoff(apiKey, model, bodyPayload);
         if (response.ok) break;
-        lastStatus = response.status;
       } catch (err) {
         console.warn(`Model ${model} unavailable, trying fallback...`);
       }
