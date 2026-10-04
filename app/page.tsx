@@ -60,7 +60,7 @@ export default function Home() {
   const [result, setResult] = useState<DecodeResult | null>(null);
   const [activeTab, setActiveTab] = useState<"summary" | "anvaya" | "vocab" | "mundige">("summary");
 
-  // Visual & Typographic Controls
+  // Typographic Controls
   const [kannadaSize, setKannadaSize] = useState<string>("text-base leading-relaxed");
   const [englishSize, setEnglishSize] = useState<string>("text-sm leading-relaxed");
 
@@ -69,6 +69,10 @@ export default function Home() {
   const recognitionRef = useRef<any>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
+  // Indian Recitation / Text-to-Speech State
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const synthRef = useRef<SpeechSynthesis | null>(null);
+
   // Structured Feedback Modal State
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [feedbackCategory, setFeedbackCategory] = useState("ಕೃತಿ ವಿಶ್ಲೇಷಣೆ ದೋಷ (Analysis Correction)");
@@ -76,6 +80,8 @@ export default function Home() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
+      synthRef.current = window.speechSynthesis;
+
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       if (SpeechRecognition) {
         const recognition = new SpeechRecognition();
@@ -94,6 +100,12 @@ export default function Home() {
         recognitionRef.current = recognition;
       }
     }
+
+    return () => {
+      if (synthRef.current) {
+        synthRef.current.cancel();
+      }
+    };
   }, []);
 
   const toggleMic = () => {
@@ -112,6 +124,57 @@ export default function Home() {
     }
   };
 
+  // Indian Recitation Engine: Calibrated for traditional Indic cadence
+  const handleToggleIndianVoice = () => {
+    if (!synthRef.current) {
+      alert("ನಿಮ್ಮ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಧ್ವನಿ ಸೌಲಭ್ಯ ಲಭ್ಯವಿಲ್ಲ.");
+      return;
+    }
+
+    if (isPlayingAudio) {
+      synthRef.current.cancel();
+      setIsPlayingAudio(false);
+      return;
+    }
+
+    if (!result) return;
+
+    synthRef.current.cancel();
+
+    // Compose dignified recitation script
+    const textToRead = `${result.titleKannada}. ಕರ್ತೃ ${result.composerKannada}. ಅಂಕಿತ ನಾಮ ${result.ankitaKannada}. ತಾತ್ಪರ್ಯ: ${result.comprehensiveSummaryKannada}. ಇಂದಿನ ಬದುಕಿಗೆ ಸಂದೇಶ: ${result.modernTakeawayKannada}`;
+
+    const utterance = new SpeechSynthesisUtterance(textToRead);
+    const availableVoices = synthRef.current.getVoices();
+
+    // Priority filter for authentic Indian voice profiles
+    const indicVoice = availableVoices.find(
+      (v) =>
+        v.lang === "kn-IN" ||
+        v.lang.startsWith("kn") ||
+        v.name.toLowerCase().includes("kannada") ||
+        v.name.toLowerCase().includes("india") ||
+        v.lang === "hi-IN"
+    );
+
+    if (indicVoice) {
+      utterance.voice = indicVoice;
+      utterance.lang = indicVoice.lang;
+    } else {
+      utterance.lang = "kn-IN";
+    }
+
+    // Traditional Pravachana cadence settings
+    utterance.rate = 0.86;
+    utterance.pitch = 0.96;
+
+    utterance.onstart = () => setIsPlayingAudio(true);
+    utterance.onend = () => setIsPlayingAudio(false);
+    utterance.onerror = () => setIsPlayingAudio(false);
+
+    synthRef.current.speak(utterance);
+  };
+
   const PRESET_SONGS = [
     { label: "ಶ್ರೀ ನರಸಿಂಹ ಸೂಳಾದಿ", query: "ವೀರ ಸಿಂಹನೆ ನಾರಸಿಂಹನೆ ದಯ ಪಾರಾವಾರನೆ ಭಯ ನಿವಾರಣ ನಿರ್ಗುಣ ಶ್ರೀ ನರಸಿಂಹ ಸೂಳಾದಿ" },
     { label: "ಶ್ರೀ ದುರ್ಗಾ ಸೂಳಾದಿ", query: "ದುರ್ಗಾ ದುರ್ಗೆಯೆ ಮಹಾದುಷ್ಟಜನ ಸಂಹಾರೆ ದುರ್ಗಾಂತರ್ಗತ ದುರ್ಗೆ ದುರ್ಲಭೆ ಸುಲಭೆ ಶ್ರೀ ದುರ್ಗಾ ಸೂಳಾದಿ ವಿಜಯದಾಸರು" },
@@ -127,6 +190,11 @@ export default function Home() {
     if (!textToQuery) {
       setError("ದಯವಿಟ್ಟು ಕೃತಿಯ ಪಲ್ಲವಿ ಅಥವಾ ಸಾಲುಗಳನ್ನು ನಮೂದಿಸಿ.");
       return;
+    }
+
+    if (synthRef.current) {
+      synthRef.current.cancel();
+      setIsPlayingAudio(false);
     }
 
     setInput(textToQuery);
@@ -193,20 +261,16 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Feedback & Attribution Stack */}
-          <div className="flex flex-col items-end gap-0.5">
+          <div className="flex items-center">
             <button
               onClick={() => setShowFeedbackModal(true)}
-              className="text-xs bg-white hover:bg-stone-50 text-stone-700 hover:text-stone-900 border border-stone-200 px-3 py-1.5 rounded-full transition-all flex items-center gap-1.5 font-medium shadow-2xs hover:shadow-xs active:scale-95 cursor-pointer"
+              className="text-xs bg-white hover:bg-stone-50 text-stone-700 hover:text-stone-900 border border-stone-200 px-3.5 py-1.5 rounded-full transition-all flex items-center gap-1.5 font-medium shadow-2xs hover:shadow-xs active:scale-95 cursor-pointer"
             >
               <svg className="w-3.5 h-3.5 fill-current text-emerald-600" viewBox="0 0 24 24">
                 <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.044c.101-.116.433-.506.549-.68.116-.174.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.043.073.043.419-.101.824z" />
               </svg>
               <span>Feedback</span>
             </button>
-            <span className="text-[10px] text-stone-500 font-sans tracking-tight pr-1">
-              By Madhav N V
-            </span>
           </div>
         </div>
       </header>
@@ -420,36 +484,57 @@ export default function Home() {
                 </a>
               </div>
 
-              {/* Typographic Sizing & PDF Export Toolbar */}
+              {/* Toolbar: Font Sizing, Indian Voice Recitation & PDF Export */}
               <div className="flex flex-wrap items-center justify-between gap-3 pt-2 text-xs text-stone-600 border-t border-stone-100">
-                <div className="flex items-center gap-2.5">
-                  <span className="font-medium text-stone-500">ಅಕ್ಷರ ಪ್ರಮಾಣ:</span>
-                  <div className="flex items-center bg-stone-100 p-0.5 rounded-lg border border-stone-200">
-                    <button
-                      onClick={() => setKannadaSize("text-sm leading-relaxed")}
-                      className={`px-2.5 py-1 rounded-md text-xs font-serif transition cursor-pointer ${
-                        kannadaSize.includes("text-sm") ? "bg-white text-amber-950 font-bold shadow-2xs" : "text-stone-600 hover:text-stone-900"
-                      }`}
-                    >
-                      ಅ
-                    </button>
-                    <button
-                      onClick={() => setKannadaSize("text-base leading-relaxed")}
-                      className={`px-2.5 py-1 rounded-md text-xs font-serif transition cursor-pointer ${
-                        kannadaSize.includes("text-base") ? "bg-white text-amber-950 font-bold shadow-2xs" : "text-stone-600 hover:text-stone-900"
-                      }`}
-                    >
-                      ಅ+
-                    </button>
-                    <button
-                      onClick={() => setKannadaSize("text-lg sm:text-xl leading-relaxed")}
-                      className={`px-2.5 py-1 rounded-md text-xs font-serif transition cursor-pointer ${
-                        kannadaSize.includes("text-lg") ? "bg-white text-amber-950 font-bold shadow-2xs" : "text-stone-600 hover:text-stone-900"
-                      }`}
-                    >
-                      ಅ++
-                    </button>
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium text-stone-500">ಅಕ್ಷರ ಪ್ರಮಾಣ:</span>
+                    <div className="flex items-center bg-stone-100 p-0.5 rounded-lg border border-stone-200">
+                      <button
+                        onClick={() => setKannadaSize("text-sm leading-relaxed")}
+                        className={`px-2.5 py-1 rounded-md text-xs font-serif transition cursor-pointer ${
+                          kannadaSize.includes("text-sm") ? "bg-white text-amber-950 font-bold shadow-2xs" : "text-stone-600 hover:text-stone-900"
+                        }`}
+                      >
+                        ಅ
+                      </button>
+                      <button
+                        onClick={() => setKannadaSize("text-base leading-relaxed")}
+                        className={`px-2.5 py-1 rounded-md text-xs font-serif transition cursor-pointer ${
+                          kannadaSize.includes("text-base") ? "bg-white text-amber-950 font-bold shadow-2xs" : "text-stone-600 hover:text-stone-900"
+                        }`}
+                      >
+                        ಅ+
+                      </button>
+                      <button
+                        onClick={() => setKannadaSize("text-lg sm:text-xl leading-relaxed")}
+                        className={`px-2.5 py-1 rounded-md text-xs font-serif transition cursor-pointer ${
+                          kannadaSize.includes("text-lg") ? "bg-white text-amber-950 font-bold shadow-2xs" : "text-stone-600 hover:text-stone-900"
+                        }`}
+                      >
+                        ಅ++
+                      </button>
+                    </div>
                   </div>
+
+                  {/* Indian Voice Pravachana Player Button */}
+                  <button
+                    onClick={handleToggleIndianVoice}
+                    className={`px-3.5 py-1.5 rounded-lg border text-xs font-semibold flex items-center gap-1.5 transition shadow-2xs cursor-pointer active:scale-95 ${
+                      isPlayingAudio
+                        ? "bg-amber-900 text-white border-amber-900 animate-pulse"
+                        : "bg-white hover:bg-stone-50 text-amber-950 border-amber-900/30"
+                    }`}
+                  >
+                    <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                      {isPlayingAudio ? (
+                        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                      ) : (
+                        <path d="M8 5v14l11-7z" />
+                      )}
+                    </svg>
+                    <span>{isPlayingAudio ? "ನಿಲ್ಲಿಸಿ (Stop)" : "ಆಲಿಸಿ (Listen)"}</span>
+                  </button>
                 </div>
 
                 <button
@@ -464,7 +549,7 @@ export default function Home() {
               </div>
             </section>
 
-            {/* Clean Segmented Tab Strip */}
+            {/* Segmented Tab Strip */}
             <div className="flex flex-wrap gap-2 border-b border-stone-200/80 pb-2">
               <button
                 onClick={() => setActiveTab("summary")}
@@ -570,7 +655,6 @@ export default function Home() {
               <div className="space-y-5">
                 {result.stanzas.map((stanza) => (
                   <div key={stanza.stanzaNumber} className="bg-white rounded-2xl border border-stone-200/80 p-5 sm:p-6 space-y-4 shadow-xs ring-1 ring-stone-900/5">
-                    {/* Stanza Type Badge */}
                     <div className="flex items-center justify-between border-b border-stone-100 pb-3">
                       <span className="px-3 py-1 rounded-md bg-stone-100 font-serif font-bold text-xs text-stone-800">
                         {stanza.stanzaType} #{stanza.stanzaNumber}
