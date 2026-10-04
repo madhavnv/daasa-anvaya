@@ -20,10 +20,99 @@ export default function Home() {
   const FEEDBACK_WHATSAPP_NUMBER = "919845509006";
 
   const PRESETS = [
-    { label: "Tarakka Bindige (ತಾರಕ್ಕ ಬಿಂದಿಗೆ)", query: "ತಾರಕ್ಕ ಬಿಂದಿಗೆ ನೀರಿಗೆ ಹೋಗೋಣ" },
-    { label: "Manava Janma (ಮಾನವ ಜನ್ಮ)", query: "manava janma doddadu idanu hani madikoliro" },
-    { label: "Kallu Sakkare (ಕಲ್ಲು ಸಕ್ಕರೆ)", query: "ಕಲ್ಲು ಸಕ್ಕರೆ ಕೊಳ್ಳಿರೋ ನೀವೆಲ್ಲರು" },
-    { label: "Jagadoddharana (ಜಗದೋದ್ಧಾರನ)", query: "jagadoddharana aadidalo yashoda" }
+    {
+      label: "Sri Narasimha Suladi",
+      labelKannada: "ಶ್ರೀ ನರಸಿಂಹ ಸೂಳಾದಿ",
+      badge: "ಸೂಳಾದಿ",
+      text: `ವೀರ ಸಿಂಹನೆ ನಾರಸಿಂಹನೆ ದಯ ಪಾರಾ
+ವಾರನೆ ಭಯ ನಿವಾರಣ ನಿರ್ಗುಣ
+ಸಾರಿದವರ ಸಂಸಾರ ವೃಕ್ಷದ ಮೂಲ
+ಬೇರರಿಸಿ ಕೀಳುವ ಬಿರಿದು ಭಯಂಕರ
+ಘೋರವತಾರ ಕರಾಳವದನ ಅ-
+ಘೋರ ದುರಿತ ಸಂಹಾರ ಮಾಯಾಕಾರ
+ಕ್ರೂರದೈತ್ಯರ ಶೋಕ ಕಾರಣ ಉದುಭವ
+ಈರೇಳು ಭುವನ ಸಾಗರದೊಡೆಯ
+ಅರೌದ್ರನಾಮಕ ವಿಜಯ ವಿಠ್ಠಲ ನರಸಿಂಗ
+ವೀರರ ಸಾತುಂಗ ಕಾರುಣ್ಯಪಾಂಗ.`
+    },
+    {
+      label: "Sri Durga Suladi",
+      labelKannada: "ಶ್ರೀ ದುರ್ಗಾ ಸೂಳಾದಿ",
+      badge: "ಸೂಳಾದಿ",
+      text: `ದುರ್ಗಾ ದುರ್ಗೆಯೆ ಮಹದುಷ್ಟಜನ ಸಂಹಾರೆ
+ದುರ್ಗಾಂತರ್ಗತ ದುರ್ಗೆ ದುರ್ಲಭೆ ಸುಲಭೆ
+ದುರ್ಗಮವಾಗಿದೆ ನಿನ್ನ ಮಹಿಮೆ ಬೊಮ್ಮ
+ಭರ್ಗಾದಿಗಳಿಗೆಲ್ಲ ಗುಣಿಸಿದರೂ
+ಸ್ವರ್ಗ ಭೂಮಿ ಪಾತಾಳ ವ್ಯಾಪುತ ದೇವಿ
+ವರ್ಗಕ್ಕೆ ಮೀರಿದ ಬಲು ಸುಂದರೀ
+ದುರ್ಗಣದವರ ಬಾಧೆ ಬಹಳವಾಗಿದೆ ತಾಯಿ
+ದುರ್ಗತಿಹಾರೆ ನಾನು ಪೇಳುವುದೇನು
+ದುರ್ಗಂಧವಾಗಿದೆ ಸಂಸೃತಿ ನೋಡಿದರೆ
+ನಿರ್ಗಮ ನಾ ಕಾಣೆನಮ್ಮ ಮಂಗಳಾಂಗೆ
+ದುರ್ಗೆ ಹೆ ದುರ್ಗೆ ಮಹಾ ದುರ್ಗೆ ಭೂದುರ್ಗೆ ವಿಷ್ಣು
+ದುರ್ಗೆ ದುರ್ಜಯ ದುರ್ಧಕ್ಷೆ ಶಕ್ತಿ
+ದುರ್ಗಕಾನನ ಗಹನ ಪರ್ವತಘೋರ ಸರ್ಪ
+ಗರ್ಗರ ಶಬ್ದ ವ್ಯಾಘ್ರ ಕರಡಿ ಮೃತ್ಯು
+ವರ್ಗ ಭೂತ ಪ್ರೇತ ಪೈಶಾಚಿ ಮೊದಲಾದ
+ದುರ್ಗಣ ಸಂಕಟ ಪ್ರಾಪ್ತವಾಗೆ
+ದುರ್ಗಾದುರ್ಗೆ ಎಂದು ಉಚ್ಚಸ್ವರದಿಂದ
+ನಿರ್ಗಳಿತವಾಗಿ ಒಮ್ಮೆ ಕೂಗಿದರೂ
+ಸ್ವರ್ಗಾಪವರ್ಗದಲ್ಲಿ ಹರಿಯೊಡನೆ ಇದ್ದರೂ
+ಸುರ್ಗಣ ಜಯ ಜಯವೆಂದು ಪೊಗಳುತಿರೆ
+ಕರ್ಗಳಿಂದಲಿ ಎತ್ತಿ ಸಾಕುವ ಸಾಕ್ಷಿ ಭೂತೆ
+ನಿರ್ಗುಡಿದಂತೆ ಲೋಕ ಲೀಲೆ ನಿನಗೆ
+ಸ್ವರ್ಗಂಗಾಜನಕ ನಮ್ಮ ವಿಜಯ ವಿಠ್ಠಲನಂಘ್ರಿ
+ದುರ್ಗಾಶ್ರಮ ಮಾಡಿ ಬದುಕುವಂತೆ ಮಾಡು ||`
+    },
+    {
+      label: "Sri Dhanvantari Suladi",
+      labelKannada: "ಶ್ರೀ ಧನ್ವಂತ್ರಿ ಸೂಳಾದಿ",
+      badge: "ಸೂಳಾದಿ",
+      text: `ಆಯುವೃದ್ಧಿಯಾಗೋದು ಶ್ರೇಯಸ್ಸು ಬರುವುದು
+ಕಾಯಾ ನಿರ್ಮಲಿನಾ ಕಾರಣವಾಹದೊ
+ಮಾಯಾ ಹಿಂದಾಗುವದು ನಾನಾ ರೋಗದ ಬೀಜ
+ಬೇಯಿಸಿ ಕಳೆವದು ವೇಗದಿಂದ
+ನಾಯಿ ಮೊದಲಾದ ಕುತ್ಸಿತ ದೇಹ ನಿ
+ಕಾಯವಾ ತೆತ್ತು ದುಷ್ಕರ್ಮದಿಂದ
+ಕ್ರೀಯಮಾಣ ಸಂಚಿತ ಭರಿತವಾಗಿದ್ದ ದುಃಖ
+ಹೇಯ ಸಾಗರದೊಳು ಬಿದ್ದು ಬಳಲೀ
+ನೋಯಿಸಿಕೊಂಡು ನೆಲೆಗಾಣದೆ ಒಮ್ಮೆ ತನ್ನ
+ಬಾಯಲಿ ವೈದ್ಯಮೂರ್ತಿ ಶ್ರೀಧನ್ವಂತ್ರಿ
+ರಾಯಾ ರಾಜೌಷಧಿ ನಿಯಾಮಕ ಕರ್ತ
+ಶ್ರೀಯರಸನೆಂದು ತುತಿಸಲಾಗಿ
+ತಾಯಿ ಒದಗಿ ಬಂದು ಬಾಲನ್ನ ಸಾಕಿದಂತೆ
+ನೋಯಗೊಡದೆ ನಮ್ಮನ್ನು ಪಾಲಿಪಾ
+ಧ್ಯೇಯಾ ದೇವಾದಿಗಳಿಗೆ ಧರ್ಮಜ ಗುಣಸಾಂದ್ರ
+ಶ್ರೇಯಸ್ಸು ಕೊಡುವನು ಭಜಕರಿಗೆ
+ಮಾಯಾ ಮಂತ್ರದಿಂದ ಜಗವೆಲ್ಲ ವ್ಯಾಪಿಸಿದ
+ನ್ಯಾಯವಂತನಾಗಿ ಚೇಷ್ಟೆ ಮಾಳ್ಪಾ
+ವಾಯುವಂದಿತ ನಿತ್ಯ ವಿಜಯ ವಿಟ್ಠಲರೇಯಾ
+ಪ್ರಿಯನು ಕಾಣೋ ನಮಗೆ ಅನಾದಿ ರೋಗ ಕಳೆವಾ ||`
+    },
+    {
+      label: "Tarakka Bindige",
+      labelKannada: "ತಾರಕ್ಕ ಬಿಂದಿಗೆ",
+      badge: "ಮುಂಡಿಗೆ",
+      text: `ತಾರಕ್ಕ ಬಿಂದಿಗೆ ನೀರಿಗೆ ಹೋಗೋಣ ಬಾರೆ ಚೆಲುವೆ
+ಬಿಂದಿಗೆ ಒಡೆದರೆ ಒಂಬತ್ತು ತೂತು
+ತಂದ ಪುರಂದರವಿಠ್ಠಲಗೊಪ್ಪಿಸು`
+    },
+    {
+      label: "Manava Janma Doddadu",
+      labelKannada: "ಮಾನವ ಜನ್ಮ ದೊಡ್ಡದು",
+      badge: "ದೇವರನಾಮ",
+      text: `ಮಾನವ ಜನ್ಮ ದೊಡ್ಡದು ಇದನು ಹಾನಿ ಮಾಡಲಿಬೇಡಿ ಹುಚ್ಚಪ್ಪಗಳಿರಾ
+ವಿಷಯದಾಸೆಗೆ ಬಿದ್ದು ಮರುಳಾಗಬೇಡಿ
+ಪುರಂದರವಿಠ್ಠಲನ ಚರಣವ ನೆನೆಯಿರೋ`
+    },
+    {
+      label: "Kallu Sakkare Kolliro",
+      labelKannada: "ಕಲ್ಲು ಸಕ್ಕರೆ ಕೊಳ್ಳಿರೋ",
+      badge: "ದೇವರನಾಮ",
+      text: `ಕಲ್ಲು ಸಕ್ಕರೆ ಕೊಳ್ಳಿರೋ ನೀವೆಲ್ಲರು ಕಲ್ಲು ಸಕ್ಕರೆ ಕೊಳ್ಳಿರೋ
+ಪುರಂದರವಿಠ್ಠಲನ ನಾಮವೆಂಬ ಸಕ್ಕರೆ
+ಸವಿದು ನೋಡಿರೋ ನೀವೆಲ್ಲರು`
+    }
   ];
 
   const isIOSDevice = () => {
@@ -50,9 +139,7 @@ export default function Home() {
       (window as any).webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-      alert(
-        "Microphone API is not supported in this browser. On iPhone, ensure Dictation is enabled in Settings > General > Keyboards."
-      );
+      alert("Microphone API is not supported in this browser. On iPhone, ensure Dictation is enabled in Settings > General > Keyboards.");
       return;
     }
 
@@ -79,37 +166,26 @@ export default function Home() {
         for (let i = 0; i < event.results.length; i++) {
           text += event.results[i][0].transcript;
         }
-        if (text) {
-          setInput(text);
-        }
+        if (text) setInput(text);
       };
 
       recognition.onerror = (event: any) => {
-        console.warn("Speech recognition error:", event.error);
+        console.warn("Speech error:", event.error);
         setIsListening(false);
-
         if (event.error === "not-allowed" || event.error === "service-not-allowed") {
-          alert(
-            "Microphone permission blocked. Please enable Microphone access for this browser in device Settings."
-          );
+          alert("Microphone permission blocked. Please enable Microphone access in device Settings.");
         } else if (event.error === "language-not-supported") {
-          alert(
-            "Kannada speech recognition is not supported on iOS WebKit. Switched to English (phonetic transliteration)."
-          );
+          alert("Switched to English phonetics for dictation.");
           setSpeechLang("en-IN");
         }
       };
 
-      recognition.onend = () => {
-        setIsListening(false);
-      };
-
+      recognition.onend = () => setIsListening(false);
       recognitionRef.current = recognition;
       recognition.start();
     } catch (err: any) {
-      console.error("Failed to start speech recognition:", err);
       setIsListening(false);
-      alert("Could not start microphone. Please ensure dictation is enabled on your phone.");
+      alert("Could not start microphone. Please ensure dictation is enabled.");
     }
   };
 
@@ -175,18 +251,14 @@ export default function Home() {
               v.name.includes("Kannada")))
       ) || voices.find((v) => v.lang.includes("hi-IN") || v.lang.includes("en-IN"));
 
-    if (indianVoice) {
-      utterance.voice = indianVoice;
-    }
+    if (indianVoice) utterance.voice = indianVoice;
     utterance.lang = "kn-IN";
     utterance.rate = 0.82;
     utterance.pitch = 1.0;
     window.speechSynthesis.speak(utterance);
   };
 
-  const exportPDF = () => {
-    window.print();
-  };
+  const exportPDF = () => window.print();
 
   const shareToWhatsApp = () => {
     if (!result) return;
@@ -251,7 +323,7 @@ export default function Home() {
         <div className="no-print bg-white rounded-2xl border border-stone-200 shadow-sm p-4 sm:p-5 space-y-3">
           <div className="relative">
             <textarea
-              rows={4}
+              rows={5}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder={
@@ -281,18 +353,8 @@ export default function Home() {
                   <rect x="6" y="6" width="12" height="12" rx="2" />
                 </svg>
               ) : (
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 003-3V5a3 3 0 10-6 0v6a3 3 0 003 3z"
-                  />
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 003-3V5a3 3 0 10-6 0v6a3 3 0 003 3z" />
                 </svg>
               )}
             </button>
@@ -351,19 +413,31 @@ export default function Home() {
             </button>
           </div>
 
-          <div className="flex items-center gap-1.5 flex-wrap pt-2.5 border-t border-stone-100 text-xs text-stone-500">
-            <span className="font-medium text-stone-400">Presets:</span>
+          {/* 6 Curated Presets */}
+          <div className="flex items-center gap-2 flex-wrap pt-2.5 border-t border-stone-100 text-xs text-stone-500">
+            <span className="font-semibold text-stone-500">ಮಾದರಿಗಳು (Presets):</span>
             {PRESETS.map((p) => (
               <button
                 key={p.label}
                 type="button"
                 onClick={() => {
-                  setInput(p.query);
-                  handleDecode(p.query);
+                  setInput(p.text);
+                  handleDecode(p.text);
                 }}
-                className="px-2.5 py-1 bg-stone-100 hover:bg-stone-200 rounded-md text-stone-700 transition border border-stone-200 cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-stone-50 hover:bg-stone-100 rounded-lg text-stone-800 transition border border-stone-200 cursor-pointer shadow-2xs text-xs font-medium"
               >
-                {p.label}
+                <span
+                  className={`px-1.5 py-0.5 rounded text-[10px] font-bold border ${
+                    p.badge === "ಸೂಳಾದಿ"
+                      ? "bg-amber-900/10 text-amber-900 border-amber-900/20"
+                      : p.badge === "ಮುಂಡಿಗೆ"
+                      ? "bg-purple-900/10 text-purple-900 border-purple-900/20"
+                      : "bg-stone-200/60 text-stone-800 border-stone-300"
+                  }`}
+                >
+                  {p.badge}
+                </span>
+                <span>{p.labelKannada}</span>
               </button>
             ))}
           </div>
@@ -399,9 +473,7 @@ export default function Home() {
                     onClick={() => setFontSize("normal")}
                     className={
                       "px-2 py-0.5 rounded text-xs " +
-                      (fontSize === "normal"
-                        ? "bg-stone-900 text-white font-semibold"
-                        : "text-stone-600")
+                      (fontSize === "normal" ? "bg-stone-900 text-white font-semibold" : "text-stone-600")
                     }
                   >
                     A
@@ -410,9 +482,7 @@ export default function Home() {
                     onClick={() => setFontSize("large")}
                     className={
                       "px-2 py-0.5 rounded text-xs " +
-                      (fontSize === "large"
-                        ? "bg-stone-900 text-white font-semibold"
-                        : "text-stone-600")
+                      (fontSize === "large" ? "bg-stone-900 text-white font-semibold" : "text-stone-600")
                     }
                   >
                     A+
@@ -421,9 +491,7 @@ export default function Home() {
                     onClick={() => setFontSize("xlarge")}
                     className={
                       "px-2 py-0.5 rounded text-xs " +
-                      (fontSize === "xlarge"
-                        ? "bg-stone-900 text-white font-semibold"
-                        : "text-stone-600")
+                      (fontSize === "xlarge" ? "bg-stone-900 text-white font-semibold" : "text-stone-600")
                     }
                   >
                     A++
@@ -473,18 +541,11 @@ export default function Home() {
 
               <div className="flex flex-wrap items-center justify-between border-t border-stone-700 pt-3 text-xs gap-3">
                 <span className="text-stone-300">
-                  Composer:{" "}
-                  <strong className="text-white font-medium">
-                    {result.composerKannada}
-                  </strong>{" "}
-                  ({result.composerEnglish})
+                  Composer: <strong className="text-white font-medium">{result.composerKannada}</strong> ({result.composerEnglish})
                 </span>
 
                 <a
-                  href={
-                    "https://www.youtube.com/results?search_query=" +
-                    encodeURIComponent(result.youtubeSearchQuery)
-                  }
+                  href={"https://www.youtube.com/results?search_query=" + encodeURIComponent(result.youtubeSearchQuery)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="no-print bg-stone-800 hover:bg-stone-700 border border-stone-600 px-3 py-1 rounded-lg text-amber-200 transition font-medium"
@@ -503,12 +564,7 @@ export default function Home() {
                 <p className={"font-serif text-stone-900 " + kannadaSize}>
                   {result.historicalContextKannada}
                 </p>
-                <p
-                  className={
-                    "text-stone-700 italic font-sans pt-1 border-t border-amber-900/10 " +
-                    englishSize
-                  }
-                >
+                <p className={"text-stone-700 italic font-sans pt-1 border-t border-amber-900/10 " + englishSize}>
                   {result.historicalContextEnglish}
                 </p>
               </div>
@@ -519,12 +575,7 @@ export default function Home() {
               <span className="text-xs font-bold uppercase tracking-wider text-stone-700 block">
                 ಸಮಗ್ರ ಭಾವಾರ್ಥ • Comprehensive Summary
               </span>
-              <p
-                className={
-                  "font-serif text-stone-900 bg-stone-50 p-3.5 rounded-xl border border-stone-100 " +
-                  kannadaSize
-                }
-              >
+              <p className={"font-serif text-stone-900 bg-stone-50 p-3.5 rounded-xl border border-stone-100 " + kannadaSize}>
                 {result.comprehensiveSummaryKannada}
               </p>
               <p className={"text-stone-700 font-sans " + englishSize}>
@@ -539,10 +590,7 @@ export default function Home() {
               </h3>
 
               {result.stanzas?.map((stanza: any, idx: number) => (
-                <div
-                  key={idx}
-                  className="bg-white rounded-2xl border border-stone-200 overflow-hidden"
-                >
+                <div key={idx} className="bg-white rounded-2xl border border-stone-200 overflow-hidden">
                   <div className="bg-stone-50 border-b border-stone-100 px-4 py-2.5 flex items-center justify-between">
                     <span className="text-xs font-bold uppercase tracking-wider text-amber-950 font-serif">
                       {stanza.stanzaType}
@@ -568,12 +616,7 @@ export default function Home() {
                       <span className="text-[10px] font-semibold text-amber-900 uppercase tracking-wider block">
                         ಕನ್ನಡ ವಾಕ್ಯಾನ್ವಯ (Syntax Flow)
                       </span>
-                      <p
-                        className={
-                          "font-serif text-stone-900 bg-amber-50/40 p-3.5 rounded-xl border border-amber-100/60 " +
-                          kannadaSize
-                        }
-                      >
+                      <p className={"font-serif text-stone-900 bg-amber-50/40 p-3.5 rounded-xl border border-amber-100/60 " + kannadaSize}>
                         {stanza.anvayaKannada}
                       </p>
                     </div>
@@ -582,12 +625,7 @@ export default function Home() {
                       <span className="text-[10px] font-semibold text-stone-500 uppercase tracking-wider block">
                         English Meaning
                       </span>
-                      <p
-                        className={
-                          "text-stone-700 bg-stone-50 p-3.5 rounded-xl border border-stone-200/60 font-sans " +
-                          englishSize
-                        }
-                      >
+                      <p className={"text-stone-700 bg-stone-50 p-3.5 rounded-xl border border-stone-200/60 font-sans " + englishSize}>
                         {stanza.anvayaEnglish}
                       </p>
                     </div>
@@ -617,25 +655,14 @@ export default function Home() {
                 </span>
                 <div className="divide-y divide-stone-100">
                   {result.pratipadaartha.map((w: any, i: number) => (
-                    <div
-                      key={i}
-                      className="py-2.5 grid grid-cols-1 sm:grid-cols-2 gap-1 text-xs sm:text-sm"
-                    >
+                    <div key={i} className="py-2.5 grid grid-cols-1 sm:grid-cols-2 gap-1 text-xs sm:text-sm">
                       <div>
-                        <span className="font-semibold text-stone-900">
-                          {w.wordKannada}
-                        </span>
-                        <span className="text-stone-400 text-xs ml-1.5 font-mono">
-                          ({w.wordTransliterated})
-                        </span>
+                        <span className="font-semibold text-stone-900">{w.wordKannada}</span>
+                        <span className="text-stone-400 text-xs ml-1.5 font-mono">({w.wordTransliterated})</span>
                       </div>
                       <div className="text-stone-700">
-                        <span className="text-stone-900 font-medium">
-                          {w.meaningKannada}
-                        </span>
-                        <span className="text-stone-500 block sm:inline sm:ml-2 italic text-xs">
-                          "{w.meaningEnglish}"
-                        </span>
+                        <span className="text-stone-900 font-medium">{w.meaningKannada}</span>
+                        <span className="text-stone-500 block sm:inline sm:ml-2 italic text-xs">"{w.meaningEnglish}"</span>
                       </div>
                     </div>
                   ))}
@@ -651,20 +678,12 @@ export default function Home() {
                 </span>
                 <div className="space-y-2">
                   {result.metaphorsAndMundige.map((m: any, i: number) => (
-                    <div
-                      key={i}
-                      className="p-3.5 bg-stone-50 rounded-xl border border-stone-100 text-xs sm:text-sm space-y-1"
-                    >
+                    <div key={i} className="p-3.5 bg-stone-50 rounded-xl border border-stone-100 text-xs sm:text-sm space-y-1">
                       <div className="font-semibold text-stone-900">
-                        {m.motifKannada}{" "}
-                        <span className="text-stone-500 font-normal">
-                          ({m.motifEnglish})
-                        </span>
+                        {m.motifKannada} <span className="text-stone-500 font-normal">({m.motifEnglish})</span>
                       </div>
                       <p className="text-stone-700">{m.innerMeaningKannada}</p>
-                      <p className="text-stone-500 italic text-xs">
-                        {m.innerMeaningEnglish}
-                      </p>
+                      <p className="text-stone-500 italic text-xs">{m.innerMeaningEnglish}</p>
                     </div>
                   ))}
                 </div>
@@ -673,7 +692,7 @@ export default function Home() {
           </div>
         )}
 
-        {/* Beta Mode Disclaimer & Creator Attribution Footer */}
+        {/* Beta Mode Disclaimer & Attribution Footer */}
         <footer className="no-print pt-8 pb-4 text-center border-t border-stone-200 space-y-2.5">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100/70 border border-amber-200 text-amber-950 text-[11px] font-medium">
             <span className="inline-block w-2 h-2 rounded-full bg-amber-600 animate-pulse"></span>
@@ -698,7 +717,6 @@ export default function Home() {
             </button>
           </div>
 
-          {/* Attribution Credit */}
           <div className="pt-3 border-t border-stone-200/60 text-stone-500 text-[11px] tracking-wide">
             <span>ಸಂಕಲನ ಮತ್ತು ತಂತ್ರಜ್ಞಾನ: </span>
             <strong className="text-stone-800 font-medium">ಮಾಧವ್ ಎನ್ ವಿ</strong>
@@ -736,17 +754,13 @@ export default function Home() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-stone-500">
-                Category (ವಿಭಾಗ):
-              </label>
+              <label className="text-xs font-semibold text-stone-500">Category (ವಿಭಾಗ):</label>
               <select
                 value={feedbackCategory}
                 onChange={(e) => setFeedbackCategory(e.target.value)}
                 className="w-full text-xs p-2.5 border border-stone-200 rounded-lg bg-stone-50"
               >
-                <option value="Meaning / ಅರ್ಥ ಅಥವಾ ಅನ್ವಯ ದೋಷ">
-                  Meaning / Translation error
-                </option>
+                <option value="Meaning / ಅರ್ಥ ಅಥವಾ ಅನ್ವಯ ದೋಷ">Meaning / Translation error</option>
                 <option value="Voice / ಧ್ವನಿ ಸರಿ ಇಲ್ಲ">Voice / Audio issue</option>
                 <option value="Song Missing / ಹಾಡು ಸಿಗಲಿಲ್ಲ">Could not find song</option>
                 <option value="Suggestion / ಸಲಹೆ">Feature request / Suggestion</option>
@@ -754,9 +768,7 @@ export default function Home() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-stone-500">
-                Comments (ವಿವರ):
-              </label>
+              <label className="text-xs font-semibold text-stone-500">Comments (ವಿವರ):</label>
               <textarea
                 rows={3}
                 value={feedbackText}
