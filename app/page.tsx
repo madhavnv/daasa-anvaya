@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 
 interface StanzaBreakdown {
   stanzaNumber: number;
@@ -31,6 +31,13 @@ interface DecodeResult {
   compositionType: "ಕೀರ್ತನೆ / ದೇವರನಾಮ" | "ಸೂಳಾದಿ" | "ಉಗಾಭೋಗ" | "ಮುಂಡಿಗೆ";
   ragaTradition?: string;
   talaTradition?: string;
+  classicalRendition?: {
+    artist: string;
+    raga: string;
+    tala: string;
+    audioUrl?: string;
+    sourceNote?: string;
+  };
   stanzas: StanzaBreakdown[];
   metaphorsAndMundige?: Array<{
     allegoryKannada: string;
@@ -56,8 +63,6 @@ export default function Home() {
   // Visual & Typographic Controls
   const [kannadaSize, setKannadaSize] = useState<string>("text-base");
   const [englishSize, setEnglishSize] = useState<string>("text-sm");
-  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
-  const speechUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
   // Quick Action Presets
   const PRESET_SONGS = [
@@ -113,7 +118,7 @@ export default function Home() {
     },
   ];
 
-  // Universal Decode Handler that eliminates React State timing race conditions
+  // Universal Decoder Handler
   const handleDecode = async (overrideInput?: string) => {
     const textToQuery = (typeof overrideInput === "string" ? overrideInput : input).trim();
     
@@ -125,13 +130,11 @@ export default function Home() {
     setInput(textToQuery);
     setLoading(true);
     setError(null);
-    stopAudio();
 
     try {
       const res = await fetch("/api/decode", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        // Sends both query and input to remain fully compatible with any route handler check
         body: JSON.stringify({ 
           query: textToQuery,
           input: textToQuery 
@@ -156,37 +159,6 @@ export default function Home() {
     }
   };
 
-  // Kannada Text-to-Speech Engine
-  const playKannadaAudio = (text: string) => {
-    if (!("speechSynthesis" in window)) {
-      alert("ನಿಮ್ಮ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಧ್ವನಿ ಸೌಲಭ್ಯ ಲಭ್ಯವಿಲ್ಲ (Speech synthesis not supported).");
-      return;
-    }
-
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "kn-IN";
-    utterance.rate = 0.88;
-
-    const voices = window.speechSynthesis.getVoices();
-    const knVoice = voices.find((v) => v.lang.includes("kn") || v.name.toLowerCase().includes("kannada"));
-    if (knVoice) utterance.voice = knVoice;
-
-    utterance.onend = () => setIsPlayingAudio(false);
-    utterance.onerror = () => setIsPlayingAudio(false);
-
-    speechUtteranceRef.current = utterance;
-    setIsPlayingAudio(true);
-    window.speechSynthesis.speak(utterance);
-  };
-
-  const stopAudio = () => {
-    if ("speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-      setIsPlayingAudio(false);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-[#FAF8F5] text-stone-900 selection:bg-amber-100 flex flex-col font-sans">
       {/* Masthead Header */}
@@ -207,7 +179,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Direct Support & Feedback Link */}
+          {/* Quick Support & Feedback Link */}
           <div className="flex items-center gap-2">
             <a
               href="https://wa.me/919845509006?text=Namaskara,%20feedback%20regarding%20Dasa%20Bodhini%20app:"
@@ -397,7 +369,69 @@ export default function Home() {
                 </p>
               </div>
 
-              {/* Toolbar: Font Scaling & Audio */}
+              {/* Classical Maestro Rendition Player Card */}
+              {result.classicalRendition && (
+                <div className="bg-radial from-amber-50/80 to-[#FBF8F1] border border-amber-900/20 rounded-2xl p-4 sm:p-5 shadow-2xs space-y-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-amber-900/10 pb-2.5">
+                    <div className="flex items-center gap-2">
+                      <span className="p-1.5 rounded-lg bg-amber-900/10 text-amber-900">
+                        {/* Veena / Classical Music Icon */}
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                        </svg>
+                      </span>
+                      <div>
+                        <h3 className="font-serif font-bold text-amber-950 text-sm sm:text-base flex items-center gap-2">
+                          <span>ಶಾಸ್ತ್ರೀಯ ಗಾಯನ</span>
+                          <span className="text-xs font-sans font-normal text-amber-900/70">| Classical Master Rendition</span>
+                        </h3>
+                        <p className="text-[11px] text-stone-500">
+                          ಪ್ರಾಮಾಣಿಕ ಹರಿದಾಸ ಸಂಪ್ರದಾಯದ ಸಂಗೀತ ಧ್ವನಿಮುದ್ರಿಕೆ
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-xs">
+                      <span className="px-2.5 py-0.5 rounded-full bg-amber-900/10 text-amber-950 font-serif font-semibold">
+                        ಗಾಯಕರು: {result.classicalRendition.artist}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+                    <div className="text-xs text-stone-600 space-y-0.5">
+                      <div className="flex items-center gap-3">
+                        <span><strong>ರಾಗ:</strong> {result.classicalRendition.raga}</span>
+                        <span><strong>ತಾಳ:</strong> {result.classicalRendition.tala}</span>
+                      </div>
+                      {result.classicalRendition.sourceNote && (
+                        <p className="text-[11px] text-stone-500 italic">
+                          {result.classicalRendition.sourceNote}
+                        </p>
+                      )}
+                    </div>
+
+                    {result.classicalRendition.audioUrl ? (
+                      <div className="w-full sm:w-auto">
+                        <audio
+                          controls
+                          controlsList="nodownload"
+                          className="w-full sm:w-72 h-8 rounded-lg accent-amber-900"
+                          src={result.classicalRendition.audioUrl}
+                        >
+                          ನಿಮ್ಮ ಬ್ರೌಸರ್ ಆಡಿಯೋ ಪ್ಲೇಯರ್ ಬೆಂಬಲಿಸುವುದಿಲ್ಲ.
+                        </audio>
+                      </div>
+                    ) : (
+                      <div className="text-[11px] text-amber-800 bg-amber-100/60 px-3 py-1.5 rounded-lg italic">
+                        ಗಾಯನ ಆವೃತ್ತಿಯನ್ನು ಶೀಘ್ರದಲ್ಲೇ ಅಪ್‌ಲೋಡ್ ಮಾಡಲಾಗುತ್ತದೆ.
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Toolbar: Font Scaling & PDF Export */}
               <div className="flex flex-wrap items-center justify-between gap-3 pt-1 text-xs text-stone-600">
                 <div className="flex items-center gap-3">
                   <span className="font-medium text-stone-500">ಕನ್ನಡ ಅಕ್ಷರ:</span>
@@ -423,37 +457,15 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => {
-                      if (isPlayingAudio) stopAudio();
-                      else {
-                        const allKannada = result.stanzas.map((s) => `${s.stanzaType}. ${s.originalTextKannada}. ${s.anvayaKannada}`).join(". ");
-                        playKannadaAudio(allKannada);
-                      }
-                    }}
-                    className="bg-stone-100 hover:bg-stone-200 text-stone-800 px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer shadow-2xs"
-                  >
-                    <svg className="w-3.5 h-3.5 text-amber-900" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                      {isPlayingAudio ? (
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
-                      ) : (
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                      )}
-                    </svg>
-                    <span>{isPlayingAudio ? "ಧ್ವನಿ ನಿಲ್ಲಿಸಿ (Stop Audio)" : "ಕೃತಿ ವಾಚನ (Read Audio)"}</span>
-                  </button>
-
-                  <button
-                    onClick={() => window.print()}
-                    className="bg-stone-100 hover:bg-stone-200 text-stone-800 px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer shadow-2xs"
-                  >
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                    </svg>
-                    <span>Export PDF (ಮುದ್ರಿಸಿ)</span>
-                  </button>
-                </div>
+                <button
+                  onClick={() => window.print()}
+                  className="bg-stone-100 hover:bg-stone-200 text-stone-800 px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                  </svg>
+                  <span>Export PDF (ಮುದ್ರಿಸಿ)</span>
+                </button>
               </div>
             </section>
 
@@ -508,16 +520,6 @@ export default function Home() {
                       <span className="px-2.5 py-0.5 rounded-md bg-stone-100 font-serif font-bold text-xs text-stone-700">
                         {stanza.stanzaType} #{stanza.stanzaNumber}
                       </span>
-                      <button
-                        onClick={() => playKannadaAudio(`${stanza.originalTextKannada}. ${stanza.anvayaKannada}`)}
-                        className="text-stone-400 hover:text-amber-900 text-xs flex items-center gap-1 transition cursor-pointer"
-                        title="ಈ ಚರಣವನ್ನು ಆಲಿಸಿ"
-                      >
-                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                        </svg>
-                        <span>ಆಲಿಸಿ</span>
-                      </button>
                     </div>
 
                     {/* Original Sahitya */}
