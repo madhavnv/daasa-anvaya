@@ -68,12 +68,13 @@ export default function Home() {
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<any>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const searchConsoleRef = useRef<HTMLDivElement | null>(null);
   const micTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Results Scroll Anchor
   const resultsRef = useRef<HTMLDivElement | null>(null);
 
-  // Robust Indic Speech Synthesis Engine
+  // Indic Speech Synthesis Engine
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const [loadedVoices, setLoadedVoices] = useState<SpeechSynthesisVoice[]>([]);
 
@@ -145,7 +146,7 @@ export default function Home() {
     },
   ];
 
-  // Helper to safely stop listening and reset watchdog timer
+  // Helper to safely stop listening and clear timer
   const stopListening = () => {
     if (micTimeoutRef.current) {
       clearTimeout(micTimeoutRef.current);
@@ -169,13 +170,12 @@ export default function Home() {
 
       if (SpeechRecognition) {
         const recognition = new SpeechRecognition();
-        recognition.continuous = false; // Stop after first finished sentence
+        recognition.continuous = false;
         recognition.interimResults = false;
         recognition.lang = "kn-IN";
 
         recognition.onstart = () => {
           setIsListening(true);
-          // Safety Watchdog: Auto-cancel after 8 seconds of silence/no input
           if (micTimeoutRef.current) clearTimeout(micTimeoutRef.current);
           micTimeoutRef.current = setTimeout(() => {
             stopListening();
@@ -191,7 +191,6 @@ export default function Home() {
         };
 
         recognition.onspeechend = () => {
-          // Immediately stop when user pauses or finishes speaking
           stopListening();
         };
 
@@ -211,7 +210,6 @@ export default function Home() {
         recognitionRef.current = recognition;
       }
 
-      // Setup Speech Synthesis voice pool
       if ("speechSynthesis" in window) {
         const populateVoices = () => {
           const voices = window.speechSynthesis.getVoices();
@@ -247,7 +245,6 @@ export default function Home() {
       try {
         recognitionRef.current.start();
       } catch (err) {
-        // If recognition was in a stale state, abort and restart cleanly
         recognitionRef.current.abort();
         setTimeout(() => {
           try {
@@ -350,7 +347,6 @@ export default function Home() {
       setResult(data);
       setActiveTab("summary");
 
-      // Auto-scroll down directly to the results dossier
       setTimeout(() => {
         resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 100);
@@ -361,6 +357,15 @@ export default function Home() {
     }
   };
 
+  // Dedicated Retry Handler: Scrolls back to search box, clears input & focuses textarea
+  const handleRetrySearch = () => {
+    searchConsoleRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    setInput("");
+    setTimeout(() => {
+      textareaRef.current?.focus();
+    }, 200);
+  };
+
   const handleSendWhatsAppFeedback = () => {
     const message = `*Dāsa Bodhini - User Feedback*\n\n*ವಿಭಾಗ (Category):* ${feedbackCategory}\n${result ? `*ಕೃತಿ (Song):* ${result.titleKannada} (${result.composerKannada})\n` : ""}${input ? `*ಹುಡುಕಾಟ (Query):* ${input}\n` : ""}*ಅನಿಸಿಕೆ/ವಿವರ (Comment):* ${feedbackComment || "ಯಾವುದೇ ವಿವರಣೆ ನೀಡಿಲ್ಲ"}`;
 
@@ -369,6 +374,12 @@ export default function Home() {
     setShowFeedbackModal(false);
     setFeedbackComment("");
   };
+
+  // Helper to extract the verified opening line / Pallavi from the decoded result
+  const detectedFirstLine =
+    result?.stanzas?.[0]?.originalTextKannada
+      ?.split("\n")[0]
+      ?.trim() || "";
 
   return (
     <div className="min-h-screen bg-[#FDFBF7] text-stone-900 selection:bg-amber-100 flex flex-col font-sans antialiased">
@@ -413,8 +424,8 @@ export default function Home() {
 
       {/* Main Workspace */}
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8 flex-1 space-y-6 sm:space-y-8 w-full">
-        {/* Search Console */}
-        <section className="bg-white rounded-2xl border border-stone-200/80 p-5 sm:p-6 shadow-xs ring-1 ring-stone-900/5 space-y-4">
+        {/* Search Console Anchor */}
+        <section ref={searchConsoleRef} className="bg-white rounded-2xl border border-stone-200/80 p-5 sm:p-6 shadow-xs ring-1 ring-stone-900/5 space-y-4">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <label className="text-xs font-semibold uppercase tracking-wider text-amber-950 font-serif flex items-center gap-1.5">
@@ -439,7 +450,6 @@ export default function Home() {
                 className="w-full text-base sm:text-lg p-4 pr-12 rounded-xl border border-stone-200 bg-[#FCFBF9] focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-900/20 focus:border-amber-900 transition font-serif leading-relaxed text-stone-900 resize-none shadow-2xs"
               />
 
-              {/* Speech-to-Text Microphone Button with Active State */}
               <button
                 type="button"
                 onClick={toggleMic}
@@ -585,8 +595,8 @@ export default function Home() {
           {result && (
             <div className="space-y-6">
               {/* Header Metadata Dossier */}
-              <section className="bg-white rounded-2xl border border-stone-200/80 p-5 sm:p-6 space-y-5 shadow-xs ring-1 ring-stone-900/5">
-                <div className="flex flex-wrap items-start justify-between gap-4 border-b border-stone-100 pb-5">
+              <section className="bg-white rounded-2xl border border-stone-200/80 p-5 sm:p-6 space-y-4 shadow-xs ring-1 ring-stone-900/5">
+                <div className="flex flex-wrap items-start justify-between gap-4 border-b border-stone-100 pb-4">
                   <div className="space-y-2">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="px-2.5 py-0.5 rounded-full bg-amber-900/10 text-amber-950 text-xs font-semibold tracking-wide">
@@ -630,6 +640,32 @@ export default function Home() {
                       <span className="font-normal text-stone-500 italic font-sans">({result.ankitaEnglish})</span>
                     </p>
                   </div>
+                </div>
+
+                {/* Canonical Opening Line / Pallavi Detection & Retry Action Bar */}
+                <div className="bg-[#FAF8F5] border border-amber-900/15 rounded-xl p-3 sm:p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-amber-900">
+                      <span className="w-2 h-2 rounded-full bg-amber-700"></span>
+                      <span>ಗುರುತಿಸಲಾದ ಕೃತಿಯ ಮೊದಲ ಸಾಲು (Detected Opening Verse):</span>
+                    </div>
+                    <p className="font-serif font-bold text-stone-900 text-sm sm:text-base pl-3.5 border-l-2 border-amber-800">
+                      "{detectedFirstLine}"
+                    </p>
+                  </div>
+
+                  {/* Retry Button: Scrolls to top, clears input & focuses textarea */}
+                  <button
+                    type="button"
+                    onClick={handleRetrySearch}
+                    className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-white hover:bg-stone-50 text-stone-700 hover:text-amber-950 border border-stone-200 hover:border-amber-900/40 rounded-lg text-xs font-semibold transition shadow-2xs cursor-pointer active:scale-95 shrink-0 self-start sm:self-center"
+                    title="ಬೇರೆ ಸಾಲುಗಳನ್ನು ನಮೂದಿಸಿ ಅಥವಾ ಧ್ವನಿ ಮೂಲಕ ಮರುಪ್ರಯತ್ನಿಸಿ"
+                  >
+                    <svg className="w-3.5 h-3.5 text-amber-800" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    <span>ಮರುಪ್ರಯತ್ನಿಸಿ (Retry Search)</span>
+                  </button>
                 </div>
 
                 {/* Historical Context Card */}
@@ -934,33 +970,33 @@ export default function Home() {
                         <p className="text-xs text-stone-500 italic font-sans">{m.allegoryEnglish}</p>
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="bg-stone-50/70 p-4 rounded-xl border border-stone-200/60 space-y-1">
-                          <span className="text-[10px] font-bold text-stone-600 uppercase tracking-wide block font-sans">
-                            ಬಾಹ್ಯ ಲೌಕಿಕ ಕಥೆ (Laukika / Surface Story)
-                          </span>
-                          <p className="text-stone-800 text-xs sm:text-sm font-serif leading-relaxed">
-                            {m.outerMeaningKannada}
-                          </p>
-                          <p className="text-stone-500 text-xs italic font-sans">{m.outerMeaningEnglish}</p>
-                        </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-stone-50/70 p-4 rounded-xl border border-stone-200/60 space-y-1">
+                        <span className="text-[10px] font-bold text-stone-600 uppercase tracking-wide block font-sans">
+                          ಬಾಹ್ಯ ಲೌಕಿಕ ಕಥೆ (Laukika / Surface Story)
+                        </span>
+                        <p className="text-stone-800 text-xs sm:text-sm font-serif leading-relaxed">
+                          {m.outerMeaningKannada}
+                        </p>
+                        <p className="text-stone-500 text-xs italic font-sans">{m.outerMeaningEnglish}</p>
+                      </div>
 
-                        <div className="bg-amber-50/60 p-4 rounded-xl border border-amber-900/15 space-y-1">
-                          <span className="text-[10px] font-bold text-amber-950 uppercase tracking-wide block font-sans">
-                            ಅಂತರಂಗ ಯೋಗ & ವೇದಾಂತಾರ್ಥ (Yogic Essence)
-                          </span>
-                          <p className="text-stone-900 text-xs sm:text-sm font-serif leading-relaxed font-medium">
-                            {m.esotericMeaningKannada}
-                          </p>
-                          <p className="text-stone-700 text-xs italic font-sans">{m.esotericMeaningEnglish}</p>
-                        </div>
+                      <div className="bg-amber-50/60 p-4 rounded-xl border border-amber-900/15 space-y-1">
+                        <span className="text-[10px] font-bold text-amber-950 uppercase tracking-wide block font-sans">
+                          ಅಂತರಂಗ ಯೋಗ & ವೇದಾಂತಾರ್ಥ (Yogic Essence)
+                        </span>
+                        <p className="text-stone-900 text-xs sm:text-sm font-serif leading-relaxed font-medium">
+                          {m.esotericMeaningKannada}
+                        </p>
+                        <p className="text-stone-700 text-xs italic font-sans">{m.esotericMeaningEnglish}</p>
                       </div>
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
         </div>
       </main>
 
