@@ -64,10 +64,11 @@ export default function Home() {
   const [kannadaSize, setKannadaSize] = useState<string>("text-base leading-relaxed");
   const [englishSize, setEnglishSize] = useState<string>("text-sm leading-relaxed");
 
-  // Speech Recognition (Mic Input)
+  // Speech Recognition (Mic Input) with Auto-Stop Watchdog
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<any>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const micTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Results Scroll Anchor
   const resultsRef = useRef<HTMLDivElement | null>(null);
@@ -144,26 +145,73 @@ export default function Home() {
     },
   ];
 
+  // Helper to safely stop listening and reset watchdog timer
+  const stopListening = () => {
+    if (micTimeoutRef.current) {
+      clearTimeout(micTimeoutRef.current);
+      micTimeoutRef.current = null;
+    }
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch (e) {
+        // Safe catch if already stopped
+      }
+    }
+    setIsListening(false);
+  };
+
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      const SpeechRecognition =
+        (window as any).SpeechRecognition ||
+        (window as any).webkitSpeechRecognition;
+
       if (SpeechRecognition) {
         const recognition = new SpeechRecognition();
-        recognition.continuous = false;
+        recognition.continuous = false; // Stop after first finished sentence
         recognition.interimResults = false;
         recognition.lang = "kn-IN";
 
-        recognition.onresult = (event: any) => {
-          const transcript = event.results[0][0].transcript;
-          setInput(transcript);
-          setIsListening(false);
+        recognition.onstart = () => {
+          setIsListening(true);
+          // Safety Watchdog: Auto-cancel after 8 seconds of silence/no input
+          if (micTimeoutRef.current) clearTimeout(micTimeoutRef.current);
+          micTimeoutRef.current = setTimeout(() => {
+            stopListening();
+          }, 8000);
         };
 
-        recognition.onerror = () => setIsListening(false);
-        recognition.onend = () => setIsListening(false);
+        recognition.onresult = (event: any) => {
+          const transcript = event.results[0][0].transcript;
+          if (transcript && transcript.trim()) {
+            setInput(transcript.trim());
+          }
+          stopListening();
+        };
+
+        recognition.onspeechend = () => {
+          // Immediately stop when user pauses or finishes speaking
+          stopListening();
+        };
+
+        recognition.onnomatch = () => {
+          stopListening();
+        };
+
+        recognition.onerror = (e: any) => {
+          console.warn("Speech recognition error:", e.error);
+          stopListening();
+        };
+
+        recognition.onend = () => {
+          stopListening();
+        };
+
         recognitionRef.current = recognition;
       }
 
+      // Setup Speech Synthesis voice pool
       if ("speechSynthesis" in window) {
         const populateVoices = () => {
           const voices = window.speechSynthesis.getVoices();
@@ -178,6 +226,7 @@ export default function Home() {
     }
 
     return () => {
+      if (micTimeoutRef.current) clearTimeout(micTimeoutRef.current);
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
         window.speechSynthesis.cancel();
       }
@@ -189,14 +238,25 @@ export default function Home() {
       alert("ನಿಮ್ಮ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಧ್ವನಿ ಗ್ರಹಿಕೆ (Voice typing) ಸೌಲಭ್ಯ ಲಭ್ಯವಿಲ್ಲ.");
       return;
     }
+
     if (isListening) {
-      recognitionRef.current.stop();
-      setIsListening(false);
+      stopListening();
     } else {
       setInput("");
-      setIsListening(true);
-      recognitionRef.current.start();
       textareaRef.current?.focus();
+      try {
+        recognitionRef.current.start();
+      } catch (err) {
+        // If recognition was in a stale state, abort and restart cleanly
+        recognitionRef.current.abort();
+        setTimeout(() => {
+          try {
+            recognitionRef.current.start();
+          } catch (e) {
+            setIsListening(false);
+          }
+        }, 100);
+      }
     }
   };
 
@@ -290,6 +350,7 @@ export default function Home() {
       setResult(data);
       setActiveTab("summary");
 
+      // Auto-scroll down directly to the results dossier
       setTimeout(() => {
         resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 100);
@@ -363,7 +424,7 @@ export default function Home() {
               {isListening && (
                 <span className="text-[11px] font-medium text-red-600 flex items-center gap-1.5 animate-pulse font-sans">
                   <span className="w-2 h-2 rounded-full bg-red-600"></span>
-                  ಧ್ವನಿ ಗ್ರಹಿಸಲಾಗುತ್ತಿದೆ... (Listening)
+                  ಧ್ವನಿ ಗ್ರಹಿಸಲಾಗುತ್ತಿದೆ... (Listening - speak now)
                 </span>
               )}
             </div>
@@ -378,13 +439,14 @@ export default function Home() {
                 className="w-full text-base sm:text-lg p-4 pr-12 rounded-xl border border-stone-200 bg-[#FCFBF9] focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-900/20 focus:border-amber-900 transition font-serif leading-relaxed text-stone-900 resize-none shadow-2xs"
               />
 
+              {/* Speech-to-Text Microphone Button with Active State */}
               <button
                 type="button"
                 onClick={toggleMic}
-                title="ಧ್ವನಿಯ ಮೂಲಕ ಹುಡುಕಿ (Speak to Search)"
+                title={isListening ? "ನಿಲ್ಲಿಸಿ (Stop Listening)" : "ಧ್ವನಿಯ ಮೂಲಕ ಹುಡುಕಿ (Speak to Search)"}
                 className={`absolute right-3.5 bottom-3.5 p-2 rounded-lg transition cursor-pointer active:scale-95 ${
                   isListening
-                    ? "bg-red-600 text-white shadow-sm shadow-red-200"
+                    ? "bg-red-600 text-white shadow-sm shadow-red-200 ring-2 ring-red-400"
                     : "bg-white hover:bg-stone-100 text-stone-500 hover:text-stone-800 border border-stone-200 shadow-2xs"
                 }`}
               >
@@ -441,7 +503,7 @@ export default function Home() {
             </span>
           </div>
 
-          {/* In-Progress Status Banner */}
+          {/* High-Visibility In-Progress Banner */}
           {loading && (
             <div className="bg-gradient-to-r from-amber-50 via-amber-100/60 to-amber-50 border border-amber-300/80 rounded-xl p-4 flex items-center justify-between gap-3 shadow-xs animate-pulse">
               <div className="flex items-center gap-3">
@@ -467,7 +529,7 @@ export default function Home() {
             </div>
           )}
 
-          {/* Presets Grid */}
+          {/* Curated Presets Grid */}
           <div className="pt-3 border-t border-stone-100 space-y-2">
             <span className="text-[11px] font-semibold text-stone-500 uppercase tracking-wider block">
               ಪ್ರಮುಖ ಕೃತಿಗಳ ಸಂಕಲನ (Quick Presets):
