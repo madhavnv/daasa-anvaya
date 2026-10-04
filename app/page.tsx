@@ -113,7 +113,7 @@ export default function Home() {
     },
   ];
 
-  // Robust Decoder Handler with race-condition prevention
+  // Universal Decode Handler that eliminates React State timing race conditions
   const handleDecode = async (overrideInput?: string) => {
     const textToQuery = (typeof overrideInput === "string" ? overrideInput : input).trim();
     
@@ -131,7 +131,11 @@ export default function Home() {
       const res = await fetch("/api/decode", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ input: textToQuery }),
+        // Sends both query and input to remain fully compatible with any route handler check
+        body: JSON.stringify({ 
+          query: textToQuery,
+          input: textToQuery 
+        }),
       });
 
       const data = await res.json();
@@ -203,7 +207,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Quick Support & Feedback Link */}
+          {/* Direct Support & Feedback Link */}
           <div className="flex items-center gap-2">
             <a
               href="https://wa.me/919845509006?text=Namaskara,%20feedback%20regarding%20Dasa%20Bodhini%20app:"
@@ -222,7 +226,7 @@ export default function Home() {
 
       {/* Main Container */}
       <main className="max-w-5xl mx-auto px-4 py-6 flex-1 space-y-6 w-full">
-        {/* Search & Query Console */}
+        {/* Search Console */}
         <section className="bg-white rounded-2xl border border-stone-200/90 p-5 shadow-xs space-y-4">
           <div className="space-y-1">
             <label className="text-xs font-bold uppercase tracking-wider text-amber-950 font-serif">
@@ -380,7 +384,7 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Historical & Literary Context */}
+              {/* Historical Context */}
               <div className="space-y-1.5 bg-[#FAF8F5] p-3.5 rounded-xl border border-stone-100 text-xs sm:text-sm">
                 <span className="font-bold text-amber-950 font-serif block">
                   ಐತಿಹಾಸಿಕ ಹಾಗೂ ಸಾಹಿತ್ಯಿಕ ಹಿನ್ನೆಲೆ (Context):
