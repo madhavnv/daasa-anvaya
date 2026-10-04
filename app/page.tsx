@@ -31,7 +31,6 @@ interface DecodeResult {
   compositionType: "ಕೀರ್ತನೆ / ದೇವರನಾಮ" | "ಸೂಳಾದಿ" | "ಉಗಾಭೋಗ" | "ಮುಂಡಿಗೆ";
   ragaTradition?: string;
   talaTradition?: string;
-  fullLyricsKannada?: string;
   classicalRendition?: {
     artist: string;
     raga: string;
@@ -59,9 +58,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<DecodeResult | null>(null);
-  // Default to summary tab first
   const [activeTab, setActiveTab] = useState<"summary" | "anvaya" | "vocab" | "mundige">("summary");
-  const [showFullLyricsModal, setShowFullLyricsModal] = useState(false);
 
   // Visual & Typographic Controls
   const [kannadaSize, setKannadaSize] = useState<string>("text-base leading-relaxed");
@@ -115,7 +112,6 @@ export default function Home() {
     }
   };
 
-  // Presets
   const PRESET_SONGS = [
     { label: "ಶ್ರೀ ನರಸಿಂಹ ಸೂಳಾದಿ", query: "ವೀರ ಸಿಂಹನೆ ನಾರಸಿಂಹನೆ ದಯ ಪಾರಾವಾರನೆ ಭಯ ನಿವಾರಣ ನಿರ್ಗುಣ ಶ್ರೀ ನರಸಿಂಹ ಸೂಳಾದಿ" },
     { label: "ಶ್ರೀ ದುರ್ಗಾ ಸೂಳಾದಿ", query: "ಜಯ ಜಯತು ಜಯದುರ್ಗೆ ಜಯ ಪರಾಶಕ್ತಿ ಜಗಜ್ಜನನಿ ಶ್ರೀ ದುರ್ಗಾ ಸೂಳಾದಿ" },
@@ -153,7 +149,6 @@ export default function Home() {
       }
 
       setResult(data);
-      // Always default to summary view first
       setActiveTab("summary");
     } catch (err: any) {
       setError(err.message || "ನೆಟ್‌ವರ್ಕ್ ಅಥವಾ ಸರ್ವರ್ ಸಮಸ್ಯೆ. ದಯವಿಟ್ಟು ಮರುಪ್ರಯತ್ನಿಸಿ.");
@@ -198,16 +193,20 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5">
+          {/* Feedback & Attribution Stack */}
+          <div className="flex flex-col items-end gap-0.5">
             <button
               onClick={() => setShowFeedbackModal(true)}
-              className="text-xs bg-white hover:bg-stone-50 text-stone-700 hover:text-stone-900 border border-stone-200 px-3.5 py-1.5 rounded-full transition-all flex items-center gap-1.5 font-medium shadow-2xs hover:shadow-xs active:scale-95 cursor-pointer"
+              className="text-xs bg-white hover:bg-stone-50 text-stone-700 hover:text-stone-900 border border-stone-200 px-3 py-1.5 rounded-full transition-all flex items-center gap-1.5 font-medium shadow-2xs hover:shadow-xs active:scale-95 cursor-pointer"
             >
               <svg className="w-3.5 h-3.5 fill-current text-emerald-600" viewBox="0 0 24 24">
                 <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.044c.101-.116.433-.506.549-.68.116-.174.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.043.073.043.419-.101.824z" />
               </svg>
               <span>Feedback</span>
             </button>
+            <span className="text-[10px] text-stone-500 font-sans tracking-tight pr-1">
+              By Madhav N V
+            </span>
           </div>
         </div>
       </header>
@@ -240,7 +239,6 @@ export default function Home() {
                 className="w-full text-base sm:text-lg p-4 pr-12 rounded-xl border border-stone-200 bg-[#FCFBF9] focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-900/20 focus:border-amber-900 transition font-serif leading-relaxed text-stone-900 resize-none shadow-2xs"
               />
 
-              {/* Speech-to-Text Microphone Button */}
               <button
                 type="button"
                 onClick={toggleMic}
@@ -258,7 +256,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Action Row */}
           <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
             <div className="flex items-center gap-2">
               <button
@@ -301,7 +298,6 @@ export default function Home() {
             </span>
           </div>
 
-          {/* Canonical Presets */}
           <div className="pt-3 border-t border-stone-100 flex flex-wrap items-center gap-1.5">
             <span className="text-[11px] font-medium text-stone-500 mr-1">ಪ್ರಮುಖ ರಚನೆಗಳು:</span>
             {PRESET_SONGS.map((p) => (
@@ -317,7 +313,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Error Notification */}
         {error && (
           <div className="bg-red-50/80 border border-red-200 text-red-900 p-4 rounded-xl text-xs sm:text-sm flex items-start gap-2.5 shadow-2xs">
             <svg className="w-4 h-4 text-red-600 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -333,7 +328,7 @@ export default function Home() {
         {/* Results Workspace */}
         {result && (
           <div className="space-y-6">
-            {/* Authoritative Metadata Dossier */}
+            {/* Header Metadata Dossier */}
             <section className="bg-white rounded-2xl border border-stone-200/80 p-5 sm:p-6 space-y-5 shadow-xs ring-1 ring-stone-900/5">
               <div className="flex flex-wrap items-start justify-between gap-4 border-b border-stone-100 pb-5">
                 <div className="space-y-2">
@@ -380,32 +375,6 @@ export default function Home() {
                   </p>
                 </div>
               </div>
-
-              {/* Complete Song Lyrics Reference Bar (Collapsible/Preview) */}
-              {result.fullLyricsKannada && (
-                <div className="bg-[#FCFBF8] border border-stone-200/90 rounded-xl p-4 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="font-serif font-bold text-xs uppercase tracking-wider text-amber-950 flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-amber-800"></span>
-                      ಸಂಪೂರ್ಣ ಮೂಲ ಸಾಹಿತ್ಯ (Verified Complete Composition)
-                    </span>
-                    <button
-                      onClick={() => setShowFullLyricsModal(!showFullLyricsModal)}
-                      className="text-xs text-amber-900 hover:text-amber-950 font-medium underline cursor-pointer"
-                    >
-                      {showFullLyricsModal ? "ಮರೆಮಾಡಿ (Hide Lyrics)" : "ಪೂರ್ಣ ಸಾಹಿತ್ಯ ನೋಡಿ (View Full Text)"}
-                    </button>
-                  </div>
-
-                  {showFullLyricsModal && (
-                    <div className="pt-2 border-t border-stone-200/60">
-                      <pre className="font-serif text-sm text-stone-800 leading-relaxed whitespace-pre-wrap font-normal">
-                        {result.fullLyricsKannada}
-                      </pre>
-                    </div>
-                  )}
-                </div>
-              )}
 
               {/* Historical Context Card */}
               <div className="bg-[#FAF8F5] p-4 rounded-xl border border-stone-200/70 space-y-1.5">
@@ -495,9 +464,8 @@ export default function Home() {
               </div>
             </section>
 
-            {/* Seamless Responsive Tab Navigation (No Horizontal Scrollbar) */}
+            {/* Clean Segmented Tab Strip */}
             <div className="flex flex-wrap gap-2 border-b border-stone-200/80 pb-2">
-              {/* TAB 1: SUMMARY (MOVED TO FIRST) */}
               <button
                 onClick={() => setActiveTab("summary")}
                 className={`py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer ${
@@ -509,7 +477,6 @@ export default function Home() {
                 ಸಾರಾಂಶ & ಸಂದೇಶ (Essence)
               </button>
 
-              {/* TAB 2: ANVAYA & SPIRITUAL MEANING */}
               <button
                 onClick={() => setActiveTab("anvaya")}
                 className={`py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer ${
@@ -521,7 +488,6 @@ export default function Home() {
                 ಅನ್ವಯ & ಭಾವಾರ್ಥ (Syntax & Meaning)
               </button>
 
-              {/* TAB 3: VOCABULARY GRID */}
               <button
                 onClick={() => setActiveTab("vocab")}
                 className={`py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer ${
@@ -533,7 +499,6 @@ export default function Home() {
                 ಪ್ರತಿಪದಾರ್ಥ (Vocabulary Table)
               </button>
 
-              {/* TAB 4: MUNDIGE RIDDLES */}
               {result.metaphorsAndMundige && result.metaphorsAndMundige.length > 0 && (
                 <button
                   onClick={() => setActiveTab("mundige")}
@@ -549,13 +514,13 @@ export default function Home() {
               )}
             </div>
 
-            {/* VIEW 1: SUMMARY TAB (FIRST) */}
+            {/* TAB 1: SUMMARY & ESSENCE */}
             {activeTab === "summary" && (
-              <div className="bg-white rounded-2xl border border-stone-200/80 p-5 sm:p-6 space-y-6 shadow-xs ring-1 ring-stone-900/5">
-                <div className="space-y-2.5">
-                  <div className="flex items-center justify-between border-b border-stone-100 pb-2.5">
+              <div className="bg-white rounded-2xl border border-stone-200/80 p-5 sm:p-7 space-y-6 shadow-xs ring-1 ring-stone-900/5">
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between border-b border-stone-100 pb-3">
                     <h3 className="text-base sm:text-lg font-serif font-bold text-stone-900">
-                      ಸಮಗ್ರ ಕೃತಿ ತಾತ್ಪರ್ಯ (Comprehensive Message)
+                      ಸಮಗ್ರ ಕೃತಿ ತಾತ್ಪರ್ಯ (Comprehensive Essence)
                     </h3>
                     <span className="text-xs font-serif text-amber-950 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-900/10">
                       {result.stanzas.length} ಚರಣಗಳ ಸಮಗ್ರ ಸಾರ
@@ -569,7 +534,7 @@ export default function Home() {
                   </p>
                 </div>
 
-                <div className="bg-[#FAF8F5] border border-amber-900/15 p-4 sm:p-5 rounded-xl space-y-2">
+                <div className="bg-[#FAF8F5] border-l-4 border-amber-800 border-y border-r border-stone-200/80 p-4 sm:p-5 rounded-r-xl space-y-2">
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-amber-800"></span>
                     <h4 className="font-serif font-bold text-amber-950 text-sm sm:text-base">
@@ -600,45 +565,46 @@ export default function Home() {
               </div>
             )}
 
-            {/* VIEW 2: ANVAYA & COMPLETE STANZA BREAKDOWN */}
+            {/* TAB 2: ANVAYA & COMPLETE STANZA BREAKDOWN */}
             {activeTab === "anvaya" && (
-              <div className="space-y-4">
+              <div className="space-y-5">
                 {result.stanzas.map((stanza) => (
                   <div key={stanza.stanzaNumber} className="bg-white rounded-2xl border border-stone-200/80 p-5 sm:p-6 space-y-4 shadow-xs ring-1 ring-stone-900/5">
+                    {/* Stanza Type Badge */}
                     <div className="flex items-center justify-between border-b border-stone-100 pb-3">
                       <span className="px-3 py-1 rounded-md bg-stone-100 font-serif font-bold text-xs text-stone-800">
                         {stanza.stanzaType} #{stanza.stanzaNumber}
                       </span>
                     </div>
 
-                    {/* Original Lyrics */}
-                    <div className="space-y-1.5">
+                    {/* Section 1: Original Stanza */}
+                    <div className="space-y-1.5 pl-3 border-l-2 border-stone-300">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400 block font-sans">
                         ಮೂಲ ಸಾಹಿತ್ಯ (Original Stanza)
                       </span>
                       <p className={`font-serif font-semibold text-stone-900 whitespace-pre-line ${kannadaSize}`}>
                         {stanza.originalTextKannada}
                       </p>
-                      <p className="text-xs text-stone-500 italic font-sans whitespace-pre-line">
+                      <p className="text-xs text-stone-500 italic font-sans whitespace-pre-line pt-0.5">
                         {stanza.originalTextTransliteration}
                       </p>
                     </div>
 
-                    {/* Direct Spoken Anvaya Order */}
-                    <div className="space-y-1.5 bg-[#FAF8F5] p-4 rounded-xl border border-stone-200/60">
+                    {/* Section 2: Reordered Spoken Syntax (Anvaya) */}
+                    <div className="bg-[#FAF8F5] p-4 rounded-xl border-l-4 border-amber-800 border-y border-r border-stone-200/60 space-y-2">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-amber-900 block font-serif">
                         ಅನ್ವಯ ಕ್ರಮ (Reordered Direct Meaning)
                       </span>
                       <p className={`font-serif text-amber-950 font-medium ${kannadaSize}`}>
                         {stanza.anvayaKannada}
                       </p>
-                      <p className="text-xs text-stone-600 font-sans italic pt-1 border-t border-stone-200/40">
+                      <p className="text-xs text-stone-600 font-sans italic pt-1.5 border-t border-stone-200/50">
                         {stanza.anvayaEnglish}
                       </p>
                     </div>
 
-                    {/* Spiritual Essence */}
-                    <div className="space-y-1.5 pt-1">
+                    {/* Section 3: Spiritual Essence */}
+                    <div className="space-y-1.5 pl-3 border-l-2 border-emerald-600 pt-1">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 block font-sans">
                         ಆಧ್ಯಾತ್ಮಿಕ ಗೂಢಾರ್ಥ (Inner Significance)
                       </span>
@@ -654,7 +620,7 @@ export default function Home() {
               </div>
             )}
 
-            {/* VIEW 3: VOCABULARY TABLE */}
+            {/* TAB 3: VOCABULARY GRID */}
             {activeTab === "vocab" && (
               <div className="space-y-4">
                 {result.stanzas.map((stanza) => (
@@ -687,7 +653,7 @@ export default function Home() {
                       </table>
                     </div>
 
-                    {/* Mobile Responsive Card Layout (Zero Horizontal Scroll) */}
+                    {/* Mobile Responsive Layout */}
                     <div className="sm:hidden space-y-2.5 divide-y divide-stone-100">
                       {stanza.wordByWordBreakdown.map((row, idx) => (
                         <div key={idx} className="pt-2.5 space-y-1">
@@ -705,7 +671,7 @@ export default function Home() {
               </div>
             )}
 
-            {/* VIEW 4: MUNDIGE & ALLEGORIES */}
+            {/* TAB 4: MUNDIGE & ALLEGORIES */}
             {activeTab === "mundige" && result.metaphorsAndMundige && (
               <div className="space-y-4">
                 <div className="bg-amber-950/5 border border-amber-950/15 p-4 rounded-xl text-xs sm:text-sm text-amber-950 space-y-1">
