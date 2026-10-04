@@ -60,20 +60,20 @@ export const COMPLETE_ANKITHA_CATALOG: DasaRecord[] = [
     location: "Kaginele / Bada"
   },
 
-  // Purandara Dasa's Sons & Family
-  {
-    composerKannada: "ವರದಪ್ಪ ನಾಯಕ (ವರದ ಪುರಂದರ ವಿಠ್ಠಲ)",
-    composerEnglish: "Varadappa Nayaka",
-    ankitaKannada: "ವರದ ಪುರಂದರ ವಿಠ್ಠಲ",
-    ankitaEnglish: "Varada Purandara Vittala",
-    era: "16th Century CE",
-    location: "Hampi"
-  },
+  // Purandara Dasa's Lineage
   {
     composerKannada: "ಗುರು ಪುರಂದರ ವಿಠ್ಠಲ (ಮಧ್ವಪತಿ ದಾಸರು)",
     composerEnglish: "Madhwapati Dasa",
     ankitaKannada: "ಗುರು ಪುರಂದರ ವಿಠ್ಠಲ",
     ankitaEnglish: "Guru Purandara Vittala",
+    era: "16th Century CE",
+    location: "Hampi"
+  },
+  {
+    composerKannada: "ವರದಪ್ಪ ನಾಯಕ (ವರದ ಪುರಂದರ ವಿಠ್ಠಲ)",
+    composerEnglish: "Varadappa Nayaka",
+    ankitaKannada: "ವರದ ಪುರಂದರ ವಿಠ್ಠಲ",
+    ankitaEnglish: "Varada Purandara Vittala",
     era: "16th Century CE",
     location: "Hampi"
   },
@@ -94,7 +94,7 @@ export const COMPLETE_ANKITHA_CATALOG: DasaRecord[] = [
     location: "Hampi"
   },
 
-  // --- 3. Mahipati Dasa Parampara & Kakhandaki Lineage (17th Century) ---
+  // --- 3. Mahipati Dasa Parampara & Kakhandaki (17th Century) ---
   {
     composerKannada: "ಮಹಿಪತಿ ದಾಸರು",
     composerEnglish: "Mahipati Dasaru",
@@ -161,8 +161,6 @@ export const COMPLETE_ANKITHA_CATALOG: DasaRecord[] = [
     era: "1727 - 1809 CE",
     location: "Manvi"
   },
-
-  // Gopala Dasa's Brothers
   {
     composerKannada: "ಶ್ರೀನಿವಾಸ ದಾಸರು (ಗೋಪಾಲದಾಸರ ಸೋದರ)",
     composerEnglish: "Srinivasa Dasa",
@@ -171,24 +169,6 @@ export const COMPLETE_ANKITHA_CATALOG: DasaRecord[] = [
     era: "18th Century CE",
     location: "Mosarakallu"
   },
-  {
-    composerKannada: "ಅನಂತಾದ್ರಿ ದಾಸರು (ಗೋಪಾಲದಾಸರ ಸೋದರ)",
-    composerEnglish: "Anantadridasa",
-    ankitaKannada: "ಆನಂದ ವಿಠ್ಠಲ",
-    ankitaEnglish: "Ananda Vittala",
-    era: "18th Century CE",
-    location: "Mosarakallu"
-  },
-  {
-    composerKannada: "ಕವಿ ಗೋವಿಂದ ದಾಸರು (ಗೋಪಾಲದಾಸರ ಸೋದರ)",
-    composerEnglish: "Kavi Govinda Dasa",
-    ankitaKannada: "ಸುಜ್ಞಾನ ವಿಠ್ಠಲ",
-    ankitaEnglish: "Sujnana Vittala",
-    era: "18th Century CE",
-    location: "Mosarakallu"
-  },
-
-  // Prominent Disciples of Vijaya Dasa & Gopala Dasa
   {
     composerKannada: "ಪ್ರಾಣೇಶ ದಾಸರು",
     composerEnglish: "Pranesha Dasaru",
@@ -206,6 +186,14 @@ export const COMPLETE_ANKITHA_CATALOG: DasaRecord[] = [
     location: "Raichur"
   },
   {
+    composerKannada: "ಮೋಹನ ದಾಸರು",
+    composerEnglish: "Mohana Dasaru",
+    ankitaKannada: "ಮೋಹನ ವಿಠ್ಠಲ",
+    ankitaEnglish: "Mohana Vittala",
+    era: "1728 - 1751 CE",
+    location: "Chikalparvi"
+  },
+  {
     composerKannada: "ವರದ ಗೋಪಾಲ ದಾಸರು",
     composerEnglish: "Varada Gopala Dasa",
     ankitaKannada: "ವರದ ಗೋಪಾಲ",
@@ -221,72 +209,8 @@ export const COMPLETE_ANKITHA_CATALOG: DasaRecord[] = [
     era: "18th Century CE",
     location: "Raichur"
   },
-  {
-    composerKannada: "ಮೋಹನ ದಾಸರು",
-    composerEnglish: "Mohana Dasaru",
-    ankitaKannada: "ಮೋಹನ ವಿಠ್ಠಲ",
-    ankitaEnglish: "Mohana Vittala",
-    era: "1728 - 1751 CE",
-    location: "Chikalparvi"
-  },
-  {
-    composerKannada: "ಶ್ರೀದ ವಿಠ್ಠಲ ದಾಸರು",
-    composerEnglish: "Sreeda Vittala Dasa",
-    ankitaKannada: "ಶ್ರೀದ ವಿಠ್ಠಲ",
-    ankitaEnglish: "Sreeda Vittala",
-    era: "18th Century CE",
-    location: "Hampasagara"
-  },
-  {
-    composerKannada: "ಅಭಿನವ ಜನಾರ್ದನ ವಿಠ್ಠಲ",
-    composerEnglish: "Abhinava Janardana Vittala",
-    ankitaKannada: "ಅಭಿನವ ಜನಾರ್ದನ ವಿಠ್ಠಲ",
-    ankitaEnglish: "Abhinava Janardana Vittala",
-    era: "18th Century CE",
-    location: "Manvi"
-  },
-  {
-    composerKannada: "ತಂದೆ ಮುದ್ದುಮೋಹನ ವಿಠ್ಠಲ",
-    composerEnglish: "Tande Muddumohana Vittala",
-    ankitaKannada: "ಮುದ್ದು ಮೋಹನ ವಿಠ್ಠಲ",
-    ankitaEnglish: "Muddu Mohana Vittala",
-    era: "18th Century CE",
-    location: "Bagalkot"
-  },
-  {
-    composerKannada: "ತಿಮ್ಮಣ್ಣ ದಾಸರು",
-    composerEnglish: "Thimmanna Dasaru",
-    ankitaKannada: "ಮನೋಹರ ವಿಠ್ಠಲ",
-    ankitaEnglish: "Manohara Vittala",
-    era: "18th Century CE",
-    location: "Bellary"
-  },
-  {
-    composerKannada: "ಭೀಮವ್ವನ ಮಗ ಕೃಷ್ಣದಾಸ",
-    composerEnglish: "Krishnadasa",
-    ankitaKannada: "ಗುರು ಕೃಷ್ಣ",
-    ankitaEnglish: "Guru Krishna",
-    era: "18th Century CE",
-    location: "Bellary"
-  },
-  {
-    composerKannada: "ವರದ ವಿಜಯ ವಿಠ್ಠಲ",
-    composerEnglish: "Varada Vijaya Vittala",
-    ankitaKannada: "ವರದ ವಿಜಯ ವಿಠ್ಠಲ",
-    ankitaEnglish: "Varada Vijaya Vittala",
-    era: "18th Century CE",
-    location: "Raichur"
-  },
-  {
-    composerKannada: "ಹಯಗ್ರೀವ ವಿಠ್ಠಲ",
-    composerEnglish: "Hayagreeva Vittala",
-    ankitaKannada: "ಹಯಗ್ರೀವ ವಿಠ್ಠಲ",
-    ankitaEnglish: "Hayagreeva Vittala",
-    era: "18th Century CE",
-    location: "Bellary"
-  },
 
-  // --- 5. Revered Women Haridasas (ಸ್ತ್ರೀ ಹರಿದಾಸರು) ---
+  // --- 5. Revered Women Haridasas ---
   {
     composerKannada: "ಹೆಳವನಕಟ್ಟೆ ಗಿರಿಯಮ್ಮ",
     composerEnglish: "Helavanakatte Giriyamma",
@@ -302,38 +226,6 @@ export const COMPLETE_ANKITHA_CATALOG: DasaRecord[] = [
     ankitaEnglish: "Bheemesha Krishna",
     era: "1823 - 1902 CE",
     location: "Harapanahalli"
-  },
-  {
-    composerKannada: "ಗೋದಾವರೀಬಾಯಿ",
-    composerEnglish: "Godavaribai",
-    ankitaKannada: "ಗೋದಾವರೀ ರಂಗ",
-    ankitaEnglish: "Godavari Ranga",
-    era: "19th Century CE",
-    location: "Raichur"
-  },
-  {
-    composerKannada: "ತುಂಗಾಬಾಯಿ",
-    composerEnglish: "Tungabai",
-    ankitaKannada: "ತುಂಗಾ ರಂಗ",
-    ankitaEnglish: "Tunga Ranga",
-    era: "19th Century CE",
-    location: "Raichur"
-  },
-  {
-    composerKannada: "ಭಾಗೀರಥಿಬಾಯಿ",
-    composerEnglish: "Bhagirathibai",
-    ankitaKannada: "ಭಾಗೀರಥೀಶ",
-    ankitaEnglish: "Bhagiratheesha",
-    era: "19th Century CE",
-    location: "Dharwad"
-  },
-  {
-    composerKannada: "ಕಮಲಾಬಾಯಿ",
-    composerEnglish: "Kamalabai",
-    ankitaKannada: "ಕಮಲೇಶ ವಿಠ್ಠಲ",
-    ankitaEnglish: "Kamalesha Vittala",
-    era: "19th Century CE",
-    location: "Bellary"
   },
 
   // --- 6. 19th & 20th Century Continuators (Up to 1983) ---
@@ -354,22 +246,6 @@ export const COMPLETE_ANKITHA_CATALOG: DasaRecord[] = [
     location: "Manvi"
   },
   {
-    composerKannada: "ಶ್ರೀನಿವಾಸ ಮೂರ್ತಿ ದಾಸರು",
-    composerEnglish: "Srinivasa Murthy Dasa",
-    ankitaKannada: "ಶ್ರೀನಿವಾಸ ಮೂರ್ತಿ",
-    ankitaEnglish: "Srinivasa Murthy",
-    era: "19th Century CE",
-    location: "Mysore"
-  },
-  {
-    composerKannada: "ಅನಂತ ಕೇಶವ ದಾಸರು",
-    composerEnglish: "Ananta Keshava Dasa",
-    ankitaKannada: "ಅನಂತ ಕೇಶವ",
-    ankitaEnglish: "Ananta Keshava",
-    era: "19th Century CE",
-    location: "Udupi"
-  },
-  {
     composerKannada: "ವರದರಾಜ ದಾಸರು",
     composerEnglish: "Varadaraja Dasa",
     ankitaKannada: "ವರದರಾಜ",
@@ -378,50 +254,10 @@ export const COMPLETE_ANKITHA_CATALOG: DasaRecord[] = [
     location: "Dharwad"
   },
   {
-    composerKannada: "ಕೇಶವ ವಿಠ್ಠಲ ದಾಸರು",
-    composerEnglish: "Keshava Vittala Dasa",
-    ankitaKannada: "ಕೇಶವ ವಿಠ್ಠಲ",
-    ankitaEnglish: "Keshava Vittala",
-    era: "19th Century CE",
-    location: "Hubli"
-  },
-  {
-    composerKannada: "ವೆಂಕಟೇಶ ವಿಠ್ಠಲ ದಾಸರು",
-    composerEnglish: "Venkatesha Vittala Dasa",
-    ankitaKannada: "ವೆಂಕಟೇಶ ವಿಠ್ಠಲ",
-    ankitaEnglish: "Venkatesha Vittala",
-    era: "19th - 20th Century CE",
-    location: "Dharwad"
-  },
-  {
     composerKannada: "ಜಯವಿಠ್ಠಲ ದಾಸರು",
     composerEnglish: "Jaya Vittala Dasa",
     ankitaKannada: "ಜಯವಿಠ್ಠಲ",
     ankitaEnglish: "Jaya Vittala",
-    era: "20th Century CE",
-    location: "Bangalore"
-  },
-  {
-    composerKannada: "ಅಭಿನವ ವಾದಿರಾಜರು",
-    composerEnglish: "Abhinava Vadirajaru",
-    ankitaKannada: "ಅಭಿನವ ಹಯವದನ",
-    ankitaEnglish: "Abhinava Hayavadana",
-    era: "20th Century CE",
-    location: "Sonda"
-  },
-  {
-    composerKannada: "ರಾಮವಿಠ್ಠಲ ದಾಸರು",
-    composerEnglish: "Rama Vittala Dasa",
-    ankitaKannada: "ರಾಮವಿಠ್ಠಲ",
-    ankitaEnglish: "Rama Vittala",
-    era: "20th Century CE",
-    location: "Udupi"
-  },
-  {
-    composerKannada: "ಮಧ್ವೇಶ ವಿಠ್ಠಲ ದಾಸರು",
-    composerEnglish: "Madhwesha Vittala Dasa",
-    ankitaKannada: "ಮಧ್ವೇಶ ವಿಠ್ಠಲ",
-    ankitaEnglish: "Madhwesha Vittala",
     era: "20th Century CE",
     location: "Bangalore"
   }
