@@ -90,11 +90,11 @@ export default function Home() {
 
         if (event.error === "not-allowed" || event.error === "service-not-allowed") {
           alert(
-            "Microphone permission blocked. Please enable Microphone access for this browser in your device Settings."
+            "Microphone permission blocked. Please enable Microphone access for this browser in device Settings."
           );
         } else if (event.error === "language-not-supported") {
           alert(
-            "Selected language is not supported by iOS WebKit dictation. Switched to English (transliteration)."
+            "Kannada speech recognition is not supported on iOS WebKit. Switched to English (phonetic transliteration)."
           );
           setSpeechLang("en-IN");
         }
@@ -114,27 +114,45 @@ export default function Home() {
   };
 
   const handleDecode = async (queryText?: string) => {
-    const textToQuery = queryText || input;
-    if (!textToQuery.trim()) return;
+    const textToQuery = (queryText !== undefined ? queryText : input).trim();
+    if (!textToQuery) return;
+
+    if (queryText && queryText !== input) {
+      setInput(queryText);
+    }
 
     setLoading(true);
     setError(null);
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
+
     try {
       const res = await fetch("/api/decode", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query: textToQuery }),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
+
       if (!res.ok) {
-        const errData = await res.json();
-        throw new Error(errData.error || "Could not analyze composition");
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || `Error ${res.status}: Could not analyze composition`);
       }
+
       const data = await res.json();
       setResult(data);
     } catch (err: any) {
       setResult(null);
-      setError(err.message || "An unexpected error occurred");
+      if (err.name === "AbortError") {
+        setError("Request timed out. Please tap Decode again.");
+      } else {
+        setError(err.message || "An unexpected error occurred");
+      }
     } finally {
+      clearTimeout(timeoutId);
       setLoading(false);
     }
   };
@@ -212,6 +230,8 @@ export default function Home() {
       : fontSize === "large"
       ? "text-base leading-relaxed"
       : "text-sm leading-relaxed";
+
+  const isButtonDisabled = loading || !input.trim();
 
   return (
     <div className="min-h-screen bg-[#FAF8F5] text-stone-900 pb-24 pt-6 px-4 sm:px-6 antialiased">
@@ -308,11 +328,26 @@ export default function Home() {
             </div>
 
             <button
+              type="button"
               onClick={() => handleDecode()}
-              disabled={loading || !input.trim()}
-              className="px-6 py-2.5 bg-amber-900 hover:bg-amber-950 text-amber-50 font-semibold rounded-xl text-xs sm:text-sm transition disabled:opacity-50 ml-auto"
+              disabled={isButtonDisabled}
+              className={`px-6 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center justify-center gap-2 ml-auto ${
+                isButtonDisabled
+                  ? "bg-stone-200 text-stone-400 cursor-not-allowed border border-stone-200"
+                  : "bg-amber-900 hover:bg-amber-950 text-amber-50 cursor-pointer shadow-sm active:scale-95"
+              }`}
             >
-              {loading ? "Analyzing..." : "Decode Song (ಅರ್ಥ ತಿಳಿಸಿ)"}
+              {loading ? (
+                <>
+                  <svg className="w-4 h-4 animate-spin text-amber-50" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                  </svg>
+                  <span>Analyzing...</span>
+                </>
+              ) : (
+                <span>Decode Song (ಅರ್ಥ ತಿಳಿಸಿ)</span>
+              )}
             </button>
           </div>
 
@@ -326,7 +361,7 @@ export default function Home() {
                   setInput(p.query);
                   handleDecode(p.query);
                 }}
-                className="px-2.5 py-1 bg-stone-100 hover:bg-stone-200 rounded-md text-stone-700 transition border border-stone-200"
+                className="px-2.5 py-1 bg-stone-100 hover:bg-stone-200 rounded-md text-stone-700 transition border border-stone-200 cursor-pointer"
               >
                 {p.label}
               </button>
@@ -334,7 +369,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Descriptive Error / Unrecognized Song Feedback */}
+        {/* Informative Error Notice */}
         {error && (
           <div className="no-print p-4 bg-amber-50 border border-amber-200 text-amber-950 rounded-2xl text-xs sm:text-sm space-y-1.5 shadow-xs">
             <div className="flex items-center gap-2 font-semibold text-amber-900">
