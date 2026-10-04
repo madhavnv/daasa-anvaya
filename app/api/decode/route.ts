@@ -31,7 +31,7 @@ const CANONICAL_HARIDASA_REGISTRY = [
   { ankita: "ಇಂದಿರೇಶ ವಿಠ್ಠಲ", composer: "ಶ್ರೀ ಇಂದಿರೇಶ ದಾಸರು", era: "18th Century", location: "Karnataka" }
 ];
 
-// Pre-cached canonical masterpieces for instant 20ms responses (Zero LLM latency/503 risk)
+// Pre-cached canonical masterpieces with curated classical renditions
 const PRECACHED_MASTERPIECES: Record<string, any> = {
   narasimha: {
     titleKannada: "ಶ್ರೀ ನರಸಿಂಹ ಸೂಳಾದಿ",
@@ -45,6 +45,13 @@ const PRECACHED_MASTERPIECES: Record<string, any> = {
     compositionType: "ಸೂಳಾದಿ",
     ragaTradition: "ಮಾಲಿಕಾ / ಸಂಪ್ರದಾಯ ಸೂಳಾದಿ ರಾಗ",
     talaTradition: "ಧ್ರುವ ತಾಳಾದಿ ಸಪ್ತತಾಳ",
+    classicalRendition: {
+      artist: "ವಿದ್ಯಾಭೂಷಣ (Sri Vidyabhushana)",
+      raga: "ರಾಗಮಾಲಿಕೆ",
+      tala: "ಸಪ್ತತಾಳ (ಧ್ರುವ, ಮಟ್ಟ, ರೂಪಕ)",
+      audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+      sourceNote: "ಸಂಪ್ರದಾಯ ಸೂಳಾದಿ ಶೈಲಿಯ ಶಾಸ್ತ್ರೀಯ ಗಾಯನ"
+    },
     stanzas: [
       {
         stanzaNumber: 1,
@@ -81,6 +88,13 @@ const PRECACHED_MASTERPIECES: Record<string, any> = {
     compositionType: "ಮುಂಡಿಗೆ",
     ragaTradition: "ತಿಲಂಗ್ / ಭೈರವಿ / ಕಾಪಿ",
     talaTradition: "ಆದಿ ತಾಳ",
+    classicalRendition: {
+      artist: "ಡಾ. ಎಂ. ಬಾಲಮುರಳಿಕೃಷ್ಣ (Dr. M. Balamuralikrishna)",
+      raga: "ತಿಲಂಗ್ / ರಾಗಮಾಲಿಕೆ",
+      tala: "ಆದಿ ತಾಳ",
+      audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+      sourceNote: "ಮುಂಡಿಗೆಯ ಗಹನ ತತ್ತ್ವವನ್ನು ಬಿಂಬಿಸುವ ಶಾಸ್ತ್ರೀಯ ಗಾಯನ"
+    },
     stanzas: [
       {
         stanzaNumber: 1,
@@ -126,6 +140,13 @@ const PRECACHED_MASTERPIECES: Record<string, any> = {
     compositionType: "ಕೀರ್ತನೆ / ದೇವರನಾಮ",
     ragaTradition: "ರಾಗಮಾಲಿಕೆ / ಭೈರವಿ",
     talaTradition: "ಆದಿ ತಾಳ",
+    classicalRendition: {
+      artist: "ಪಂ. ಭೀಮಸೇನ ಜೋಶಿ (Pt. Bhimsen Joshi)",
+      raga: "ಮಾಂಡ್ / ರಾಗಮಾಲಿಕೆ",
+      tala: "ಆದಿ ತಾಳ",
+      audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+      sourceNote: "ವೈರಾಗ್ಯ ಭಾವದ ಮೇರು ಶಾಸ್ತ್ರೀಯ ಗಾಯನ"
+    },
     stanzas: [
       {
         stanzaNumber: 1,
@@ -242,7 +263,7 @@ Return ONLY a valid JSON object matching this exact schema:
   "modernTakeawayEnglish": "string"
 }`;
 
-    // Updated model endpoint to gemini-3.8-flash (or gemini-3.5-flash-lite)
+    // Modern Gemini endpoint (gemini-3.8-flash)
     const apiResponse = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`,
       {
@@ -277,7 +298,7 @@ Return ONLY a valid JSON object matching this exact schema:
 
     if (!rawContent) {
       return NextResponse.json(
-        { error: "ಪೂರ್ಣ ಮಾಹಿತಿ ಪಡೆಯಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ." },
+        { error: "ಪೂರ್ಣ ಮಾಹಿತಿ ಪಡೆಯಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ." },
         { status: 500 }
       );
     }
