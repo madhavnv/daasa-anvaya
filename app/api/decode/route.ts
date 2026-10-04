@@ -1,5 +1,16 @@
 import { NextResponse } from "next/server";
-import { ANKITHA_CATALOG } from "@/lib/ankithaData";
+
+// Fallback registry for attribution prompt
+const ANKITHA_CATALOG = [
+  { ankita: "ಪುರಂದರ ವಿಠ್ಠಲ", composer: "ಶ್ರೀ ಪುರಂದರ ದಾಸರು", era: "1484–1564 CE" },
+  { ankita: "ವಿಜಯ ವಿಠ್ಠಲ", composer: "ಶ್ರೀ ವಿಜಯ ದಾಸರು", era: "1682–1755 CE" },
+  { ankita: "ಗೋಪಾಲ ವಿಠ್ಠಲ", composer: "ಶ್ರೀ ಗೋಪಾಲ ದಾಸರು", era: "1721–1762 CE" },
+  { ankita: "ಜಗನ್ನಾಥ ವಿಠ್ಠಲ", composer: "ಶ್ರೀ ಜಗನ್ನಾಥ ದಾಸರು", era: "1727–1809 CE" },
+  { ankita: "ಹಯವದನ", composer: "ಶ್ರೀ ವಾದಿರಾಜ ತೀರ್ಥರು", era: "1480–1600 CE" },
+  { ankita: "ಕಾಗಿನೆಲೆಯಾದಿಕೇಶವ", composer: "ಶ್ರೀ ಕನಕ ದಾಸರು", era: "1509–1609 CE" },
+  { ankita: "ಗುರು ಪುರಂದರ ವಿಠ್ಠಲ", composer: "ಶ್ರೀ ಮಧ್ವಪತಿ ದಾಸರು", era: "16th Century" },
+  { ankita: "ಗುರು ಜಗನ್ನಾಥ ವಿಠ್ಠಲ", composer: "ಶ್ರೀ ಮೇಧಾವಿ ವೆಂಕಟರಮಣಾಚಾರ್ಯ", era: "19th Century" }
+];
 
 // Pre-cached canonical masterpieces for instant 20ms responses
 const PRECACHED_MASTERPIECES: Record<string, any> = {
