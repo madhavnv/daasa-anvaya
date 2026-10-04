@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 // Deterministic Registry of 40+ Haridasas (1263–1983 CE)
-// Inlined to guarantee zero-failure Vercel builds across all Next.js versions
+// Inlined to guarantee zero-failure Vercel builds across all Next.js environments
 const CANONICAL_HARIDASA_REGISTRY = [
   { ankita: "ಪುರಂದರ ವಿಠ್ಠಲ", composer: "ಶ್ರೀ ಪುರಂದರ ದಾಸರು", era: "1484–1564 CE", location: "Hampi / Pandharpur" },
   { ankita: "ಕಾಗಿನೆಲೆಯಾದಿಕೇಶವ", composer: "ಶ್ರೀ ಕನಕ ದಾಸರು", era: "1509–1609 CE", location: "Kaginele" },
@@ -31,7 +31,7 @@ const CANONICAL_HARIDASA_REGISTRY = [
   { ankita: "ಇಂದಿರೇಶ ವಿಠ್ಠಲ", composer: "ಶ್ರೀ ಇಂದಿರೇಶ ದಾಸರು", era: "18th Century", location: "Karnataka" }
 ];
 
-// Pre-cached canonical masterpieces with curated classical renditions
+// Pre-cached canonical masterpieces with curated classical rendition queries
 const PRECACHED_MASTERPIECES: Record<string, any> = {
   narasimha: {
     titleKannada: "ಶ್ರೀ ನರಸಿಂಹ ಸೂಳಾದಿ",
@@ -46,10 +46,10 @@ const PRECACHED_MASTERPIECES: Record<string, any> = {
     ragaTradition: "ಮಾಲಿಕಾ / ಸಂಪ್ರದಾಯ ಸೂಳಾದಿ ರಾಗ",
     talaTradition: "ಧ್ರುವ ತಾಳಾದಿ ಸಪ್ತತಾಳ",
     classicalRendition: {
-      artist: "ವಿದ್ಯಾಭೂಷಣ (Sri Vidyabhushana)",
+      artist: "ವಿದ್ಯಾಭೂಷಣ / ಸಂಪ್ರದಾಯ ಗಾಯಕರು",
       raga: "ರಾಗಮಾಲಿಕೆ",
       tala: "ಸಪ್ತತಾಳ (ಧ್ರುವ, ಮಟ್ಟ, ರೂಪಕ)",
-      audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+      searchQuery: "Narasimha Suladi Veera Simhane Vidyabhushana",
       sourceNote: "ಸಂಪ್ರದಾಯ ಸೂಳಾದಿ ಶೈಲಿಯ ಶಾಸ್ತ್ರೀಯ ಗಾಯನ"
     },
     stanzas: [
@@ -89,11 +89,11 @@ const PRECACHED_MASTERPIECES: Record<string, any> = {
     ragaTradition: "ತಿಲಂಗ್ / ಭೈರವಿ / ಕಾಪಿ",
     talaTradition: "ಆದಿ ತಾಳ",
     classicalRendition: {
-      artist: "ಡಾ. ಎಂ. ಬಾಲಮುರಳಿಕೃಷ್ಣ (Dr. M. Balamuralikrishna)",
-      raga: "ತಿಲಂಗ್ / ರಾಗಮಾಲಿಕೆ",
+      artist: "ಡಾ. ಎಂ. ಬಾಲಮುರಳಿಕೃಷ್ಣ / ಶಾಸ್ತ್ರೀಯ ಗಾಯನ",
+      raga: "ತಿಲಂಗ್ (Tilang)",
       tala: "ಆದಿ ತಾಳ",
-      audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-      sourceNote: "ಮುಂಡಿಗೆಯ ಗಹನ ತತ್ತ್ವವನ್ನು ಬಿಂಬಿಸುವ ಶಾಸ್ತ್ರೀಯ ಗಾಯನ"
+      searchQuery: "Tarakka Bindige Neerige Hogona Balamuralikrishna",
+      sourceNote: "ಮುಂಡಿಗೆಯ ಗಹನ ತತ್ತ್ವವನ್ನು ಬಿಂಬಿಸುವ ಶಾಸ್ತ್ರೀಯ ತಿಲಂಗ್ ರಾಗದ ಗಾಯನ"
     },
     stanzas: [
       {
@@ -135,7 +135,7 @@ const PRECACHED_MASTERPIECES: Record<string, any> = {
     composerEnglish: "Sri Purandara Dasaru (1484–1564 CE)",
     ankitaKannada: "ಪುರಂದರ ವಿಠ್ಠಲ",
     ankitaEnglish: "Purandara Vittala",
-    historicalContextKannada: "ಪುರಂದರದಾಸರ ಅತ್ಯಂತ ಪ್ರಭಾವಿ ವೈರಾಗ್ಯ ಗೀತೆ. ಅಸಂಖ್ಯಾತ ಜೀವ ಜನ್ಮಗಳ ನಂತರ ಲಭಿಸಿದ ದುರ್ಲಭವಾದ ಮನುಷ್ಯ ಜನ್ಮವನ್ನು ವ್ಯರ್ಥ ವಿಷಯ ಸುಖಗಳಿಗೆ ಹಾಳುಮಾಡದೆ ಹರಿನಾಮ ಸ್ಮರಣೆಯಲ್ಲಿ ತೊಡಗಿಸಿಕೊಳ್ಳಬೇಕೆಂದು ಜನಸಾಮಾನ್ಯರಿಗೆ ಎಚ್ಚರಿಸುವ ಕೃತಿ.",
+    historicalContextKannada: "ಪುರಂದರದಾಸರ ಅತ್ಯಂತ ಪ್ರಸಿದ್ಧ ವೈರಾಗ್ಯ ಗೀತೆ. ಅಸಂಖ್ಯಾತ ಜೀವ ಜನ್ಮಗಳ ನಂತರ ಲಭಿಸಿದ ದುರ್ಲಭವಾದ ಮನುಷ್ಯ ಜನ್ಮವನ್ನು ವ್ಯರ್ಥ ವಿಷಯ ಸುಖಗಳಿಗೆ ಹಾಳುಮಾಡದೆ ಹರಿನಾಮ ಸ್ಮರಣೆಯಲ್ಲಿ ತೊಡಗಿಸಿಕೊಳ್ಳಬೇಕೆಂದು ಜನಸಾಮಾನ್ಯರಿಗೆ ಎಚ್ಚರಿಸುವ ಕೃತಿ.",
     historicalContextEnglish: "Purandara Dasa's timeless wake-up call articulating the immense rarity of conscious human embodiment and warning against dissipating it in mundane hedonism.",
     compositionType: "ಕೀರ್ತನೆ / ದೇವರನಾಮ",
     ragaTradition: "ರಾಗಮಾಲಿಕೆ / ಭೈರವಿ",
@@ -144,7 +144,7 @@ const PRECACHED_MASTERPIECES: Record<string, any> = {
       artist: "ಪಂ. ಭೀಮಸೇನ ಜೋಶಿ (Pt. Bhimsen Joshi)",
       raga: "ಮಾಂಡ್ / ರಾಗಮಾಲಿಕೆ",
       tala: "ಆದಿ ತಾಳ",
-      audioUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+      searchQuery: "Bhimsen Joshi Manava Janma Doddadu Purandara Dasa",
       sourceNote: "ವೈರಾಗ್ಯ ಭಾವದ ಮೇರು ಶಾಸ್ತ್ರೀಯ ಗಾಯನ"
     },
     stanzas: [
@@ -175,7 +175,6 @@ const PRECACHED_MASTERPIECES: Record<string, any> = {
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}));
-    // Accept query, input, or text interchangeably
     const query = (body.query || body.input || body.text || "").trim();
 
     if (!query) {
@@ -185,7 +184,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // Fast-path instant cache matching (eliminates 100% of LLM calls for canonical favorites)
+    // Fast-path instant cache matching (bypasses 100% of LLM calls for canonical favorites)
     const qLower = query.toLowerCase();
     if (qLower.includes("ನಾರಸಿಂಹ") || qLower.includes("ವೀರ ಸಿಂಹನೆ") || qLower.includes("narasimha")) {
       return NextResponse.json(PRECACHED_MASTERPIECES.narasimha);
@@ -213,6 +212,7 @@ CRITICAL SCHOLARLY RULES:
 1. Deterministic Attribution: Verify the signature line (ಅಂಕಿತ ನಾಮ). Never default to Purandara Dasa if the signature belongs to another Dasa (e.g. ವಿಜಯ ವಿಠ್ಠಲ = Vijaya Dasa; ಗುರು ಜಗನ್ನಾಥ ವಿಠ್ಠಲ = Medhavi Venkataramacharya; ಹಯವದನ = Vadiraja Tirtha).
 2. Structural Rigor: If the work is a Suladi, label stanzas with the respective Tala (ಧ್ರುವ, ಮಟ್ಟ, ರೂಪಕ, ಝಂಪೆ, ತ್ರಿಪುಟ, ಅಟ್ಟ, ಆದಿ, ಜತೆ). If Mundige, decode esoteric allegories.
 3. Anvaya: Reorder the poetic lines into natural spoken Kannada grammatical order.
+4. Classical Rendition Query: Provide a suggested classical artist name, standard raga, tala, and an exact YouTube search string in "classicalRendition".
 
 Return ONLY a valid JSON object matching this exact schema:
 {
@@ -227,6 +227,13 @@ Return ONLY a valid JSON object matching this exact schema:
   "compositionType": "ಕೀರ್ತನೆ / ದೇವರನಾಮ" | "ಸೂಳಾದಿ" | "ಉಗಾಭೋಗ" | "ಮುಂಡಿಗೆ",
   "ragaTradition": "string",
   "talaTradition": "string",
+  "classicalRendition": {
+    "artist": "string",
+    "raga": "string",
+    "tala": "string",
+    "searchQuery": "string",
+    "sourceNote": "string"
+  },
   "stanzas": [
     {
       "stanzaNumber": 1,
@@ -263,43 +270,74 @@ Return ONLY a valid JSON object matching this exact schema:
   "modernTakeawayEnglish": "string"
 }`;
 
-    // Modern Gemini endpoint (gemini-3.8-flash)
-    const apiResponse = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [
-            {
-              role: "user",
-              parts: [{ text: `${systemPrompt}\n\nAnalyze this Haridasa composition or query:\n"${query}"` }]
-            }
-          ],
-          generationConfig: {
-            temperature: 0.15,
-            responseMimeType: "application/json"
+    // Resilient Fallback Waterfall across model tiers
+    const MODELS_TO_TRY = [
+      "gemini-3.8-flash",
+      "gemini-3.5-flash-lite",
+      "gemini-2.5-flash"
+    ];
+
+    let rawContent: string | null = null;
+
+    for (const model of MODELS_TO_TRY) {
+      try {
+        let apiResponse = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              contents: [
+                {
+                  role: "user",
+                  parts: [{ text: `${systemPrompt}\n\nAnalyze this Haridasa composition or query:\n"${query}"` }]
+                }
+              ],
+              generationConfig: {
+                temperature: 0.15,
+                responseMimeType: "application/json"
+              }
+            })
           }
-        })
+        );
+
+        if (apiResponse.status === 503 || apiResponse.status === 429) {
+          await new Promise((resolve) => setTimeout(resolve, 800));
+          apiResponse = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                contents: [
+                  {
+                    role: "user",
+                    parts: [{ text: `${systemPrompt}\n\nAnalyze this Haridasa composition or query:\n"${query}"` }]
+                  }
+                ],
+                generationConfig: {
+                  temperature: 0.15,
+                  responseMimeType: "application/json"
+                }
+              })
+            }
+          );
+        }
+
+        if (apiResponse.ok) {
+          const data = await apiResponse.json();
+          rawContent = data?.candidates?.[0]?.content?.parts?.[0]?.text || null;
+          if (rawContent) break;
+        }
+      } catch (err: any) {
+        console.warn(`Connection error on ${model}:`, err.message);
       }
-    );
-
-    if (!apiResponse.ok) {
-      const errText = await apiResponse.text();
-      console.error("Gemini API error:", errText);
-      return NextResponse.json(
-        { error: "ವಿಶ್ಲೇಷಣೆ ಸರ್ವರ್‌ನಲ್ಲಿ ತೊಂದರೆ ಉಂಟಾಗಿದೆ. ದಯವಿಟ್ಟು ಮರುಪ್ರಯತ್ನಿಸಿ." },
-        { status: 502 }
-      );
     }
-
-    const data = await apiResponse.json();
-    const rawContent = data?.candidates?.[0]?.content?.parts?.[0]?.text;
 
     if (!rawContent) {
       return NextResponse.json(
-        { error: "ಪೂರ್ಣ ಮಾಹಿತಿ ಪಡೆಯಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ." },
-        { status: 500 }
+        { error: "ಸರ್ವರ್‌ನಲ್ಲಿ ಹೆಚ್ಚಿನ ಒತ್ತಡವಿದೆ (503 High Demand). ದಯವಿಟ್ಟು 5 ಸೆಕೆಂಡುಗಳ ನಂತರ ಮತ್ತೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ." },
+        { status: 503 }
       );
     }
 
