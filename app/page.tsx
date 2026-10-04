@@ -64,7 +64,7 @@ export default function Home() {
   const [kannadaSize, setKannadaSize] = useState<string>("text-base");
   const [englishSize, setEnglishSize] = useState<string>("text-sm");
 
-  // Quick Action Presets
+  // Verified Quick Action Presets
   const PRESET_SONGS = [
     { label: "ಶ್ರೀ ನರಸಿಂಹ ಸೂಳಾದಿ", query: "ವೀರ ಸಿಂಹನೆ ನಾರಸಿಂಹನೆ ದಯ ಪಾರಾವಾರನೆ ಭಯ ನಿವಾರಣ ನಿರ್ಗುಣ ಶ್ರೀ ನರಸಿಂಹ ಸೂಳಾದಿ" },
     { label: "ಶ್ರೀ ದುರ್ಗಾ ಸೂಳಾದಿ", query: "ಜಯ ಜಯತು ಜಯದುರ್ಗೆ ಜಯ ಪರಾಶಕ್ತಿ ಜಗಜ್ಜನನಿ ಶ್ರೀ ದುರ್ಗಾ ಸೂಳಾದಿ" },
@@ -74,56 +74,12 @@ export default function Home() {
     { label: "ಕಲ್ಲು ಸಕ್ಕರೆ ಕೊಳ್ಳಿರೋ", query: "ಕಲ್ಲು ಸಕ್ಕರೆ ಕೊಳ್ಳಿರೋ ನೀವೆಲ್ಲರು ಕಲ್ಲು ಸಕ್ಕರೆ ಕೊಳ್ಳಿರೋ ಪುರಂದರವಿಠ್ಠಲ" },
   ];
 
-  // ಭಾವ ಶೋಧನೆ (Bhāva Shōdhane) Thematic Discovery Options
-  const BHAVA_OPTIONS = [
-    {
-      kannada: "ವೈರಾಗ್ಯ ಭಾವ",
-      english: "Vairāgya (Dispassion)",
-      query: "ಮಾನವ ಜನ್ಮ ದೊಡ್ಡದು ಇದನು ಹಾನಿ ಮಾಡಲಿಬೇಡಿ ಹುಚ್ಚಪ್ಪಗಳಿರಾ",
-    },
-    {
-      kannada: "ಶರಣಾಗತಿ & ರಕ್ಷಣೆ",
-      english: "Śaraṇāgati (Surrender)",
-      query: "ವೀರ ಸಿಂಹನೆ ನಾರಸಿಂಹನೆ ದಯ ಪಾರಾವಾರನೆ ಭಯ ನಿವಾರಣ ನಿರ್ಗುಣ ಶ್ರೀ ನರಸಿಂಹ ಸೂಳಾದಿ",
-    },
-    {
-      kannada: "ಯೋಗ / ಮುಂಡಿಗೆ",
-      english: "Mundige (Allegory)",
-      query: "ತಾರಕ್ಕ ಬಿಂದಿಗೆ ನೀರಿಗೆ ಹೋಗೋಣ ಬಾರೆ ಚೆಲುವೆ ಬಿಂದಿಗೆ ಒಡೆದರೆ ಒಂಬತ್ತು ತೂತು",
-    },
-    {
-      kannada: "ವಾತ್ಸಲ್ಯ ಭಾವ",
-      english: "Vātsalya (Maternal Love)",
-      query: "ಜಗದೋದ್ಧಾರನ ಆಡಿಸಿದಳೆಶೋದ ಜಗದೋದ್ಧಾರನ ಮಗನೆಂದು ತಿಳಿಯುತ",
-    },
-    {
-      kannada: "ಆರೋಗ್ಯ & ಪ್ರಾರ್ಥನೆ",
-      english: "Arogya (Healing)",
-      query: "ಆಯುವೃದ್ಧಿಯಾಗೋದು ಶ್ರೇಯಸ್ಸು ಬರುವುದು ಕಾಯಾ ನಿರ್ಮಲಿನಾ ಕಾರಣವಾಹದೊ ಶ್ರೀ ಧನ್ವಂತ್ರಿ ಸೂಳಾದಿ",
-    },
-    {
-      kannada: "ಗುರು ಕೃಪೆ & ಭಕ್ತಿ",
-      english: "Guru Bhakti",
-      query: "ಗುರುವಿನ ಗುಲಾಮನಾಗುವ ತನಕ ದೊರೆಯದಣ್ಣ ಮುಕುತಿ",
-    },
-    {
-      kannada: "ದೈನ್ಯ ಭಾವ",
-      english: "Dainya (Plea for Grace)",
-      query: "ಇನ್ನು ದಯಬಾರದೆ ದಾಸನ ಮೇಲೆ ಪನ್ನಂಗಶಯನ ಶ್ರೀ ವೆಂಕಟೇಶ",
-    },
-    {
-      kannada: "ತತ್ತ್ವೋಪದೇಶ",
-      english: "Upadeśa (Philosophy)",
-      query: "ಕಲ್ಲು ಸಕ್ಕರೆ ಕೊಳ್ಳಿರೋ ನೀವೆಲ್ಲರು ಕಲ್ಲು ಸಕ್ಕರೆ ಕೊಳ್ಳಿರೋ ಪುರಂದರವಿಠ್ಠಲ",
-    },
-  ];
-
   // Universal Decoder Handler
   const handleDecode = async (overrideInput?: string) => {
     const textToQuery = (typeof overrideInput === "string" ? overrideInput : input).trim();
-    
+
     if (!textToQuery) {
-      setError("ದಯವಿಟ್ಟು ಕೃತಿಯ ಪಲ್ಲವಿ ಅಥವಾ ಸರಿಯಾದ ಪದವನ್ನು ನಮೂದಿಸಿ ನೋಡಿ.");
+      setError("ದಯವಿಟ್ಟು ಕೃತಿಯ ಪಲ್ಲವಿ ಅಥವಾ ಸಾಲುಗಳನ್ನು ನಮೂದಿಸಿ ನೋಡಿ.");
       return;
     }
 
@@ -135,9 +91,9 @@ export default function Home() {
       const res = await fetch("/api/decode", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           query: textToQuery,
-          input: textToQuery 
+          input: textToQuery,
         }),
       });
 
@@ -164,12 +120,15 @@ export default function Home() {
       {/* Masthead Header */}
       <header className="border-b border-stone-200/80 bg-white/95 backdrop-blur-xs sticky top-0 z-40">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-amber-900 text-amber-50 flex items-center justify-center font-serif font-bold text-lg shadow-2xs">
-              ದಾ
+          <div className="flex items-center gap-3">
+            {/* Cultural Tamburi / Sangeetha Icon */}
+            <div className="w-9 h-9 rounded-xl bg-amber-900/10 border border-amber-900/20 text-amber-950 flex items-center justify-center shadow-2xs">
+              <svg className="w-5 h-5 text-amber-900" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+              </svg>
             </div>
             <div>
-              <h1 className="text-base sm:text-lg font-serif font-bold tracking-tight text-amber-950 flex items-center gap-1.5">
+              <h1 className="text-base sm:text-lg font-serif font-bold tracking-tight text-amber-950 flex items-center gap-2">
                 <span>ದಾಸ ಬೋಧಿನಿ</span>
                 <span className="text-xs font-sans font-normal text-stone-500">| Dāsa Bodhini</span>
               </h1>
@@ -179,15 +138,15 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Quick Support & Feedback Link */}
+          {/* Restored Direct WhatsApp Feedback Link */}
           <div className="flex items-center gap-2">
             <a
-              href="https://wa.me/919845509006?text=Namaskara,%20feedback%20regarding%20Dasa%20Bodhini%20app:"
+              href="https://api.whatsapp.com/send?phone=919845509006&text=Namaskara,%20feedback%20regarding%20Dasa%20Bodhini%20app:"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 px-2.5 py-1 rounded-full transition flex items-center gap-1 shadow-2xs"
+              className="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300/80 px-3 py-1.5 rounded-full transition flex items-center gap-1.5 font-medium shadow-2xs cursor-pointer active:scale-95"
             >
-              <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+              <svg className="w-3.5 h-3.5 fill-current text-emerald-700" viewBox="0 0 24 24">
                 <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.044c.101-.116.433-.506.549-.68.116-.174.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.043.073.043.419-.101.824z" />
               </svg>
               <span>Feedback</span>
@@ -271,31 +230,6 @@ export default function Home() {
                 {p.label}
               </button>
             ))}
-          </div>
-
-          {/* ಭಾವ ಶೋಧನೆ • Devotional Mood Discovery Bar */}
-          <div className="pt-3 border-t border-stone-200/80 space-y-2">
-            <div className="flex items-center justify-between text-[11px] text-stone-500">
-              <span className="font-serif font-bold text-amber-950 flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-800"></span>
-                ಭಾವ ಶೋಧನೆ • Bhāva Shōdhane
-              </span>
-              <span className="text-stone-400 italic">ಕಾವ್ಯದ ಅಂತರಂಗ ಭಾವದಂತೆ ಅನ್ವೇಷಿಸಿ</span>
-            </div>
-
-            <div className="flex flex-wrap gap-1.5">
-              {BHAVA_OPTIONS.map((b) => (
-                <button
-                  key={b.kannada}
-                  type="button"
-                  onClick={() => handleDecode(b.query)}
-                  className="px-2.5 py-1 rounded-full bg-stone-100 hover:bg-amber-100/80 text-stone-700 hover:text-amber-950 border border-stone-200/80 text-[11px] font-medium transition cursor-pointer active:scale-95 flex items-center gap-1 shadow-2xs"
-                >
-                  <span className="font-serif font-semibold">{b.kannada}</span>
-                  <span className="text-[10px] text-stone-400 font-sans">({b.english})</span>
-                </button>
-              ))}
-            </div>
           </div>
         </section>
 
@@ -677,7 +611,7 @@ export default function Home() {
 
                 <div className="pt-2 flex justify-end">
                   <a
-                    href={`https://wa.me/?text=${encodeURIComponent(`*${result.titleKannada}* (${result.composerKannada})\n\nಅಂಕಿತ: ${result.ankitaKannada}\n\n*ಸಾರಾಂಶ:* ${result.comprehensiveSummaryKannada.slice(0, 200)}...\n\nದಾಸ ಬೋಧಿನಿಯಲ್ಲಿ ವಿಶ್ಲೇಷಿಸಲಾಗಿದೆ.`)}`}
+                    href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`*${result.titleKannada}* (${result.composerKannada})\n\nಅಂಕಿತ: ${result.ankitaKannada}\n\n*ಸಾರಾಂಶ:* ${result.comprehensiveSummaryKannada.slice(0, 200)}...\n\nದಾಸ ಬೋಧಿನಿಯಲ್ಲಿ ವಿಶ್ಲೇಷಿಸಲಾಗಿದೆ.`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white px-4 py-2 rounded-xl text-xs font-semibold transition shadow-2xs"
@@ -696,9 +630,12 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="border-t border-stone-200 bg-white py-6 mt-12 text-center text-xs text-stone-500 space-y-1">
-        <p className="font-serif">ದಾಸ ಬೋಧಿನಿ • Dāsa Bodhini Workstation</p>
-        <p className="text-[11px] text-stone-400">
+        <p className="font-serif font-semibold text-stone-700">ದಾಸ ಬೋಧಿನಿ • Dāsa Bodhini Workstation</p>
+        <p className="text-[11px] text-stone-500">
           ಪ್ರಸ್ಥಾನತ್ರಯ ಹಾಗೂ 40+ ಹರಿದಾಸರ ಅಂಕಿತ ಮುದ್ರೆಗಳ ಸಂಶೋಧನಾ ವೇದಿಕೆ (1263–1983 CE).
+        </p>
+        <p className="text-[11px] text-stone-400 pt-1">
+          Designed & Curated by <span className="font-medium text-stone-600">Madhav N V</span>
         </p>
       </footer>
     </div>
