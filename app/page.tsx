@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 interface StanzaBreakdown {
   stanzaNumber: number;
@@ -64,6 +64,51 @@ export default function Home() {
   const [kannadaSize, setKannadaSize] = useState<string>("text-base");
   const [englishSize, setEnglishSize] = useState<string>("text-sm");
 
+  // Speech Recognition (Mic)
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef<any>(null);
+
+  // Structured Feedback Modal State
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [feedbackCategory, setFeedbackCategory] = useState("ಕೃತಿ ವಿಶ್ಲೇಷಣೆ ದೋಷ (Analysis Correction)");
+  const [feedbackComment, setFeedbackComment] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        const recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = "kn-IN";
+
+        recognition.onresult = (event: any) => {
+          const transcript = event.results[0][0].transcript;
+          setInput((prev) => (prev ? `${prev} ${transcript}` : transcript));
+          setIsListening(false);
+        };
+
+        recognition.onerror = () => setIsListening(false);
+        recognition.onend = () => setIsListening(false);
+        recognitionRef.current = recognition;
+      }
+    }
+  }, []);
+
+  const toggleMic = () => {
+    if (!recognitionRef.current) {
+      alert("ನಿಮ್ಮ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಧ್ವನಿ ಗ್ರಹಿಕೆ (Voice typing) ಸೌಲಭ್ಯ ಲಭ್ಯವಿಲ್ಲ.");
+      return;
+    }
+    if (isListening) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    } else {
+      setIsListening(true);
+      recognitionRef.current.start();
+    }
+  };
+
   // Verified Quick Action Presets
   const PRESET_SONGS = [
     { label: "ಶ್ರೀ ನರಸಿಂಹ ಸೂಳಾದಿ", query: "ವೀರ ಸಿಂಹನೆ ನಾರಸಿಂಹನೆ ದಯ ಪಾರಾವಾರನೆ ಭಯ ನಿವಾರಣ ನಿರ್ಗುಣ ಶ್ರೀ ನರಸಿಂಹ ಸೂಳಾದಿ" },
@@ -115,6 +160,16 @@ export default function Home() {
     }
   };
 
+  // Send WhatsApp Feedback with Selected Options
+  const handleSendWhatsAppFeedback = () => {
+    const message = `*Dāsa Bodhini - User Feedback*\n\n*ವಿಭಾಗ (Category):* ${feedbackCategory}\n${result ? `*ಕೃತಿ (Current Song):* ${result.titleKannada} (${result.composerKannada})\n` : ""}${input ? `*ಹುಡುಕಾಟ (Query):* ${input}\n` : ""}*ಅನಿಸಿಕೆ/ವಿವರ (Comment):* ${feedbackComment || "ಯಾವುದೇ ವಿವರಣೆ ನೀಡಿಲ್ಲ"}`;
+
+    const url = `https://api.whatsapp.com/send?phone=919845509006&text=${encodeURIComponent(message)}`;
+    window.open(url, "_blank");
+    setShowFeedbackModal(false);
+    setFeedbackComment("");
+  };
+
   return (
     <div className="min-h-screen bg-[#FAF8F5] text-stone-900 selection:bg-amber-100 flex flex-col font-sans">
       {/* Masthead Header */}
@@ -138,19 +193,17 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Restored Direct WhatsApp Feedback Link */}
+          {/* Interactive Feedback Button */}
           <div className="flex items-center gap-2">
-            <a
-              href="https://api.whatsapp.com/send?phone=919845509006&text=Namaskara,%20feedback%20regarding%20Dasa%20Bodhini%20app:"
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              onClick={() => setShowFeedbackModal(true)}
               className="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300/80 px-3 py-1.5 rounded-full transition flex items-center gap-1.5 font-medium shadow-2xs cursor-pointer active:scale-95"
             >
               <svg className="w-3.5 h-3.5 fill-current text-emerald-700" viewBox="0 0 24 24">
                 <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.044c.101-.116.433-.506.549-.68.116-.174.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.043.073.043.419-.101.824z" />
               </svg>
               <span>Feedback</span>
-            </a>
+            </button>
           </div>
         </div>
       </header>
@@ -169,8 +222,24 @@ export default function Home() {
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="ಉದಾಹರಣೆಗೆ: ವೀರ ಸಿಂಹನೆ ನಾರಸಿಂಹನೆ ದಯ ಪಾರಾವಾರನೆ... ಅಥವಾ ತಾರಕ್ಕ ಬಿಂದಿಗೆ..."
                 rows={3}
-                className="w-full text-sm sm:text-base p-3.5 rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-900/30 focus:border-amber-900 transition bg-stone-50/50 resize-y font-serif"
+                className="w-full text-sm sm:text-base p-3.5 pr-12 rounded-xl border border-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-900/30 focus:border-amber-900 transition bg-stone-50/50 resize-y font-serif"
               />
+
+              {/* Speech-to-Text Microphone Button */}
+              <button
+                type="button"
+                onClick={toggleMic}
+                title="ಧ್ವನಿಯ ಮೂಲಕ ನಮೂದಿಸಿ (Voice Typing in Kannada)"
+                className={`absolute right-3 bottom-3 p-2 rounded-lg transition cursor-pointer ${
+                  isListening
+                    ? "bg-red-600 text-white animate-pulse"
+                    : "bg-stone-100 hover:bg-amber-100 text-stone-600 hover:text-amber-950 border border-stone-200"
+                }`}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                </svg>
+              </button>
             </div>
           </div>
 
@@ -213,7 +282,7 @@ export default function Home() {
             </div>
 
             <span className="text-[11px] text-stone-500 italic hidden md:inline">
-              ⚡ 40+ ಅಧಿಕೃತ ಹರಿದಾಸರ ಅಂಕಿತ ಮುದ್ರೆಗಳೊಂದಿಗೆ ಸಂಶೋಧನಾ ಆಧಾರಿತ ವಿಶ್ಲೇಷಣೆ
+              ⚡ ಪ್ರಾಮಾಣಿಕ ಅನ್ವಯ, ಪ್ರತಿಪದಾರ್ಥ ಹಾಗೂ ಮುಂಡಿಗೆ ಗೂಢಾರ್ಥ ವಿಶ್ಲೇಷಣೆ
             </span>
           </div>
 
@@ -628,14 +697,86 @@ export default function Home() {
         )}
       </main>
 
+      {/* Structured Feedback Modal */}
+      {showFeedbackModal && (
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-5 space-y-4 shadow-xl border border-stone-200">
+            <div className="flex items-center justify-between border-b border-stone-100 pb-3">
+              <h3 className="font-serif font-bold text-amber-950 text-base flex items-center gap-2">
+                <span>ಅನಿಸಿಕೆ / ಸಲಹೆ ಸಲ್ಲಿಸಿ</span>
+                <span className="text-xs font-sans text-stone-500 font-normal">(Feedback)</span>
+              </h3>
+              <button
+                onClick={() => setShowFeedbackModal(false)}
+                className="text-stone-400 hover:text-stone-700 text-lg cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div>
+                <label className="font-semibold text-stone-700 block mb-1.5">
+                  ವಿಷಯ / ವಿಭಾಗ ಆಯ್ಕೆಮಾಡಿ (Select Category):
+                </label>
+                <select
+                  value={feedbackCategory}
+                  onChange={(e) => setFeedbackCategory(e.target.value)}
+                  className="w-full p-2.5 rounded-xl border border-stone-200 bg-stone-50/50 font-serif text-xs text-stone-800 focus:outline-none focus:ring-1 focus:ring-amber-900"
+                >
+                  <option value="ಕೃತಿ ವಿಶ್ಲೇಷಣೆ ದೋಷ (Analysis / Anvaya Correction)">ಕೃತಿ ವಿಶ್ಲೇಷಣೆ ದೋಷ (Analysis Correction)</option>
+                  <option value="ಅಂಕಿತ ನಾಮ ಸರಿಪಡಿಸುವಿಕೆ (Composer / Ankita Correction)">ಅಂಕಿತ ನಾಮ ಸರಿಪಡಿಸುವಿಕೆ (Ankita Correction)</option>
+                  <option value="ಹೊಸ ಕೃತಿ ಸೇರ್ಪಡೆ ಕೋರಿಕೆ (Request Song Addition)">ಹೊಸ ಕೃತಿ ಸೇರ್ಪಡೆ ಕೋರಿಕೆ (Add Song)</option>
+                  <option value="ಶಾಸ್ತ್ರೀಯ ಗಾಯನ ಲಿಂಕ್ ಸಲಹೆ (Audio Rendition Suggestion)">ಶಾಸ್ತ್ರೀಯ ಗಾಯನ ಲಿಂಕ್ ಸಲಹೆ (Rendition Suggestion)</option>
+                  <option value="ಸಾಮಾನ್ಯ ಅನಿಸಿಕೆ (General Feedback)">ಸಾಮಾನ್ಯ ಅನಿಸಿಕೆ (General Feedback)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="font-semibold text-stone-700 block mb-1.5">
+                  ನಿಮ್ಮ ವಿವರಣೆ / ಅನಿಸಿಕೆ (Your Comments & Suggestion):
+                </label>
+                <textarea
+                  value={feedbackComment}
+                  onChange={(e) => setFeedbackComment(e.target.value)}
+                  placeholder="ನಿಮ್ಮ ಸಲಹೆ ಅಥವಾ ತಿದ್ದುಪಡಿಯನ್ನು ಇಲ್ಲಿ ಬರೆಯಿರಿ..."
+                  rows={3}
+                  className="w-full p-2.5 rounded-xl border border-stone-200 bg-stone-50/50 text-xs font-serif text-stone-800 focus:outline-none focus:ring-1 focus:ring-amber-900 resize-none"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-stone-100">
+              <button
+                type="button"
+                onClick={() => setShowFeedbackModal(false)}
+                className="px-3 py-1.5 text-xs text-stone-600 hover:text-stone-900 cursor-pointer"
+              >
+                ರದ್ದುಮಾಡಿ (Cancel)
+              </button>
+              <button
+                type="button"
+                onClick={handleSendWhatsAppFeedback}
+                className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-2xs cursor-pointer active:scale-95"
+              >
+                <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                  <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.275.072.376-.044c.101-.116.433-.506.549-.68.116-.174.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.043.073.043.419-.101.824z" />
+                </svg>
+                <span>WhatsApp ನಲ್ಲಿ ಕಳುಹಿಸಿ (Send)</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Footer */}
-      <footer className="border-t border-stone-200 bg-white py-6 mt-12 text-center text-xs text-stone-500 space-y-1">
-        <p className="font-serif font-semibold text-stone-700">ದಾಸ ಬೋಧಿನಿ • Dāsa Bodhini Workstation</p>
-        <p className="text-[11px] text-stone-500">
-          ಪ್ರಸ್ಥಾನತ್ರಯ ಹಾಗೂ 40+ ಹರಿದಾಸರ ಅಂಕಿತ ಮುದ್ರೆಗಳ ಸಂಶೋಧನಾ ವೇದಿಕೆ (1263–1983 CE).
+      <footer className="border-t border-stone-200 bg-white py-6 mt-12 text-center text-xs text-stone-500 space-y-1.5">
+        <p className="font-serif font-semibold text-stone-700">ದಾಸ ಬೋಧಿನಿ • Dāsa Bodhini</p>
+        <p className="text-[11px] text-amber-900/80 font-medium">
+          Note: This is a Beta version and is currently being tested.
         </p>
-        <p className="text-[11px] text-stone-400 pt-1">
-          Designed & Curated by <span className="font-medium text-stone-600">Madhav N V</span>
+        <p className="text-[11px] text-stone-400 pt-0.5">
+          Designed & Developed by <span className="font-medium text-stone-600">Madhav N V</span>
         </p>
       </footer>
     </div>
