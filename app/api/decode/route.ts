@@ -1,15 +1,15 @@
 import { NextResponse } from "next/server";
 
 const CANONICAL_HARIDASA_REGISTRY = [
-  { ankita: "ವಿಜಯ ವಿಠ್ಠಲ", composer: "ಶ್ರೀ ವಿಜಯ ದಾಸರು", era: "1682–1755 CE", location: "Chikalparvi" },
-  { ankita: "ಪುರಂದರ ವಿಠ್ಠಲ", composer: "ಶ್ರೀ ಪುರಂದರ ದಾಸರು", era: "1484–1564 CE", location: "Hampi / Pandharpur" },
-  { ankita: "ಕಾಗಿನೆಲೆಯಾದಿಕೇಶವ", composer: "ಶ್ರೀ ಕನಕ ದಾಸರು", era: "1509–1609 CE", location: "Kaginele" },
-  { ankita: "ಗೋಪಾಲ ವಿಠ್ಠಲ", composer: "ಶ್ರೀ ಗೋಪಾಲ ದಾಸರು", era: "1721–1762 CE", location: "Mosarakallu" },
-  { ankita: "ಜಗನ್ನಾಥ ವಿಠ್ಠಲ", composer: "ಶ್ರೀ ಜಗನ್ನಾಥ ದಾಸರು", era: "1727–1809 CE", location: "Manvi" },
-  { ankita: "ಹಯವದನ", composer: "ಶ್ರೀ ವಾದಿರಾಜ ತೀರ್ಥರು", era: "1480–1600 CE", location: "Sode" },
-  { ankita: "ಶ್ರೀವ್ಯಾಸವಿಠ್ಠಲ", composer: "ಶ್ರೀ ವ್ಯಾಸರಾಜ ತೀರ್ಥರು", era: "1460–1539 CE", location: "Hampi" },
-  { ankita: "ಶ್ರೀರಂಗವಿಠ್ಠಲ", composer: "ಶ್ರೀ ಶ್ರೀಪಾದರಾಜರು", era: "1422–1480 CE", location: "Mulbagal" },
-  { ankita: "ಪ್ರಾಣೇಶವಿಠ್ಠಲ", composer: "ಶ್ರೀ ಪ್ರಾಣೇಶ ದಾಸರು", era: "1744–1823 CE", location: "Lingasugur" }
+  { ankita: "ವಿಜಯ ವಿಠ್ಠಲ", composer: "ಶ್ರೀ ವಿಜಯ ದಾಸರು", era: "1682–1755 CE", location: "Chikalparvi", genre: "Suladi / Kirthane" },
+  { ankita: "ಪುರಂದರ ವಿಠ್ಠಲ", composer: "ಶ್ರೀ ಪುರಂದರ ದಾಸರು", era: "1484–1564 CE", location: "Hampi / Pandharpur", genre: "Kirthane / Suladi / Mundige" },
+  { ankita: "ಕಾಗಿನೆಲೆಯಾದಿಕೇಶವ", composer: "ಶ್ರೀ ಕನಕ ದಾಸರು", era: "1509–1609 CE", location: "Kaginele", genre: "Philosophy / Kirthane" },
+  { ankita: "ಗೋಪಾಲ ವಿಠ್ಠಲ", composer: "ಶ್ರೀ ಗೋಪಾಲ ದಾಸರು", era: "1721–1762 CE", location: "Mosarakallu", genre: "Suladi / Ugabhoga" },
+  { ankita: "ಜಗನ್ನಾಥ ವಿಠ್ಠಲ", composer: "ಶ್ರೀ ಜಗನ್ನಾಥ ದಾಸರು", era: "1727–1809 CE", location: "Manvi", genre: "Tattwa / Kirthane" },
+  { ankita: "ಹಯವದನ", composer: "ಶ್ರೀ ವಾದಿರಾಜ ತೀರ್ಥರು", era: "1480–1600 CE", location: "Sode", genre: "Vadiraja Stotra / Suladi" },
+  { ankita: "ಶ್ರೀವ್ಯಾಸವಿಠ್ಠಲ", composer: "ಶ್ರೀ ವ್ಯಾಸರಾಜ ತೀರ್ಥರು", era: "1460–1539 CE", location: "Hampi", genre: "Vyasaraya Kirthane" },
+  { ankita: "ಶ್ರೀರಂಗವಿಠ್ಠಲ", composer: "ಶ್ರೀ ಶ್ರೀಪಾದರಾಜರು", era: "1422–1480 CE", location: "Mulbagal", genre: "Ugabhoga / Kirthane" },
+  { ankita: "ಪ್ರಾಣೇಶವಿಠ್ಠಲ", composer: "ಶ್ರೀ ಪ್ರಾಣೇಶ ದಾಸರು", era: "1744–1823 CE", location: "Lingasugur", genre: "Suladi / Devaranama" }
 ];
 
 const PRECACHED_MASTERPIECES: Record<string, any> = {
@@ -147,7 +147,7 @@ const PRECACHED_MASTERPIECES: Record<string, any> = {
     composerKannada: "ಶ್ರೀ ಪುರಂದರ ದಾಸರು",
     composerEnglish: "Sri Purandara Dasaru (1484–1564 CE)",
     ankitaKannada: "ಪುರಂದರ ವಿಠ್ಠಲ",
-    ankitaEnglish: "Purandara Vittala",
+    ankitaEnglish: "Vijaya Vittala",
     historicalContextKannada: "ಪುರಂದರದಾಸರ ಅತ್ಯಂತ ಪ್ರಸಿದ್ಧ 'ಮುಂಡಿಗೆ' (ರೂಪಕ ಕವನ). ಮೇಲ್ನೋಟಕ್ಕೆ ಗೃಹಿಣಿಯೊಬ್ಬಳು ನೀರಿಗೆ ಹೋಗುವ ಜನಪದ ಕಥೆಯಂತೆ ಕಂಡರೂ, ಅಂತರಂಗದಲ್ಲಿ ನವದ್ವಾರ ಶರೀರ ಮತ್ತು ಭಕ್ತಿ-ಮೋಕ್ಷದ ಗೂಢಾರ್ಥವನ್ನು ಹೊಂದಿದೆ.",
     historicalContextEnglish: "Purandara Dasa's cryptic riddle-song (Mundige) presenting a profound yogic allegory on the mortal physical body and salvation.",
     compositionType: "ಮುಂಡಿಗೆ",
@@ -217,7 +217,7 @@ const PRECACHED_MASTERPIECES: Record<string, any> = {
     titleKannada: "ಮಾನವ ಜನ್ಮ ದೊಡ್ಡದು",
     titleEnglish: "Manava Janma Doddadu",
     composerKannada: "ಶ್ರೀ ಪುರಂದರ ದಾಸರು",
-    composerEnglish: "Sri Purandara Dasaru (1484–1564 CE)",
+    composerEnglish: "Sri Vijaya Dasaru (1484–1564 CE)",
     ankitaKannada: "ಪುರಂದರ ವಿಠ್ಠಲ",
     ankitaEnglish: "Purandara Vittala",
     historicalContextKannada: "ಪುರಂದರದಾಸರ ಅತ್ಯಂತ ಪ್ರಸಿದ್ಧ ವೈರಾಗ್ಯ ಗೀತೆ. ಮನುಷ್ಯ ಜನ್ಮದ ಮಹತ್ವ ಮತ್ತು ಹರಿನಾಮ ಸ್ಮರಣೆಯ ಅನಿವಾರ್ಯತೆಯನ್ನು ಸಾರುವ ಸರ್ವಕಾಲಿಕ ಕೃತಿ.",
@@ -290,7 +290,7 @@ export async function POST(req: Request) {
 
     const qLower = query.toLowerCase();
 
-    // 1. ABSOLUTE DETERMINISTIC OVERRIDES
+    // 1. ABSOLUTE DETERMINISTIC OVERRIDES FOR HIGH-ACCURACY MATCHES
     if (
       qLower.includes("ದುರ್ಗಾ") || 
       qLower.includes("ದುರ್ಗೆ") || 
@@ -334,17 +334,15 @@ export async function POST(req: Request) {
       );
     }
 
-    const systemPrompt = `You are "Dāsa Bodhini" (ದಾಸ ಬೋಧಿನಿ), the authoritative academic workstation for Haridasa Sahitya (1263–1983 CE).
-Analyze the query, which may be a first line, phrase, or title.
+    const systemPrompt = `You are "Dāsa Bodhini" (ದಾಸ ಬೋಧಿನಿ), the authoritative academic and theological workstation for Haridasa Sahitya (1263–1983 CE).
+Analyze the query with rigorous academic precision to ensure 100% theological and historical data accuracy.
 
-CRITICAL FULL-SONG DECODING INSTRUCTIONS:
-1. Reconstruct the COMPLETE composition: Never analyze just the first line or a single stanza. Identify the full song from canonical Haridasa records.
-2. In "stanzas", you MUST generate entries for the Pallavi, Anupallavi, and ALL Charanas (or all Suladi metric talas: Dhruva, Mattya, Rupaka, Jhampa, Triputa, Atta, Adi, Jathe).
-3. Provide word-by-word breakdowns, genuine Anvaya (reordered spoken syntax), and spiritual essence for EVERY single stanza.
-4. Deterministic Signature Attribution:
+CRITICAL ACCURACY & RECONSTRUCTION RULES:
+1. Canonical Identification: Identify the exact canonical composition. Do not echo back fragmented user input as the title.
+2. Complete Stanza Coverage: You MUST reconstruct the FULL composition including Pallavi, Anupallavi, and ALL Charanas or Suladi metric talas (Dhruva, Mattya, Rupaka, Jhampa, Triputa, Atta, Adi, Jathe).
+3. Etymological Rigor: Provide accurate, traditional Sanskrit/Kannada word-by-word meanings and natural spoken-order Anvaya.
+4. Strict Attribution: Cross-reference against this authentic Haridasa registry:
 ${JSON.stringify(CANONICAL_HARIDASA_REGISTRY)}
-Note that "ಕಂಡು ಕಂಡು ನೀ ಎನ್ನ ಕೈ ಬಿಡುವರೆ" is by ಶ್ರೀ ಪುರಂದರ ದಾಸರು (ಅಂಕಿತ: ಪುರಂದರವಿಠಲ).
-"ಶ್ರೀ ದುರ್ಗಾ ಸೂಳಾದಿ" is by ಶ್ರೀ ವಿಜಯ ದಾಸರು (ಅಂಕಿತ: ವಿಜಯ ವಿಠ್ಠಲ).
 
 Return ONLY valid JSON matching this exact schema:
 {
@@ -406,8 +404,8 @@ Return ONLY valid JSON matching this exact schema:
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              contents: [{ role: "user", parts: [{ text: `${systemPrompt}\n\nReconstruct and decode the ENTIRE multi-stanza Haridasa song based on this query:\n"${query}"` }] }],
-              generationConfig: { temperature: 0.15, responseMimeType: "application/json" }
+              contents: [{ role: "user", parts: [{ text: `${systemPrompt}\n\nAccurately decode and reconstruct the full Haridasa composition for query:\n"${query}"` }] }],
+              generationConfig: { temperature: 0.1, responseMimeType: "application/json" }
             })
           }
         );
@@ -420,8 +418,8 @@ Return ONLY valid JSON matching this exact schema:
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                contents: [{ role: "user", parts: [{ text: `${systemPrompt}\n\nReconstruct and decode the ENTIRE multi-stanza Haridasa song based on this query:\n"${query}"` }] }],
-                generationConfig: { temperature: 0.15, responseMimeType: "application/json" }
+                contents: [{ role: "user", parts: [{ text: `${systemPrompt}\n\nAccurately decode and reconstruct the full Haridasa composition for query:\n"${query}"` }] }],
+                generationConfig: { temperature: 0.1, responseMimeType: "application/json" }
               })
             }
           );
