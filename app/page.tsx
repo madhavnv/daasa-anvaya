@@ -60,114 +60,52 @@ export default function Home() {
   const [result, setResult] = useState<DecodeResult | null>(null);
   const [activeTab, setActiveTab] = useState<"summary" | "anvaya" | "vocab" | "mundige">("summary");
 
-  // Typographic Controls
   const [kannadaSize, setKannadaSize] = useState<string>("text-base leading-relaxed");
   const [englishSize, setEnglishSize] = useState<string>("text-sm leading-relaxed");
 
-  // Speech Recognition (Mic Input) with Auto-Stop Watchdog
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<any>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const searchConsoleRef = useRef<HTMLDivElement | null>(null);
   const micTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Results Scroll Anchor
   const resultsRef = useRef<HTMLDivElement | null>(null);
 
-  // Indic Speech Synthesis Engine
+  // Sarvam AI Cloud TTS State Handler
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
-  const [loadedVoices, setLoadedVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Structured Feedback Modal State
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [feedbackCategory, setFeedbackCategory] = useState("ಕೃತಿ ವಿಶ್ಲೇಷಣೆ ದೋಷ (Analysis Correction)");
   const [feedbackComment, setFeedbackComment] = useState("");
 
   const PRESET_SONGS: PresetItem[] = [
-    {
-      title: "ಶ್ರೀ ನರಸಿಂಹ ಸೂಳಾದಿ",
-      genre: "ಸೂಳಾದಿ",
-      caption: "ವಿಜಯದಾಸರ ಸಪ್ತತಾಳ ಅಭಯ ಸ್ತುತಿ",
-      query: "ವೀರ ಸಿಂಹನೆ ನಾರಸಿಂಹನೆ ದಯ ಪಾರಾವಾರನೆ ಭಯ ನಿವಾರಣ ನಿರ್ಗುಣ ಶ್ರೀ ನರಸಿಂಹ ಸೂಳಾದಿ",
-    },
-    {
-      title: "ಶ್ರೀ ದುರ್ಗಾ ಸೂಳಾದಿ",
-      genre: "ಸೂಳಾದಿ",
-      caption: "ವಿಜಯದಾಸರ ದುರ್ಗಾಂತರ್ಗತ ಹರಿ ಸ್ತುತಿ",
-      query: "ದುರ್ಗಾ ದುರ್ಗೆಯೆ ಮಹಾದುಷ್ಟಜನ ಸಂಹಾರೆ ದುರ್ಗಾಂತರ್ಗತ ದುರ್ಗೆ ದುರ್ಲಭೆ ಸುಲಭೆ ಶ್ರೀ ದುರ್ಗಾ ಸೂಳಾದಿ ವಿಜಯದಾಸರು",
-    },
-    {
-      title: "ಶ್ರೀ ವೆಂಕಟೇಶ ಸೂಳಾದಿ",
-      genre: "ಸೂಳಾದಿ",
-      caption: "ಗೋಪಾಲದಾಸರ ತಿರುಪತಿ ಶ್ರೀನಿವಾಸ ಸ್ತುತಿ",
-      query: "ಶ್ರೀ ವೆಂಕಟೇಶ ನಾರಾಯಣ ಪರಮಪುರುಷ ಗೋಪಾಲವಿಠ್ಠಲ ಸೂಳಾದಿ",
-    },
-    {
-      title: "ತಾರಕ್ಕ ಬಿಂದಿಗೆ",
-      genre: "ಮುಂಡಿಗೆ",
-      caption: "ಪುರಂದರದಾಸರ ಕಾಯ-ಯೋಗ ಗೂಢಾರ್ಥ",
-      query: "ತಾರಕ್ಕ ಬಿಂದಿಗೆ ನೀರಿಗೆ ಹೋಗೋಣ ಬಾರೆ ಚೆಲುವೆ ಬಿಂದಿಗೆ ಒಡೆದರೆ ಒಂಬತ್ತು ತೂತು",
-    },
-    {
-      title: "ಮಾನವ ಜನ್ಮ ದೊಡ್ಡದು",
-      genre: "ದೇವರನಾಮ",
-      caption: "ಪುರಂದರದಾಸರ ಪರಮ ವೈರಾಗ್ಯ ಗೀತೆ",
-      query: "ಮಾನವ ಜನ್ಮ ದೊಡ್ಡದು ಇದನು ಹಾನಿ ಮಾಡಲಿಬೇಡಿ ಹುಚ್ಚಪ್ಪಗಳಿರಾ",
-    },
-    {
-      title: "ಯಾರಿಗೆ ಯಾರುಂಟು",
-      genre: "ದೇವರನಾಮ",
-      caption: "ಕನಕದಾಸರ ಸಂಸಾರ ನೀತಿ ಬೋಧೆ",
-      query: "ಯಾರಿಗೆ ಯಾರುಂಟು ಎರವಿನ ಸಂಸಾರ ಕಾಗಿನೆಲೆಯಾದಿಕೇಶವ ಕನಕದಾಸರು",
-    },
-    {
-      title: "ಕಂಡು ಕಂಡು ನೀ ಎನ್ನ",
-      genre: "ದೇವರನಾಮ",
-      caption: "ಪುರಂದರದಾಸರ ಅನನ್ಯ ಶರಣಾಗತಿ ಕೀರ್ತನೆ",
-      query: "ಕಂಡು ಕಂಡು ನೀ ಎನ್ನ ಕೈ ಬಿಡುವರೇ ಕೃಷ್ಣಾ ಪುಂಡರೀಕಾಕ್ಷ ಶ್ರೀ ಪುರುಷೋತ್ತಮ ಹರಿ ಪುರಂದರವಿಠಲ",
-    },
-    {
-      title: "ಆವ ರೋಗವೋ ಧನ್ವಂತ್ರಿ",
-      genre: "ದೇವರನಾಮ",
-      caption: "ಪುರಂದರದಾಸರ ಭವರೋಗ ಪರಿಹಾರ ಸ್ತುತಿ",
-      query: "ಆವ ರೋಗವೋ ಎನಗೆ ಧನ್ವಂತ್ರಿ ದಯಮಾಡಿ ಪುರಂದರವಿಠ್ಠಲ",
-    },
-    {
-      title: "ಹಯವದನ ಕರುಣಿಸು",
-      genre: "ದೇವರನಾಮ",
-      caption: "ವಾದಿರಾಜ ತೀರ್ಥರ ದೈವಿಕ ಉಪಾಸನೆ",
-      query: "ಹಯವದನ ವಿಭೋ ಕರುಣಿಸೋ ವಾದಿರಾಜ ತೀರ್ಥರು ಹಯವದನ",
-    },
-    {
-      title: "ಕಲ್ಲು ಸಕ್ಕರೆ ಕೊಳ್ಳಿರೋ",
-      genre: "ದೇವರನಾಮ",
-      caption: "ಪುರಂದರದಾಸರ ಹರಿನಾಮ ಮಾಧುರ್ಯ",
-      query: "ಕಲ್ಲು ಸಕ್ಕರೆ ಕೊಳ್ಳಿರೋ ನೀವೆಲ್ಲರು ಕಲ್ಲು ಸಕ್ಕರೆ ಕೊಳ್ಳಿರೋ ಪುರಂದರವಿಠ್ಠಲ",
-    },
+    { title: "ಶ್ರೀ ನರಸಿಂಹ ಸೂಳಾದಿ", genre: "ಸೂಳಾದಿ", caption: "ವಿಜಯದಾಸರ ಸಪ್ತತಾಳ ಅಭಯ ಸ್ತುತಿ", query: "ವೀರ ಸಿಂಹನೆ ನಾರಸಿಂಹನೆ ದಯ ಪಾರಾವಾರನೆ ಭಯ ನಿವಾರಣ ನಿರ್ಗುಣ ಶ್ರೀ ನರಸಿಂಹ ಸೂಳಾದಿ" },
+    { title: "ಶ್ರೀ ದುರ್ಗಾ ಸೂಳಾದಿ", genre: "ಸೂಳಾದಿ", caption: "ವಿಜಯದಾಸರ ದುರ್ಗಾಂತರ್ಗತ ಹರಿ ಸ್ತುತಿ", query: "ದುರ್ಗಾ ದುರ್ಗೆಯೆ ಮಹಾದುಷ್ಟಜನ ಸಂಹಾರೆ ದುರ್ಗಾಂತರ್ಗತ ದುರ್ಗೆ ದುರ್ಲಭೆ ಸುಲಭೆ ಶ್ರೀ ದುರ್ಗಾ ಸೂಳಾದಿ ವಿಜಯದಾಸರು" },
+    { title: "ಶ್ರೀ ವೆಂಕಟೇಶ ಸೂಳಾದಿ", genre: "ಸೂಳಾದಿ", caption: "ಗೋಪಾಲದಾಸರ ತಿರುಪತಿ ಶ್ರೀನಿವಾಸ ಸ್ತುತಿ", query: "ಶ್ರೀ ವೆಂಕಟೇಶ ನಾರಾಯಣ ಪರಮಪುರುಷ ಗೋಪಾಲವಿಠ್ಠಲ ಸೂಳಾದಿ" },
+    { title: "ತಾರಕ್ಕ ಬಿಂದಿಗೆ", genre: "ಮುಂಡಿಗೆ", caption: "ಪುರಂದರದಾಸರ ಕಾಯ-ಯೋಗ ಗೂಢಾರ್ಥ", query: "ತಾರಕ್ಕ ಬಿಂದಿಗೆ ನೀರಿಗೆ ಹೋಗೋಣ ಬಾರೆ ಚೆಲುವೆ ಬಿಂದಿಗೆ ಒಡೆದರೆ ಒಂಬತ್ತು ತೂತು" },
+    { title: "ಮಾನವ ಜನ್ಮ ದೊಡ್ಡದು", genre: "ದೇವರನಾಮ", caption: "ಪುರಂದರದಾಸರ ಪರಮ ವೈರಾಗ್ಯ ಗೀತೆ", query: "ಮಾನವ ಜನ್ಮ ದೊಡ್ಡದು ಇದನು ಹಾನಿ ಮಾಡಲಿಬೇಡಿ ಹುಚ್ಚಪ್ಪಗಳಿರಾ" },
+    { title: "ಯಾರಿಗೆ ಯಾರುಂಟು", genre: "ದೇವರನಾಮ", caption: "ಕನಕದಾಸರ ಸಂಸಾರ ನೀತಿ ಬೋಧೆ", query: "ಯಾರಿಗೆ ಯಾರುಂಟು ಎರವಿನ ಸಂಸಾರ ಕಾಗಿನೆಲೆಯಾದಿಕೇಶವ ಕನಕದಾಸರು" },
+    { title: "ಕಂಡು ಕಂಡು ನೀ ಎನ್ನ", genre: "ದೇವರನಾಮ", caption: "ಪುರಂದರದಾಸರ ಅನನ್ಯ ಶರಣಾಗತಿ ಕೀರ್ತನೆ", query: "ಕಂಡು ಕಂಡು ನೀ ಎನ್ನ ಕೈ ಬಿಡುವರೇ ಕೃಷ್ಣಾ ಪುಂಡರೀಕಾಕ್ಷ ಶ್ರೀ ಪುರುಷೋತ್ತಮ ಹರಿ ಪುರಂದರವಿಠಲ" },
+    { title: "ಆವ ರೋಗವೋ ಧನ್ವಂತ್ರಿ", genre: "ದೇವರನಾಮ", caption: "ಪುರಂದರದಾಸರ ಭವರೋಗ ಪರಿಹಾರ ಸ್ತುತಿ", query: "ಆವ ರೋಗವೋ ಎನಗೆ ಧನ್ವಂತ್ರಿ ದಯಮಾಡಿ ಪುರಂದರವಿಠ್ಠಲ" },
+    { title: "ಹಯವದನ ಕರುಣಿಸು", genre: "ದೇವರನಾಮ", caption: "ವಾದಿರಾಜ ತೀರ್ಥರ ದೈವಿಕ ಉಪಾಸನೆ", query: "ಹಯವದನ ವಿಭೋ ಕರುಣಿಸೋ ವಾದಿರಾಜ ತೀರ್ಥರು ಹಯವದನ" },
+    { title: "ಕಲ್ಲು ಸಕ್ಕರೆ ಕೊಳ್ಳಿರೋ", genre: "ದೇವರನಾಮ", caption: "ಪುರಂದರದಾಸರ ಹರಿನಾಮ ಮಾಧುರ್ಯ", query: "ಕಲ್ಲು ಸಕ್ಕರೆ ಕೊಳ್ಳಿರೋ ನೀವೆಲ್ಲರು ಕಲ್ಲು ಸಕ್ಕರೆ ಕೊಳ್ಳಿರೋ ಪುರಂದರವಿಠ್ಠಲ" },
   ];
 
-  // Helper to safely stop listening and clear timer
   const stopListening = () => {
     if (micTimeoutRef.current) {
       clearTimeout(micTimeoutRef.current);
       micTimeoutRef.current = null;
     }
     if (recognitionRef.current) {
-      try {
-        recognitionRef.current.stop();
-      } catch (e) {
-        // Safe catch if already stopped
-      }
+      try { recognitionRef.current.stop(); } catch (e) {}
     }
     setIsListening(false);
   };
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const SpeechRecognition =
-        (window as any).SpeechRecognition ||
-        (window as any).webkitSpeechRecognition;
-
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
       if (SpeechRecognition) {
         const recognition = new SpeechRecognition();
         recognition.continuous = false;
@@ -177,57 +115,24 @@ export default function Home() {
         recognition.onstart = () => {
           setIsListening(true);
           if (micTimeoutRef.current) clearTimeout(micTimeoutRef.current);
-          micTimeoutRef.current = setTimeout(() => {
-            stopListening();
-          }, 8000);
+          micTimeoutRef.current = setTimeout(() => { stopListening(); }, 8000);
         };
-
         recognition.onresult = (event: any) => {
           const transcript = event.results[0][0].transcript;
-          if (transcript && transcript.trim()) {
-            setInput(transcript.trim());
-          }
+          if (transcript && transcript.trim()) setInput(transcript.trim());
           stopListening();
         };
-
-        recognition.onspeechend = () => {
-          stopListening();
-        };
-
-        recognition.onnomatch = () => {
-          stopListening();
-        };
-
-        recognition.onerror = (e: any) => {
-          console.warn("Speech recognition error:", e.error);
-          stopListening();
-        };
-
-        recognition.onend = () => {
-          stopListening();
-        };
-
+        recognition.onspeechend = () => stopListening();
+        recognition.onnomatch = () => stopListening();
+        recognition.onerror = () => stopListening();
+        recognition.onend = () => stopListening();
         recognitionRef.current = recognition;
-      }
-
-      if ("speechSynthesis" in window) {
-        const populateVoices = () => {
-          const voices = window.speechSynthesis.getVoices();
-          if (voices && voices.length > 0) {
-            setLoadedVoices(voices);
-          }
-        };
-
-        populateVoices();
-        window.speechSynthesis.onvoiceschanged = populateVoices;
       }
     }
 
     return () => {
       if (micTimeoutRef.current) clearTimeout(micTimeoutRef.current);
-      if (typeof window !== "undefined" && "speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-      }
+      if (audioRef.current) audioRef.current.pause();
     };
   }, []);
 
@@ -236,7 +141,6 @@ export default function Home() {
       alert("ನಿಮ್ಮ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಧ್ವನಿ ಗ್ರಹಿಕೆ (Voice typing) ಸೌಲಭ್ಯ ಲಭ್ಯವಿಲ್ಲ.");
       return;
     }
-
     if (isListening) {
       stopListening();
     } else {
@@ -247,69 +151,59 @@ export default function Home() {
       } catch (err) {
         recognitionRef.current.abort();
         setTimeout(() => {
-          try {
-            recognitionRef.current.start();
-          } catch (e) {
-            setIsListening(false);
-          }
+          try { recognitionRef.current.start(); } catch (e) { setIsListening(false); }
         }, 100);
       }
     }
   };
 
-  const handleToggleIndianVoice = () => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
-      alert("ನಿಮ್ಮ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಧ್ವನಿ ಸೌಲಭ್ಯ ಬೆಂಬಲಿತವಾಗಿಲ್ಲ.");
-      return;
-    }
-
-    const synth = window.speechSynthesis;
-
-    if (isPlayingAudio || synth.speaking) {
-      synth.cancel();
+  const handleToggleSarvamVoice = async () => {
+    if (isPlayingAudio && audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
       setIsPlayingAudio(false);
       return;
     }
 
     if (!result) return;
 
-    synth.cancel();
-    if (synth.paused) {
-      synth.resume();
-    }
+    try {
+      setIsPlayingAudio(true);
+      const textToRead = `${result.titleKannada}. ಕರ್ತೃ ${result.composerKannada}. ತಾತ್ಪರ್ಯ: ${result.comprehensiveSummaryKannada}`;
 
-    const textToRead = `${result.titleKannada}. ಕರ್ತೃ ${result.composerKannada}. ಅಂಕಿತ ನಾಮ ${result.ankitaKannada}. ತಾತ್ಪರ್ಯ: ${result.comprehensiveSummaryKannada}. ಇಂದಿನ ಬದುಕಿಗೆ ಸಂದೇಶ: ${result.modernTakeawayKannada}`;
+      const res = await fetch("/api/tts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          text: textToRead,
+          language_code: "kn-IN",
+          speaker: "shubh",
+        }),
+      });
 
-    const utterance = new SpeechSynthesisUtterance(textToRead);
-    const allVoices = loadedVoices.length > 0 ? loadedVoices : synth.getVoices();
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "TTS generation failed.");
 
-    const preferredVoice =
-      allVoices.find((v) => v.lang.toLowerCase().includes("kn")) ||
-      allVoices.find((v) => v.lang === "hi-IN" || v.lang.startsWith("hi")) ||
-      allVoices.find((v) => v.lang === "en-IN" || v.name.toLowerCase().includes("india")) ||
-      allVoices.find((v) => v.default) ||
-      allVoices[0];
+      const audioBytes = Uint8Array.from(atob(data.audioBase64), (c) => c.charCodeAt(0));
+      const blob = new Blob([audioBytes], { type: "audio/wav" });
+      const url = URL.createObjectURL(blob);
 
-    if (preferredVoice) {
-      utterance.voice = preferredVoice;
-      utterance.lang = preferredVoice.lang;
-    } else {
-      utterance.lang = "kn-IN";
-    }
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
 
-    utterance.rate = 0.88;
-    utterance.pitch = 0.98;
+      const audio = new Audio(url);
+      audioRef.current = audio;
 
-    utterance.onstart = () => setIsPlayingAudio(true);
-    utterance.onend = () => setIsPlayingAudio(false);
-    utterance.onerror = (e) => {
-      console.warn("Speech synthesis interrupted or failed:", e);
+      audio.onended = () => setIsPlayingAudio(false);
+      audio.onerror = () => setIsPlayingAudio(false);
+
+      await audio.play();
+    } catch (err: any) {
+      console.error("Sarvam Audio playback error:", err);
+      alert("ಧ್ವನಿ ಉತ್ಪಾದನೆಯಲ್ಲಿ ದೋಷ ಉಂಟಾಗಿದೆ.");
       setIsPlayingAudio(false);
-    };
-
-    setTimeout(() => {
-      synth.speak(utterance);
-    }, 50);
+    }
   };
 
   const handleDecode = async (overrideInput?: string) => {
@@ -320,8 +214,8 @@ export default function Home() {
       return;
     }
 
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
+    if (audioRef.current) {
+      audioRef.current.pause();
       setIsPlayingAudio(false);
     }
 
@@ -333,16 +227,11 @@ export default function Home() {
       const res = await fetch("/api/decode", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          query: textToQuery,
-          input: textToQuery,
-        }),
+        body: JSON.stringify({ query: textToQuery, input: textToQuery }),
       });
 
       const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || "ವಿಶ್ಲೇಷಣೆ ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ.");
-      }
+      if (!res.ok) throw new Error(data.error || "ವಿಶ್ಲೇಷಣೆ ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ.");
 
       setResult(data);
       setActiveTab("summary");
@@ -357,29 +246,21 @@ export default function Home() {
     }
   };
 
-  // Dedicated Retry Handler: Scrolls back to search box, clears input & focuses textarea
   const handleRetrySearch = () => {
     searchConsoleRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
     setInput("");
-    setTimeout(() => {
-      textareaRef.current?.focus();
-    }, 200);
+    setTimeout(() => { textareaRef.current?.focus(); }, 200);
   };
 
   const handleSendWhatsAppFeedback = () => {
     const message = `*Dāsa Bodhini - User Feedback*\n\n*ವಿಭಾಗ (Category):* ${feedbackCategory}\n${result ? `*ಕೃತಿ (Song):* ${result.titleKannada} (${result.composerKannada})\n` : ""}${input ? `*ಹುಡುಕಾಟ (Query):* ${input}\n` : ""}*ಅನಿಸಿಕೆ/ವಿವರ (Comment):* ${feedbackComment || "ಯಾವುದೇ ವಿವರಣೆ ನೀಡಿಲ್ಲ"}`;
-
     const url = `https://api.whatsapp.com/send?phone=919845509006&text=${encodeURIComponent(message)}`;
     window.open(url, "_blank");
     setShowFeedbackModal(false);
     setFeedbackComment("");
   };
 
-  // Helper to extract the verified opening line / Pallavi from the decoded result
-  const detectedFirstLine =
-    result?.stanzas?.[0]?.originalTextKannada
-      ?.split("\n")[0]
-      ?.trim() || "";
+  const detectedFirstLine = result?.stanzas?.[0]?.originalTextKannada?.split("\n")[0]?.trim() || "";
 
   return (
     <div className="min-h-screen bg-[#FDFBF7] text-stone-900 selection:bg-amber-100 flex flex-col font-sans antialiased">
@@ -394,17 +275,11 @@ export default function Home() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-base sm:text-lg font-serif font-bold tracking-tight text-stone-900">
-                  ದಾಸ ಬೋಧಿನಿ
-                </h1>
+                <h1 className="text-base sm:text-lg font-serif font-bold tracking-tight text-stone-900">ದಾಸ ಬೋಧಿನಿ</h1>
                 <span className="text-stone-300 font-light">|</span>
-                <span className="text-xs font-sans font-medium text-stone-500 uppercase tracking-widest">
-                  Dāsa Bodhini
-                </span>
+                <span className="text-xs font-sans font-medium text-stone-500 uppercase tracking-widest">Dāsa Bodhini</span>
               </div>
-              <p className="text-[11px] text-stone-500 tracking-tight hidden sm:block">
-                ಹರಿದಾಸ ಸಾಹಿತ್ಯ, ಸೂಳಾದಿ ಮತ್ತು ಮುಂಡಿಗೆಗಳ ಸಂಶೋಧನಾ ವೇದಿಕೆ
-              </p>
+              <p className="text-[11px] text-stone-500 tracking-tight hidden sm:block">ಹರಿದಾಸ ಸಾಹಿತ್ಯ, ಸೂಳಾದಿ ಮತ್ತು ಮುಂಡಿಗೆಗಳ ಸಂಶೋಧನಾ ವೇದಿಕೆ</p>
             </div>
           </div>
 
@@ -435,7 +310,7 @@ export default function Home() {
               {isListening && (
                 <span className="text-[11px] font-medium text-red-600 flex items-center gap-1.5 animate-pulse font-sans">
                   <span className="w-2 h-2 rounded-full bg-red-600"></span>
-                  ಧ್ವನಿ ಗ್ರಹಿಸಲಾಗುತ್ತಿದೆ... (Listening - speak now)
+                  ಧ್ವನಿ ಗ್ರಹಿಸಲಾಗುತ್ತಿದೆ... (Listening)
                 </span>
               )}
             </div>
@@ -513,7 +388,6 @@ export default function Home() {
             </span>
           </div>
 
-          {/* High-Visibility In-Progress Banner */}
           {loading && (
             <div className="bg-gradient-to-r from-amber-50 via-amber-100/60 to-amber-50 border border-amber-300/80 rounded-xl p-4 flex items-center justify-between gap-3 shadow-xs animate-pulse">
               <div className="flex items-center gap-3">
@@ -532,14 +406,9 @@ export default function Home() {
                   </p>
                 </div>
               </div>
-              <div className="hidden sm:flex items-center gap-1.5 text-xs font-semibold text-amber-900">
-                <span className="w-2 h-2 rounded-full bg-amber-600 animate-ping"></span>
-                <span>ಕಾರ್ಯನಿರತವಾಗಿದೆ</span>
-              </div>
             </div>
           )}
 
-          {/* Curated Presets Grid */}
           <div className="pt-3 border-t border-stone-100 space-y-2">
             <span className="text-[11px] font-semibold text-stone-500 uppercase tracking-wider block">
               ಪ್ರಮುಖ ಕೃತಿಗಳ ಸಂಕಲನ (Quick Presets):
@@ -594,7 +463,6 @@ export default function Home() {
         <div ref={resultsRef}>
           {result && (
             <div className="space-y-6">
-              {/* Header Metadata Dossier */}
               <section className="bg-white rounded-2xl border border-stone-200/80 p-5 sm:p-6 space-y-4 shadow-xs ring-1 ring-stone-900/5">
                 <div className="flex flex-wrap items-start justify-between gap-4 border-b border-stone-100 pb-4">
                   <div className="space-y-2">
@@ -642,29 +510,28 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Canonical Opening Line / Pallavi Detection & Retry Action Bar */}
+                {/* Verified Canonical Opening Verse Badge + Retry Action */}
                 <div className="bg-[#FAF8F5] border border-amber-900/15 rounded-xl p-3 sm:p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
                   <div className="space-y-1">
                     <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-amber-900">
                       <span className="w-2 h-2 rounded-full bg-amber-700"></span>
-                      <span>ಗುರುತಿಸಲಾದ ಕೃತಿಯ ಮೊದಲ ಸಾಲು (Detected Opening Verse):</span>
+                      <span>ಗುರುತಿಸಲಾದ ಕೃತಿಯ ಮೊದಲ ಸಾಲು (Detected Canonical Opening):</span>
                     </div>
                     <p className="font-serif font-bold text-stone-900 text-sm sm:text-base pl-3.5 border-l-2 border-amber-800">
                       "{detectedFirstLine}"
                     </p>
                   </div>
 
-                  {/* Retry Button: Scrolls to top, clears input & focuses textarea */}
                   <button
                     type="button"
                     onClick={handleRetrySearch}
                     className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-white hover:bg-stone-50 text-stone-700 hover:text-amber-950 border border-stone-200 hover:border-amber-900/40 rounded-lg text-xs font-semibold transition shadow-2xs cursor-pointer active:scale-95 shrink-0 self-start sm:self-center"
-                    title="ಬೇರೆ ಸಾಲುಗಳನ್ನು ನಮೂದಿಸಿ ಅಥವಾ ಧ್ವನಿ ಮೂಲಕ ಮರುಪ್ರಯತ್ನಿಸಿ"
+                    title="ಮತ್ತೊಮ್ಮೆ ಬೇರೆ ಸಾಲುಗಳನ್ನು ನಮೂದಿಸಿ"
                   >
                     <svg className="w-3.5 h-3.5 text-amber-800" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
-                    <span>ಮರುಪ್ರಯತ್ನಿಸಿ (Retry Search)</span>
+                    <span>ಮರುಪ್ರಯತ್ನಿಸಿ (Retry)</span>
                   </button>
                 </div>
 
@@ -681,7 +548,7 @@ export default function Home() {
                   </p>
                 </div>
 
-                {/* Toolbar: Font Sizing, Indian Voice Recitation & PDF Export */}
+                {/* Toolbar: Font Sizing, Sarvam Cloud TTS & PDF Export */}
                 <div className="flex flex-wrap items-center justify-between gap-3 pt-2 text-xs text-stone-600 border-t border-stone-100">
                   <div className="flex flex-wrap items-center gap-3">
                     <div className="flex items-center gap-2">
@@ -714,10 +581,10 @@ export default function Home() {
                       </div>
                     </div>
 
-                    {/* Indian Voice Pravachana Player Button */}
+                    {/* Sarvam AI Cloud TTS Audio Button */}
                     <button
                       type="button"
-                      onClick={handleToggleIndianVoice}
+                      onClick={handleToggleSarvamVoice}
                       className={`px-3.5 py-1.5 rounded-lg border text-xs font-semibold flex items-center gap-1.5 transition shadow-2xs cursor-pointer active:scale-95 ${
                         isPlayingAudio
                           ? "bg-amber-900 text-white border-amber-900 animate-pulse"
@@ -731,7 +598,7 @@ export default function Home() {
                           <path d="M8 5v14l11-7z" />
                         )}
                       </svg>
-                      <span>{isPlayingAudio ? "ನಿಲ್ಲಿಸಿ (Stop)" : "ಆಲಿಸಿ (Listen)"}</span>
+                      <span>{isPlayingAudio ? "ನಿಲ್ಲಿಸಿ (Stop)" : "ಆಲಿಸಿ (Sarvam AI Audio)"}</span>
                     </button>
                   </div>
 
@@ -970,33 +837,33 @@ export default function Home() {
                         <p className="text-xs text-stone-500 italic font-sans">{m.allegoryEnglish}</p>
                       </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="bg-stone-50/70 p-4 rounded-xl border border-stone-200/60 space-y-1">
-                        <span className="text-[10px] font-bold text-stone-600 uppercase tracking-wide block font-sans">
-                          ಬಾಹ್ಯ ಲೌಕಿಕ ಕಥೆ (Laukika / Surface Story)
-                        </span>
-                        <p className="text-stone-800 text-xs sm:text-sm font-serif leading-relaxed">
-                          {m.outerMeaningKannada}
-                        </p>
-                        <p className="text-stone-500 text-xs italic font-sans">{m.outerMeaningEnglish}</p>
-                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="bg-stone-50/70 p-4 rounded-xl border border-stone-200/60 space-y-1">
+                          <span className="text-[10px] font-bold text-stone-600 uppercase tracking-wide block font-sans">
+                            ಬಾಹ್ಯ ಲೌಕಿಕ ಕಥೆ (Laukika / Surface Story)
+                          </span>
+                          <p className="text-stone-800 text-xs sm:text-sm font-serif leading-relaxed">
+                            {m.outerMeaningKannada}
+                          </p>
+                          <p className="text-stone-500 text-xs italic font-sans">{m.outerMeaningEnglish}</p>
+                        </div>
 
-                      <div className="bg-amber-50/60 p-4 rounded-xl border border-amber-900/15 space-y-1">
-                        <span className="text-[10px] font-bold text-amber-950 uppercase tracking-wide block font-sans">
-                          ಅಂತರಂಗ ಯೋಗ & ವೇದಾಂತಾರ್ಥ (Yogic Essence)
-                        </span>
-                        <p className="text-stone-900 text-xs sm:text-sm font-serif leading-relaxed font-medium">
-                          {m.esotericMeaningKannada}
-                        </p>
-                        <p className="text-stone-700 text-xs italic font-sans">{m.esotericMeaningEnglish}</p>
+                        <div className="bg-amber-50/60 p-4 rounded-xl border border-amber-900/15 space-y-1">
+                          <span className="text-[10px] font-bold text-amber-950 uppercase tracking-wide block font-sans">
+                            ಅಂತರಂಗ ಯೋಗ & ವೇದಾಂತಾರ್ಥ (Yogic Essence)
+                          </span>
+                          <p className="text-stone-900 text-xs sm:text-sm font-serif leading-relaxed font-medium">
+                            {m.esotericMeaningKannada}
+                          </p>
+                          <p className="text-stone-700 text-xs italic font-sans">{m.esotericMeaningEnglish}</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </main>
 
@@ -1074,12 +941,8 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t border-stone-200/70 bg-white py-6 mt-12 text-center text-xs text-stone-500 space-y-1.5">
         <p className="font-serif font-bold text-stone-800">ದಾಸ ಬೋಧಿನಿ • Dāsa Bodhini</p>
-        <p className="text-[11px] text-amber-900/90 font-medium">
-          Note: This is a Beta version and is currently being tested.
-        </p>
-        <p className="text-[11px] text-stone-400 pt-0.5">
-          Designed & Developed by <span className="font-medium text-stone-600">Madhav N V</span>
-        </p>
+        <p className="text-[11px] text-amber-900/90 font-medium">Note: This is a Beta version and is currently being tested.</p>
+        <p className="text-[11px] text-stone-400 pt-0.5">Designed & Developed by <span className="font-medium text-stone-600">Madhav N V</span></p>
       </footer>
     </div>
   );
