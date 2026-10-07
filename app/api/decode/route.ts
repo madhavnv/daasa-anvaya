@@ -54,7 +54,7 @@ const PRECACHED_MASTERPIECES: Record<string, any> = {
     composerEnglish: "Sri Vijaya Dasaru (1682–1755 CE)",
     ankitaKannada: "ವಿಜಯ ವಿಠ್ಠಲ",
     ankitaEnglish: "Vijaya Vittala",
-    historicalContextKannada: "ವಿಜಯದಾಸರು ಪ್ರಹ್ಲಾದನಿಗೆ ಒಲಿದ ಭಕ್ತವತ್ಸಲ ನರಸಿಂಹ ದೇವರನ್ನು ಧ್ಯಾನಿಸುತ್ತಾ ರಚಿಸಿದ ಪೂರ್ಣ ಸೂಳಾದಿ.",
+    historicalContextKannada: "ಶ್ರೀ ವಿಜಯದಾಸರು ಪ್ರಹ್ಲಾದನಿಗೆ ಒಲಿದ ಭಕ್ತವತ್ಸಲ ನರಸಿಂಹ ದೇವರನ್ನು ಧ್ಯಾನಿಸುತ್ತಾ ರಚಿಸಿದ ಪೂರ್ಣ ಸೂಳಾದಿ.",
     historicalContextEnglish: "Composed by Sri Vijaya Dasa invoking Lord Narasimha's transcendental ferocity toward adharma across traditional Suladi talas.",
     compositionType: "ಸೂಳಾದಿ",
     ragaTradition: "ಮಾಲಿಕಾ ರಾಗ",
