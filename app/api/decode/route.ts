@@ -2,18 +2,19 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const { text, language_code = "kn-IN", speaker = "shubh" } = await req.json();
+    const body = await req.json().catch(() => ({}));
+    
+    // Support both 'text' string and 'inputs' array formats for maximum compatibility
+    const rawText = body.text || (Array.isArray(body.inputs) ? body.inputs[0] : null);
 
-    if (!text || typeof text !== "string") {
+    if (!rawText || typeof rawText !== "string" || !rawText.trim()) {
+      console.error("TTS Route Error: Received invalid or empty text payload:", body);
       return NextResponse.json({ error: "Valid text is required for TTS." }, { status: 400 });
     }
 
-    // Clean text and fit within Sarvam's REST limits
-    const sanitizedText = text.replace(/[\n\r]+/g, " ").trim().substring(0, 2500);
-
+    const sanitizedText = rawText.replace(/[\n\r]+/g, " ").trim().substring(0, 2500);
     const sarvamApiKey = "sk_ldj1zxqz_E5plgzYCRGYGJGLJjLyy9Ned";
 
-    // Correct Sarvam Bulbul v3 REST API payload structure
     const response = await fetch("https://api.sarvam.ai/text-to-speech", {
       method: "POST",
       headers: {
@@ -22,8 +23,8 @@ export async function POST(req: Request) {
       },
       body: JSON.stringify({
         text: sanitizedText,
-        target_language_code: language_code,
-        speaker: speaker, // 'shubh' (male) or 'ishita' (female)
+        target_language_code: body.language_code || "kn-IN",
+        speaker: body.speaker || "shubh",
         model: "bulbul:v3",
         output_audio_codec: "wav",
         speech_sample_rate: 24000,
@@ -38,8 +39,6 @@ export async function POST(req: Request) {
     }
 
     const data = await response.json();
-    
-    // Sarvam REST response returns base64 strings under 'audios' array
     const audioBase64 = data.audios?.[0];
 
     if (!audioBase64) {
