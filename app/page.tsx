@@ -61,7 +61,6 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<"summary" | "anvaya" | "vocab" | "mundige">("summary");
 
   const [kannadaSize, setKannadaSize] = useState<string>("text-base leading-relaxed");
-  const [englishSize, setEnglishSize] = useState<string>("text-sm leading-relaxed");
 
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<any>(null);
@@ -679,7 +678,7 @@ export default function Home() {
                     <p className={`text-stone-800 font-serif ${kannadaSize}`}>
                       {result.comprehensiveSummaryKannada}
                     </p>
-                    <p className={`text-stone-600 font-sans italic pt-2 border-t border-stone-100 ${englishSize}`}>
+                    <p className={`text-stone-600 font-sans italic pt-2 border-t border-stone-100 text-sm leading-relaxed`}>
                       {result.comprehensiveSummaryEnglish}
                     </p>
                   </div>
@@ -757,7 +756,7 @@ export default function Home() {
                         <p className={`text-stone-800 font-serif ${kannadaSize}`}>
                           {stanza.spiritualMeaningKannada}
                         </p>
-                        <p className={`text-stone-600 italic font-sans ${englishSize}`}>
+                        <p className="text-stone-600 italic font-sans text-sm leading-relaxed">
                           {stanza.spiritualMeaningEnglish}
                         </p>
                       </div>
@@ -946,4 +945,4 @@ export default function Home() {
       </footer>
     </div>
   );
-} 
+}
