@@ -164,11 +164,21 @@ export default function Home() {
       return;
     }
 
-    if (!result) return;
+    if (!result) {
+      alert("ಯಾವುದೇ ಕೃತಿ ಲಭ್ಯವಿಲ್ಲ.");
+      return;
+    }
+
+    const summaryText = result.comprehensiveSummaryKannada || result.titleKannada || "";
+    const textToRead = `${result.titleKannada}. ಕರ್ತೃ ${result.composerKannada}. ತಾತ್ಪರ್ಯ: ${summaryText}`.trim();
+
+    if (!textToRead) {
+      alert("ಧ್ವನಿಗಾಗಿ ಯಾವುದೇ ಪಠ್ಯ ಲಭ್ಯವಿಲ್ಲ.");
+      return;
+    }
 
     try {
       setIsPlayingAudio(true);
-      const textToRead = `${result.titleKannada}. ಕರ್ತೃ ${result.composerKannada}. ತಾತ್ಪರ್ಯ: ${result.comprehensiveSummaryKannada}`;
 
       const res = await fetch("/api/tts", {
         method: "POST",
@@ -182,6 +192,10 @@ export default function Home() {
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "TTS generation failed.");
+
+      if (!data.audioBase64) {
+        throw new Error("Audio data missing from response.");
+      }
 
       const audioBytes = Uint8Array.from(atob(data.audioBase64), (c) => c.charCodeAt(0));
       const blob = new Blob([audioBytes], { type: "audio/wav" });
@@ -200,7 +214,7 @@ export default function Home() {
       await audio.play();
     } catch (err: any) {
       console.error("Sarvam Audio playback error:", err);
-      alert("ಧ್ವನಿ ಉತ್ಪಾದನೆಯಲ್ಲಿ ದೋಷ ಉಂಟಾಗಿದೆ.");
+      alert("ಧ್ವನಿ ಉತ್ಪಾದನೆಯಲ್ಲಿ ದೋಷ ಉಂಟಾಗಿದೆ: " + err.message);
       setIsPlayingAudio(false);
     }
   };
@@ -678,7 +692,7 @@ export default function Home() {
                     <p className={`text-stone-800 font-serif ${kannadaSize}`}>
                       {result.comprehensiveSummaryKannada}
                     </p>
-                    <p className={`text-stone-600 font-sans italic pt-2 border-t border-stone-100 text-sm leading-relaxed`}>
+                    <p className="text-stone-600 font-sans italic pt-2 border-t border-stone-100 text-sm leading-relaxed">
                       {result.comprehensiveSummaryEnglish}
                     </p>
                   </div>
