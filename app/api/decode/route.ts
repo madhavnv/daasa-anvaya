@@ -25,6 +25,7 @@ const PRECACHED_MASTERPIECES: Record<string, any> = {
     compositionType: "ಸೂಳಾದಿ",
     ragaTradition: "ಸಂಪ್ರದಾಯ ಸೂಳಾದಿ ರಾಗಮಾಲಿಕೆ",
     talaTradition: "ಧ್ರುವ ತಾಳಾದಿ ಸಪ್ತತಾಳ",
+    bhaktiRasa: "ದೈವಿಕ ಶಕ್ತಿ ಸ್ತುತಿ & ಅಭಯ ಭಕ್ತಿ",
     comprehensiveSummaryKannada: "ವಿಜಯದಾಸರು ಜಗಜ್ಜನನಿಯಾದ ದುರ್ಗಾದೇವಿಯ ಅಪಾರ ಮಹಿಮೆಯನ್ನು ಸ್ತುತಿಸುತ್ತಾ, ಆಕೆಯ ಅಂತರ್ಗತನಾದ ಶ್ರೀ ವಿಜಯವಿಠ್ಠಲನ ಚರಣಗಳಲ್ಲಿ ಶರಣಾಗತಿಯನ್ನು ಬೇಡುತ್ತಾರೆ.",
     comprehensiveSummaryEnglish: "A celebrated Suladi praising cosmic mother Durga as the manifestation of divine will, seeking shelter at the feet of Vijaya Vittala.",
     modernTakeawayKannada: "ಮನಸ್ಸಿನ ಆತಂಕ, ದುಷ್ಟ ಆಲೋಚನೆಗಳು ಹಾಗೂ ಜೀವನದ ಅನಿಶ್ಚಿತತೆಯನ್ನು ಗೆಲ್ಲಲು ನಿಷ್ಕಪಟ ಭಕ್ತಿ ಹಾಗೂ ದೈವಶಕ್ತಿಯಲ್ಲಿ ದೃಢ ನಂಬಿಕೆ ಇಡಬೇಕು.",
@@ -59,6 +60,7 @@ const PRECACHED_MASTERPIECES: Record<string, any> = {
     compositionType: "ಸೂಳಾದಿ",
     ragaTradition: "ಮಾಲಿಕಾ ರಾಗ",
     talaTradition: "ಸಪ್ತತಾಳ",
+    bhaktiRasa: "ವೀರ & ಶರಣಾಗತಿ ಭಕ್ತಿ",
     comprehensiveSummaryKannada: "ವಿಜಯದಾಸರ ಈ ಸೂಳಾದಿಯು ನರಸಿಂಹ ತತ್ತ್ವದ ಸಮಗ್ರ ವಿವರಣೆ ನೀಡುತ್ತದೆ.",
     comprehensiveSummaryEnglish: "A masterwork Suladi establishing the absolute sovereignty of Lord Narasimha.",
     modernTakeawayKannada: "ಬದುಕಿನಲ್ಲಿ ಎದುರಾಗುವ ಭಯ ಮತ್ತು ಅನ್ಯಾಯದ ಸನ್ನಿವೇಶಗಳಲ್ಲಿ ಕುಗ್ಗದೆ ಸತ್ಯದ ಮಾರ್ಗದಲ್ಲಿ ಧೃಢವಾಗಿ ನಿಲ್ಲಲು ಈ ಕೃತಿ ಆತ್ಮಸ್ಥೈರ್ಯ ನೀಡುತ್ತದೆ.",
@@ -79,88 +81,11 @@ const PRECACHED_MASTERPIECES: Record<string, any> = {
         spiritualMeaningEnglish: "Reconciles the paradox of divine ferocity toward evil and tender shelter toward sincere seekers."
       }
     ]
-  },
-  tarakka: {
-    titleKannada: "ತಾರಕ್ಕ ಬಿಂದಿಗೆ (ಮುಂಡಿಗೆ)",
-    titleEnglish: "Tarakka Bindige (Mundige)",
-    composerKannada: "ಶ್ರೀ ಪುರಂದರ ದಾಸರು",
-    composerEnglish: "Sri Purandara Dasaru (1484–1564 CE)",
-    ankitaKannada: "ಪುರಂದರ ವಿಠ್ಠಲ",
-    ankitaEnglish: "Purandara Vittala",
-    historicalContextKannada: "ಪುರಂದರದಾಸರ ಅತ್ಯಂತ ಪ್ರಸಿದ್ಧ ಮುಂಡಿಗೆ. ನವದ್ವಾರ ಶರೀರ ಮತ್ತು ಭಕ್ತಿ-ಮೋಕ್ಷದ ಗೂಢಾರ್ಥವನ್ನು ಹೊಂದಿದೆ.",
-    historicalContextEnglish: "Purandara Dasa's cryptic riddle-song presenting a profound yogic allegory on the mortal physical body.",
-    compositionType: "ಮುಂಡಿಗೆ",
-    ragaTradition: "ತಿಲಂಗ್ ರಾಗ",
-    talaTradition: "ಆದಿ ತಾಳ",
-    comprehensiveSummaryKannada: "ಪುರಂದರದಾಸರು ಮಾನವ ಶರೀರದ ಅನಿತ್ಯತೆಯನ್ನು ಅರಿತು ಭಗವದ್ಭಕ್ತಿಯಲ್ಲಿ ತೊಡಗಿಸಿಕೊಳ್ಳುವುದು ಇದರ ಸಂದೇಶ ಎಂದು ಬೋಧಿಸಿದ್ದಾರೆ.",
-    comprehensiveSummaryEnglish: "A sublime example of Dasa Mundige poetry where rural idioms veil profound truths of physical impermanence.",
-    modernTakeawayKannada: "ನಮ್ಮ ಬಾಹ್ಯ ಸೌಂದರ್ಯ ಹಾಗೂ ಲೌಕಿಕ ಸಂಪತ್ತಿನ ಬಗ್ಗೆ ಅಹಂಕಾರ ಪಡದೆ, ಸಿಕ್ಕಿರುವ ಅಲ್ಪಾಯುಷ್ಯದಲ್ಲಿ ಸಾರ್ಥಕ ಕಾರ್ಯಗಳನ್ನು ಮಾಡಬೇಕು.",
-    modernTakeawayEnglish: "Do not dwell on vanity; recognize life's fragility.",
-    stanzas: [
-      {
-        stanzaNumber: 1,
-        stanzaType: "ಪಲ್ಲವಿ",
-        originalTextKannada: "ತಾರಕ್ಕ ಬಿಂದಿಗೆ ನೀರಿಗೆ ಹೋಗೋಣ ಬಾರೆ ಚೆಲುವೆ\nಬಿಂದಿಗೆ ಒಡೆದರೆ ಒಂಬತ್ತು ತೂತು\nತಂದೆ ತಾಯಿಯಿಲ್ಲದ ತಬ್ಬಲಿ ಬಿಂದಿಗೆ",
-        originalTextTransliteration: "Tarakka bindige neerige hogona baare cheluve\nbindige odedare ombattu thootu\ntande taayiyillada tabbali bindige",
-        wordByWordBreakdown: [
-          { kannadaWord: "ತಾರಕ್ಕ", transliteration: "tarakka", meaningKannada: "ತಾರಮ್ಮ / ಎಲೈ ಚೇತನವೇ", meaningEnglish: "O soul" },
-          { kannadaWord: "ಬಿಂದಿಗೆ", transliteration: "bindige", meaningKannada: "ನೀರಿನ ಕೊಡ (ಮಾನವ ಶರೀರ)", meaningEnglish: "Water pot" }
-        ],
-        anvayaKannada: "ಎಲೈ ಚೆಲುವೆಯಾದ ಜೀವಿಯೇ, ಬಿಂದಿಗೆಯನ್ನು ತಾ, ನೀರಿಗೆ ಹೋಗೋಣ ಬಾರೆ.",
-        anvayaEnglish: "Bring the pitcher, O fair soul, let us fetch water!",
-        spiritualMeaningKannada: "ಬಿಂದಿಗೆ ಎಂದರೆ ನವದ್ವಾರಗಳುಳ್ಳ ಮಾನವ ಶರೀರ.",
-        spiritualMeaningEnglish: "The fragile pitcher symbolizes the mortal nine-portal human frame."
-      }
-    ],
-    metaphorsAndMundige: [
-      {
-        allegoryKannada: "ಬಿಂದಿಗೆ ಮತ್ತು ಒಂಬತ್ತು ತೂತು",
-        allegoryEnglish: "The Water Pot with Nine Holes",
-        outerMeaningKannada: "ನದಿಗೆ ಕೊಂಡೊಯ್ಯುವ ಮಣ್ಣಿನ ಕೊಡ.",
-        outerMeaningEnglish: "An earthenware pot carried to fetch water.",
-        esotericMeaningKannada: "ನವದ್ವಾರಗಳುಳ್ಳ ನಶ್ವರ ಮಾನವ ಶರೀರ.",
-        esotericMeaningEnglish: "The physical human anatomy with its nine portals."
-      }
-    ]
-  },
-  manava: {
-    titleKannada: "ಮಾನವ ಜನ್ಮ ದೊಡ್ಡದು",
-    titleEnglish: "Manava Janma Doddadu",
-    composerKannada: "ಶ್ರೀ ಪುರಂದರ ದಾಸರು",
-    composerEnglish: "Sri Purandara Dasaru (1484–1564 CE)",
-    ankitaKannada: "ಪುರಂದರ ವಿಠ್ಠಲ",
-    ankitaEnglish: "Purandara Vittala",
-    historicalContextKannada: "ಪುರಂದರದಾಸರ ಅತ್ಯಂತ ಪ್ರಸಿದ್ಧ ವೈರಾಗ್ಯ ಗೀತೆ.",
-    historicalContextEnglish: "Purandara Dasa's timeless wake-up call articulating the immense rarity of human embodiment.",
-    compositionType: "ಕೀರ್ತನೆ / ದೇವರನಾಮ",
-    ragaTradition: "ಭೈರವಿ ರಾಗ",
-    talaTradition: "ಆದಿ ತಾಳ",
-    comprehensiveSummaryKannada: "ಮನುಷ್ಯ ಜನ್ಮದ ಮಹತ್ವ ಮತ್ತು ಹರಿನಾಮ ಸ್ಮರಣೆಯ ಅನಿವಾರ್ಯತೆಯನ್ನು ಸಾರುವ ಕೃತಿ.",
-    comprehensiveSummaryEnglish: "An existential masterpiece imploring humanity to seize conscious life.",
-    modernTakeawayKannada: "ಕಾಲ ಮತ್ತು ಅವಕಾಶಗಳು ಶಾಶ್ವತವಲ್ಲ. ಇಂದೇ ಸತ್ಕಾರ್ಯಗಳಲ್ಲಿ ತೊಡಗಿಕೊಳ್ಳುವುದು ಜಾಣತನ.",
-    modernTakeawayEnglish: "Time is irreplaceable.",
-    stanzas: [
-      {
-        stanzaNumber: 1,
-        stanzaType: "ಪಲ್ಲವಿ",
-        originalTextKannada: "ಮಾನವ ಜನ್ಮ ದೊಡ್ಡದು ಇದನು ಹಾನಿ ಮಾಡಲಿಬೇಡಿ ಹುಚ್ಚಪ್ಪಗಳಿರಾ\nಮಾನವ ಜನ್ಮ ದೊಡ್ಡದು",
-        originalTextTransliteration: "Manava janma doddadu idanu haani maadalibeedi huchappagalira\nmanava janma doddadu",
-        wordByWordBreakdown: [
-          { kannadaWord: "ಮಾನವ ಜನ್ಮ", transliteration: "manava janma", meaningKannada: "ಮನುಷ್ಯನಾಗಿ ಹುಟ್ಟಿದ ಅವಸ್ಥೆ", meaningEnglish: "Human embodiment" },
-          { kannadaWord: "ದೊಡ್ಡದು", transliteration: "doddadu", meaningKannada: "ಅತ್ಯಂತ ಶ್ರೇಷ್ಠ", meaningEnglish: "Priceless" }
-        ],
-        anvayaKannada: "ಎಲೈ ಭ್ರಾಂತರಾದ ಹುಚ್ಚಪ್ಪಗಳಿರಾ! ಮಾನವ ಜನ್ಮವು ಅತ್ಯಂತ ದೊಡ್ಡದು. ಇದನ್ನು ವ್ಯರ್ಥವಾಗಿ ಹಾಳು ಮಾಡಬೇಡಿ.",
-        anvayaEnglish: "O infatuated mortals! The human birth is exceedingly precious. Do not squander it away!",
-        spiritualMeaningKannada: "ಮನುಷ್ಯ ಜನ್ಮ ಮಾತ್ರ ವಿವೇಕ ಮತ್ತು ಮೋಕ್ಷ ಸಾಧನೆಗೆ ಯೋಗ್ಯವಾದದ್ದು.",
-        spiritualMeaningEnglish: "Human consciousness alone grants liberation."
-      }
-    ]
   }
 };
 
 export async function POST(req: Request) {
   try {
-    // Robust payload extraction supporting JSON body or raw text fallback
     let body: any = {};
     try {
       body = await req.json();
@@ -186,12 +111,6 @@ export async function POST(req: Request) {
     if (qLower.includes("ನಾರಸಿಂಹ") || qLower.includes("ವೀರ ಸಿಂಹನೆ") || qLower.includes("narasimha")) {
       return NextResponse.json(PRECACHED_MASTERPIECES.narasimha);
     }
-    if (qLower.includes("ತಾರಕ್ಕ") || qLower.includes("ಬಿಂದಿಗೆ") || qLower.includes("tarakka")) {
-      return NextResponse.json(PRECACHED_MASTERPIECES.tarakka);
-    }
-    if (qLower.includes("ಮಾನವ ಜನ್ಮ") || qLower.includes("ಹುಚ್ಚಪ್ಪಗಳಿರಾ") || qLower.includes("manava")) {
-      return NextResponse.json(PRECACHED_MASTERPIECES.manava);
-    }
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
@@ -204,11 +123,7 @@ export async function POST(req: Request) {
     const systemPrompt = `You are "Dāsa Bodhini" (ದಾಸ ಬೋಧಿನಿ), the authoritative academic and theological workstation for Haridasa Sahitya (1263–1983 CE).
 Analyze the query with rigorous academic precision to ensure 100% theological and historical data accuracy.
 
-CRITICAL ACCURACY & RECONSTRUCTION RULES:
-1. Canonical Identification: Identify the exact canonical composition. Do not echo back fragmented user input as the title.
-2. Complete Stanza Coverage: Reconstruct the FULL composition including Pallavi, Anupallavi, and ALL Charanas or Suladi metric talas.
-3. Etymological Rigor: Provide accurate, traditional Sanskrit/Kannada word-by-word meanings and natural spoken-order Anvaya.
-4. Strict Attribution based on Registry:
+Strict Attribution based on Registry:
 ${JSON.stringify(CANONICAL_HARIDASA_REGISTRY)}
 
 Return ONLY valid JSON matching this exact schema:
@@ -224,6 +139,7 @@ Return ONLY valid JSON matching this exact schema:
   "compositionType": "ಕೀರ್ತನೆ / ದೇವರನಾಮ" | "ಸೂಳಾದಿ" | "ಉಗಾಭೋಗ" | "ಮುಂಡಿಗೆ",
   "ragaTradition": "string",
   "talaTradition": "string",
+  "bhaktiRasa": "string",
   "comprehensiveSummaryKannada": "string",
   "comprehensiveSummaryEnglish": "string",
   "modernTakeawayKannada": "string",
