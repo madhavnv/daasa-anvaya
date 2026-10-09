@@ -153,7 +153,7 @@ export default function Home() {
     }
   };
 
-  // DYNAMIC MULTI-TAB & CONTEXT-AWARE TTS
+  // DYNAMIC CONTEXT-AWARE TTS
   const handleToggleSarvamVoice = async () => {
     if (isPlayingAudio && audioRef.current) {
       audioRef.current.pause();
@@ -533,7 +533,7 @@ export default function Home() {
                   </p>
                 </div>
 
-                {/* Toolbar: Font Sizing + Speak & PDF Export on the SAME Line */}
+                {/* Toolbar: Font Sizing + PDF Export (Listen Audio moved to tab bar below) */}
                 <div className="flex flex-wrap items-center justify-between gap-3 pt-2 text-xs text-stone-600 border-t border-stone-100">
                   <div className="flex items-center gap-2">
                     <span className="font-medium text-stone-500">ಅಕ್ಷರ ಪ್ರಮಾಣ:</span>
@@ -565,88 +565,88 @@ export default function Home() {
                     </div>
                   </div>
 
-                  {/* Speak and PDF Export Aligned Together on the Same Line */}
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={handleToggleSarvamVoice}
-                      className={`px-3.5 py-1.5 rounded-lg border text-xs font-semibold flex items-center gap-1.5 transition shadow-2xs cursor-pointer active:scale-95 ${
-                        isPlayingAudio
-                          ? "bg-amber-900 text-white border-amber-900 animate-pulse"
-                          : "bg-white hover:bg-stone-50 text-amber-950 border-amber-900/30"
-                      }`}
-                    >
-                      <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
-                        {isPlayingAudio ? (
-                          <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-                        ) : (
-                          <path d="M8 5v14l11-7z" />
-                        )}
-                      </svg>
-                      <span>{isPlayingAudio ? "ನಿಲ್ಲಿಸಿ (Stop)" : "ಆಲಿಸಿ (Sarvam AI Audio)"}</span>
-                    </button>
-
-                    <button
-                      onClick={() => window.print()}
-                      className="bg-stone-50 hover:bg-stone-100 text-stone-700 border border-stone-200 px-3.5 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5 cursor-pointer shadow-2xs active:scale-95"
-                    >
-                      <svg className="w-3.5 h-3.5 text-stone-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                      </svg>
-                      <span>ಮುದ್ರಿಸಿ (Print / PDF)</span>
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => window.print()}
+                    className="bg-stone-50 hover:bg-stone-100 text-stone-700 border border-stone-200 px-3.5 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5 cursor-pointer shadow-2xs active:scale-95"
+                  >
+                    <svg className="w-3.5 h-3.5 text-stone-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                    </svg>
+                    <span>ಮುದ್ರಿಸಿ (Print / PDF)</span>
+                  </button>
                 </div>
               </section>
 
-              {/* Segmented Tab Strip */}
-              <div className="flex flex-wrap gap-2 border-b border-stone-200/80 pb-2">
-                <button
-                  onClick={() => setActiveTab("summary")}
-                  className={`py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer ${
-                    activeTab === "summary"
-                      ? "bg-amber-950 text-amber-50 shadow-2xs"
-                      : "text-stone-600 hover:text-stone-900 hover:bg-stone-100 bg-white border border-stone-200/80"
-                  }`}
-                >
-                  ಸಾರಾಂಶ & ಸಂದೇಶ (Essence)
-                </button>
-
-                <button
-                  onClick={() => setActiveTab("anvaya")}
-                  className={`py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer ${
-                    activeTab === "anvaya"
-                      ? "bg-amber-950 text-amber-50 shadow-2xs"
-                      : "text-stone-600 hover:text-stone-900 hover:bg-stone-100 bg-white border border-stone-200/80"
-                  }`}
-                >
-                  ಅನ್ವಯ & ಭಾವಾರ್ಥ (Syntax & Meaning)
-                </button>
-
-                <button
-                  onClick={() => setActiveTab("vocab")}
-                  className={`py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer ${
-                    activeTab === "vocab"
-                      ? "bg-amber-950 text-amber-50 shadow-2xs"
-                      : "text-stone-600 hover:text-stone-900 hover:bg-stone-100 bg-white border border-stone-200/80"
-                  }`}
-                >
-                  ಪ್ರತಿಪದಾರ್ಥ (Vocabulary Table)
-                </button>
-
-                {result.metaphorsAndMundige && result.metaphorsAndMundige.length > 0 && (
+              {/* Segmented Tab Strip & Contextual "Listen Audio" Button */}
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-200/80 pb-2">
+                <div className="flex flex-wrap gap-2">
                   <button
-                    onClick={() => setActiveTab("mundige")}
-                    className={`py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 cursor-pointer ${
-                      activeTab === "mundige"
+                    onClick={() => setActiveTab("summary")}
+                    className={`py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer ${
+                      activeTab === "summary"
                         ? "bg-amber-950 text-amber-50 shadow-2xs"
                         : "text-stone-600 hover:text-stone-900 hover:bg-stone-100 bg-white border border-stone-200/80"
                     }`}
                   >
-                    <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-                    <span>ಮುಂಡಿಗೆ / ಗೂಢಾರ್ಥ (Riddle Decoder)</span>
+                    ಸಾರಾಂಶ & ಸಂದೇಶ (Essence)
                   </button>
-                )}
+
+                  <button
+                    onClick={() => setActiveTab("anvaya")}
+                    className={`py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer ${
+                      activeTab === "anvaya"
+                        ? "bg-amber-950 text-amber-50 shadow-2xs"
+                        : "text-stone-600 hover:text-stone-900 hover:bg-stone-100 bg-white border border-stone-200/80"
+                    }`}
+                  >
+                    ಅನ್ವಯ & ಭಾವಾರ್ಥ (Syntax & Meaning)
+                  </button>
+
+                  <button
+                    onClick={() => setActiveTab("vocab")}
+                    className={`py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold transition cursor-pointer ${
+                      activeTab === "vocab"
+                        ? "bg-amber-950 text-amber-50 shadow-2xs"
+                        : "text-stone-600 hover:text-stone-900 hover:bg-stone-100 bg-white border border-stone-200/80"
+                    }`}
+                  >
+                    ಪ್ರತಿಪದಾರ್ಥ (Vocabulary Table)
+                  </button>
+
+                  {result.metaphorsAndMundige && result.metaphorsAndMundige.length > 0 && (
+                    <button
+                      onClick={() => setActiveTab("mundige")}
+                      className={`py-2 px-4 rounded-xl text-xs sm:text-sm font-semibold transition flex items-center gap-1.5 cursor-pointer ${
+                        activeTab === "mundige"
+                          ? "bg-amber-950 text-amber-50 shadow-2xs"
+                          : "text-stone-600 hover:text-stone-900 hover:bg-stone-100 bg-white border border-stone-200/80"
+                      }`}
+                    >
+                      <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                      <span>ಮುಂಡಿಗೆ / ಗೂಢಾರ್ಥ (Riddle Decoder)</span>
+                    </button>
+                  )}
+                </div>
+
+                {/* Contextual "Listen Audio" Button placed right next to the tabs */}
+                <button
+                  type="button"
+                  onClick={handleToggleSarvamVoice}
+                  className={`px-3.5 py-2 rounded-xl border text-xs font-semibold flex items-center gap-1.5 transition shadow-2xs cursor-pointer active:scale-95 ${
+                    isPlayingAudio
+                      ? "bg-amber-900 text-white border-amber-900 animate-pulse"
+                      : "bg-white hover:bg-stone-50 text-amber-950 border-amber-900/30"
+                  }`}
+                >
+                  <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                    {isPlayingAudio ? (
+                      <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                    ) : (
+                      <path d="M8 5v14l11-7z" />
+                    )}
+                  </svg>
+                  <span>{isPlayingAudio ? "ನಿಲ್ಲಿಸಿ (Stop)" : "ಆಲಿಸಿ (Listen Audio)"}</span>
+                </button>
               </div>
 
               {/* TAB 1: SUMMARY & ESSENCE */}
@@ -925,7 +925,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="border-t border-stone-200/70 bg-white py-6 mt-12 text-center text-xs text-stone-500 space-y-1.5">
-        <p className="font-serif font-bold text-stone-800">ದಾಸ ಬೋಧಿನಿ • Dāsa Bodhini</p>
+        <p className="font-serif font-bold text-stone-800">ದಾಸ ಬೋಧಿನಿ • ದಾಸ ಬೋಧಿನಿ</p>
         <p className="text-[11px] text-amber-900/90 font-medium">Note: This is a Beta version and is currently being tested.</p>
         <p className="text-[11px] text-stone-400 pt-0.5">Designed & Developed by <span className="font-medium text-stone-600">Madhav N V</span></p>
       </footer>
