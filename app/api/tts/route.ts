@@ -21,7 +21,7 @@ export async function POST(req: Request) {
       body: JSON.stringify({
         text: sanitizedText,
         target_language_code: body.language_code || "kn-IN",
-        speaker: body.speaker || "roopa",
+        speaker: "roopa",
         model: "bulbul:v3",
         output_audio_codec: "wav",
         speech_sample_rate: 24000,
