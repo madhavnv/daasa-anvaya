@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "interface" in window ? {} : {}; // standard types below
 
 interface StanzaBreakdown {
   stanzaNumber: number;
@@ -31,6 +31,7 @@ interface DecodeResult {
   compositionType: "ಕೀರ್ತನೆ / ದೇವರನಾಮ" | "ಸೂಳಾದಿ" | "ಉಗಾಭೋಗ" | "ಮುಂಡಿಗೆ";
   ragaTradition?: string;
   talaTradition?: string;
+  bhaktiRasa?: string;
   comprehensiveSummaryKannada: string;
   comprehensiveSummaryEnglish: string;
   modernTakeawayKannada: string;
@@ -85,10 +86,6 @@ export default function Home() {
     { title: "ತಾರಕ್ಕ ಬಿಂದಿಗೆ", genre: "ಮುಂಡಿಗೆ", caption: "ಪುರಂದರದಾಸರ ಕಾಯ-ಯೋಗ ಗೂಢಾರ್ಥ", query: "ತಾರಕ್ಕ ಬಿಂದಿಗೆ ನೀರಿಗೆ ಹೋಗೋಣ ಬಾರೆ ಚೆಲುವೆ ಬಿಂದಿಗೆ ಒಡೆದರೆ ಒಂಬತ್ತು ತೂತು" },
     { title: "ಮಾನವ ಜನ್ಮ ದೊಡ್ಡದು", genre: "ದೇವರನಾಮ", caption: "ಪುರಂದರದಾಸರ ಪರಮ ವೈರಾಗ್ಯ ಗೀತೆ", query: "ಮಾನವ ಜನ್ಮ ದೊಡ್ಡದು ಇದನು ಹಾನಿ ಮಾಡಲಿಬೇಡಿ ಹುಚ್ಚಪ್ಪಗಳಿರಾ" },
     { title: "ಯಾರಿಗೆ ಯಾರುಂಟು", genre: "ದೇವರನಾಮ", caption: "ಕನಕದಾಸರ ಸಂಸಾರ ನೀತಿ ಬೋಧೆ", query: "ಯಾರಿಗೆ ಯಾರುಂಟು ಎರವಿನ ಸಂಸಾರ ಕಾಗಿನೆಲೆಯಾದಿಕೇಶವ ಕನಕದಾಸರು" },
-    { title: "ಕಂಡು ಕಂಡು ನೀ ಎನ್ನ", genre: "ದೇವರನಾಮ", caption: "ಪುರಂದರದಾಸರ ಅನನ್ಯ ಶರಣಾಗತಿ ಕೀರ್ತನೆ", query: "ಕಂಡು ಕಂಡು ನೀ ಎನ್ನ ಕೈ ಬಿಡುವರೇ ಕೃಷ್ಣಾ ಪುಂಡರೀಕಾಕ್ಷ ಶ್ರೀ ಪುರುಷೋತ್ತಮ ಹರಿ ಪುರಂದರವಿಠಲ" },
-    { title: "ಆವ ರೋಗವೋ ಧನ್ವಂತ್ರಿ", genre: "ದೇವರನಾಮ", caption: "ಪುರಂದರದಾಸರ ಭವರೋಗ ಪರಿಹಾರ ಸ್ತುತಿ", query: "ಆವ ರೋಗವೋ ಎನಗೆ ಧನ್ವಂತ್ರಿ ದಯಮಾಡಿ ಪುರಂದರವಿಠ್ಠಲ" },
-    { title: "ಹಯವದನ ಕರುಣಿಸು", genre: "ದೇವರನಾಮ", caption: "ವಾದಿರಾಜ ತೀರ್ಥರ ದೈವಿಕ ಉಪಾಸನೆ", query: "ಹಯವದನ ವಿಭೋ ಕರುಣಿಸೋ ವಾದಿರಾಜ ತೀರ್ಥರು ಹಯವದನ" },
-    { title: "ಕಲ್ಲು ಸಕ್ಕರೆ ಕೊಳ್ಳಿರೋ", genre: "ದೇವರನಾಮ", caption: "ಪುರಂದರದಾಸರ ಹರಿನಾಮ ಮಾಧುರ್ಯ", query: "ಕಲ್ಲು ಸಕ್ಕರೆ ಕೊಳ್ಳಿರೋ ನೀವೆಲ್ಲರು ಕಲ್ಲು ಸಕ್ಕರೆ ಕೊಳ್ಳಿರೋ ಪುರಂದರವಿಠ್ಠಲ" },
   ];
 
   const stopListening = () => {
@@ -156,7 +153,7 @@ export default function Home() {
     }
   };
 
-  // WIRED EXCLUSIVELY TO /api/tts
+  // DYNAMIC MULTI-TAB & CONTEXT-AWARE TTS
   const handleToggleSarvamVoice = async () => {
     if (isPlayingAudio && audioRef.current) {
       audioRef.current.pause();
@@ -170,8 +167,22 @@ export default function Home() {
       return;
     }
 
-    const summaryText = result.comprehensiveSummaryKannada || result.titleKannada || "";
-    const textToRead = `${result.titleKannada}. ಕರ್ತೃ ${result.composerKannada}. ತಾತ್ಪರ್ಯ: ${summaryText}`.trim();
+    // Dynamically build text based on the active tab user is viewing
+    let textToRead = "";
+    if (activeTab === "summary") {
+      textToRead = `${result.titleKannada}. ಕರ್ತೃ ${result.composerKannada}. ಸಾರಾಂಶ: ${result.comprehensiveSummaryKannada}. ಇಂದಿನ ಸಂದೇಶ: ${result.modernTakeawayKannada}`.trim();
+    } else if (activeTab === "anvaya") {
+      const anvayaCombined = result.stanzas.map(s => `${s.stanzaType}. ${s.anvayaKannada}. ಗೂಢಾರ್ಥ: ${s.spiritualMeaningKannada}`).join(" ");
+      textToRead = `${result.titleKannada} ಅನ್ವಯ ಹಾಗೂ ಭಾವಾರ್ಥ. ${anvayaCombined}`.trim();
+    } else if (activeTab === "vocab") {
+      const vocabCombined = result.stanzas.map(s => s.wordByWordBreakdown.map(w => `${w.kannadaWord} ಎಂದರೆ ${w.meaningKannada}`).join(", ")).join(". ");
+      textToRead = `${result.titleKannada} ಪದಾರ್ಥ ವಿವರಣೆ. ${vocabCombined}`.trim();
+    } else if (activeTab === "mundige" && result.metaphorsAndMundige) {
+      const mundigeCombined = result.metaphorsAndMundige.map(m => `ರೂಪಕ: ${m.allegoryKannada}. ಬಾಹ್ಯಾರ್ಥ: ${m.outerMeaningKannada}. ಅಂತರಂಗಾರ್ಥ: ${m.esotericMeaningKannada}`).join(" ");
+      textToRead = `${result.titleKannada} ಮುಂಡಿಗೆ ಗೂಢಾರ್ಥ. ${mundigeCombined}`.trim();
+    } else {
+      textToRead = `${result.titleKannada}. ಕರ್ತೃ ${result.composerKannada}. ತಾತ್ಪರ್ಯ: ${result.comprehensiveSummaryKannada}`.trim();
+    }
 
     if (!textToRead) {
       alert("ಧ್ವನಿಗಾಗಿ ಯಾವುದೇ ಪಠ್ಯ ಲಭ್ಯವಿಲ್ಲ.");
@@ -187,7 +198,7 @@ export default function Home() {
         body: JSON.stringify({
           text: textToRead,
           language_code: "kn-IN",
-          speaker: "shubh",
+          speaker: "priya", // Verified female voice
         }),
       });
 
@@ -225,7 +236,6 @@ export default function Home() {
     }
   };
 
-  // WIRED EXCLUSIVELY TO /api/decode
   const handleDecode = async (overrideInput?: string) => {
     const textToQuery = (typeof overrideInput === "string" ? overrideInput : input).trim();
 
@@ -271,12 +281,6 @@ export default function Home() {
     }
   };
 
-  const handleRetrySearch = () => {
-    searchConsoleRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-    setInput("");
-    setTimeout(() => { textareaRef.current?.focus(); }, 200);
-  };
-
   const handleSendWhatsAppFeedback = () => {
     const message = `*Dāsa Bodhini - User Feedback*\n\n*ವಿಭಾಗ (Category):* ${feedbackCategory}\n${result ? `*ಕೃತಿ (Song):* ${result.titleKannada} (${result.composerKannada})\n` : ""}${input ? `*ಹುಡುಕಾಟ (Query):* ${input}\n` : ""}*ಅನಿಸಿಕೆ/ವಿವರ (Comment):* ${feedbackComment || "ಯಾವುದೇ ವಿವರಣೆ ನೀಡಿಲ್ಲ"}`;
     const url = `https://api.whatsapp.com/send?phone=919845509006&text=${encodeURIComponent(message)}`;
@@ -284,8 +288,6 @@ export default function Home() {
     setShowFeedbackModal(false);
     setFeedbackComment("");
   };
-
-  const detectedFirstLine = result?.stanzas?.[0]?.originalTextKannada?.split("\n")[0]?.trim() || "";
 
   return (
     <div className="min-h-screen bg-[#FDFBF7] text-stone-900 selection:bg-amber-100 flex flex-col font-sans antialiased">
@@ -413,27 +415,6 @@ export default function Home() {
             </span>
           </div>
 
-          {loading && (
-            <div className="bg-gradient-to-r from-amber-50 via-amber-100/60 to-amber-50 border border-amber-300/80 rounded-xl p-4 flex items-center justify-between gap-3 shadow-xs animate-pulse">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-amber-900 text-amber-100 flex items-center justify-center shrink-0 shadow-2xs">
-                  <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-                  </svg>
-                </div>
-                <div>
-                  <h4 className="font-serif font-bold text-amber-950 text-xs sm:text-sm">
-                    ಕೃತಿಯ ವಿಶ್ಲೇಷಣೆ ನಡೆಯುತ್ತಿದೆ (Decoding Composition)...
-                  </h4>
-                  <p className="text-[11px] text-stone-600 font-sans">
-                    ಅಂಕಿತ ನಿರ್ಣಯ, ಸಾಹಿತ್ಯ ಸಂಯೋಜನೆ ಮತ್ತು ಅನ್ವಯ ರೂಪಿಸಲಾಗುತ್ತಿದೆ. ಪೂರ್ಣಗೊಂಡ ನಂತರ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಕೆಳಗೆ ಪ್ರದರ್ಶಿತವಾಗಲಿದೆ.
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
-
           <div className="pt-3 border-t border-stone-100 space-y-2">
             <span className="text-[11px] font-semibold text-stone-500 uppercase tracking-wider block">
               ಪ್ರಮುಖ ಕೃತಿಗಳ ಸಂಕಲನ (Quick Presets):
@@ -505,6 +486,11 @@ export default function Home() {
                           ತಾಳ: {result.talaTradition}
                         </span>
                       )}
+                      {result.bhaktiRasa && (
+                        <span className="px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-900 border border-amber-200 text-xs">
+                          ಭಕ್ತಿ ರಸ: {result.bhaktiRasa}
+                        </span>
+                      )}
                       <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[11px] font-medium">
                         ✓ {result.stanzas.length} ಚರಣಗಳು ಪೂರ್ಣ ಲಭ್ಯ
                       </span>
@@ -535,31 +521,6 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Verified Canonical Opening Verse Badge + Retry Action */}
-                <div className="bg-[#FAF8F5] border border-amber-900/15 rounded-xl p-3 sm:p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-amber-900">
-                      <span className="w-2 h-2 rounded-full bg-amber-700"></span>
-                      <span>ಗುರುತಿಸಲಾದ ಕೃತಿಯ ಮೊದಲ ಸಾಲು (Detected Canonical Opening):</span>
-                    </div>
-                    <p className="font-serif font-bold text-stone-900 text-sm sm:text-base pl-3.5 border-l-2 border-amber-800">
-                      "{detectedFirstLine}"
-                    </p>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={handleRetrySearch}
-                    className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-white hover:bg-stone-50 text-stone-700 hover:text-amber-950 border border-stone-200 hover:border-amber-900/40 rounded-lg text-xs font-semibold transition shadow-2xs cursor-pointer active:scale-95 shrink-0 self-start sm:self-center"
-                    title="ಮತ್ತೊಮ್ಮೆ ಬೇರೆ ಸಾಲುಗಳನ್ನು ನಮೂದಿಸಿ"
-                  >
-                    <svg className="w-3.5 h-3.5 text-amber-800" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                    <span>ಮರುಪ್ರಯತ್ನಿಸಿ (Retry)</span>
-                  </button>
-                </div>
-
                 {/* Historical Context Card */}
                 <div className="bg-[#FAF8F5] p-4 rounded-xl border border-stone-200/70 space-y-1.5">
                   <span className="font-bold text-amber-950 font-serif text-xs uppercase tracking-wider block">
@@ -573,40 +534,40 @@ export default function Home() {
                   </p>
                 </div>
 
-                {/* Toolbar: Font Sizing, Sarvam Cloud TTS & PDF Export */}
+                {/* Toolbar: Font Sizing + Speak & PDF Export on the SAME Line */}
                 <div className="flex flex-wrap items-center justify-between gap-3 pt-2 text-xs text-stone-600 border-t border-stone-100">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium text-stone-500">ಅಕ್ಷರ ಪ್ರಮಾಣ:</span>
-                      <div className="flex items-center bg-stone-100 p-0.5 rounded-lg border border-stone-200">
-                        <button
-                          onClick={() => setKannadaSize("text-sm leading-relaxed")}
-                          className={`px-2.5 py-1 rounded-md text-xs font-serif transition cursor-pointer ${
-                            kannadaSize.includes("text-sm") ? "bg-white text-amber-950 font-bold shadow-2xs" : "text-stone-600 hover:text-stone-900"
-                          }`}
-                        >
-                          ಅ
-                        </button>
-                        <button
-                          onClick={() => setKannadaSize("text-base leading-relaxed")}
-                          className={`px-2.5 py-1 rounded-md text-xs font-serif transition cursor-pointer ${
-                            kannadaSize.includes("text-base") ? "bg-white text-amber-950 font-bold shadow-2xs" : "text-stone-600 hover:text-stone-900"
-                          }`}
-                        >
-                          ಅ+
-                        </button>
-                        <button
-                          onClick={() => setKannadaSize("text-lg sm:text-xl leading-relaxed")}
-                          className={`px-2.5 py-1 rounded-md text-xs font-serif transition cursor-pointer ${
-                            kannadaSize.includes("text-lg") ? "bg-white text-amber-950 font-bold shadow-2xs" : "text-stone-600 hover:text-stone-900"
-                          }`}
-                        >
-                          ಅ++
-                        </button>
-                      </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium text-stone-500">ಅಕ್ಷರ ಪ್ರಮಾಣ:</span>
+                    <div className="flex items-center bg-stone-100 p-0.5 rounded-lg border border-stone-200">
+                      <button
+                        onClick={() => setKannadaSize("text-sm leading-relaxed")}
+                        className={`px-2.5 py-1 rounded-md text-xs font-serif transition cursor-pointer ${
+                          kannadaSize.includes("text-sm") ? "bg-white text-amber-950 font-bold shadow-2xs" : "text-stone-600 hover:text-stone-900"
+                        }`}
+                      >
+                        ಅ
+                      </button>
+                      <button
+                        onClick={() => setKannadaSize("text-base leading-relaxed")}
+                        className={`px-2.5 py-1 rounded-md text-xs font-serif transition cursor-pointer ${
+                          kannadaSize.includes("text-base") ? "bg-white text-amber-950 font-bold shadow-2xs" : "text-stone-600 hover:text-stone-900"
+                        }`}
+                      >
+                        ಅ+
+                      </button>
+                      <button
+                        onClick={() => setKannadaSize("text-lg sm:text-xl leading-relaxed")}
+                        className={`px-2.5 py-1 rounded-md text-xs font-serif transition cursor-pointer ${
+                          kannadaSize.includes("text-lg") ? "bg-white text-amber-950 font-bold shadow-2xs" : "text-stone-600 hover:text-stone-900"
+                        }`}
+                      >
+                        ಅ++
+                      </button>
                     </div>
+                  </div>
 
-                    {/* Sarvam AI Cloud TTS Audio Button */}
+                  {/* Speak and PDF Export Aligned Together on the Same Line */}
+                  <div className="flex items-center gap-2">
                     <button
                       type="button"
                       onClick={handleToggleSarvamVoice}
@@ -625,17 +586,17 @@ export default function Home() {
                       </svg>
                       <span>{isPlayingAudio ? "ನಿಲ್ಲಿಸಿ (Stop)" : "ಆಲಿಸಿ (Sarvam AI Audio)"}</span>
                     </button>
-                  </div>
 
-                  <button
-                    onClick={() => window.print()}
-                    className="bg-stone-50 hover:bg-stone-100 text-stone-700 border border-stone-200 px-3.5 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5 cursor-pointer shadow-2xs active:scale-95"
-                  >
-                    <svg className="w-3.5 h-3.5 text-stone-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                    </svg>
-                    <span>ಮುದ್ರಿಸಿ (Print / PDF)</span>
-                  </button>
+                    <button
+                      onClick={() => window.print()}
+                      className="bg-stone-50 hover:bg-stone-100 text-stone-700 border border-stone-200 px-3.5 py-1.5 rounded-lg text-xs font-medium transition flex items-center gap-1.5 cursor-pointer shadow-2xs active:scale-95"
+                    >
+                      <svg className="w-3.5 h-3.5 text-stone-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                      </svg>
+                      <span>ಮುದ್ರಿಸಿ (Print / PDF)</span>
+                    </button>
+                  </div>
                 </div>
               </section>
 
