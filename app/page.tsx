@@ -84,8 +84,10 @@ export default function Home() {
   const PRESET_SONGS: PresetItem[] = [
     { title: "ಶ್ರೀ ನರಸಿಂಹ ಸೂಳಾದಿ", genre: "ಸೂಳಾದಿ", caption: "ವಿಜಯದಾಸರ ಸಪ್ತತಾಳ ಅಭಯ ಸ್ತುತಿ", query: "ವೀರ ಸಿಂಹನೆ ನಾರಸಿಂಹನೆ ದಯ ಪಾರಾವಾರನೆ ಭಯ ನಿವಾರಣ ನಿರ್ಗುಣ ಶ್ರೀ ನರಸಿಂಹ ಸೂಳಾದಿ" },
     { title: "ಶ್ರೀ ದುರ್ಗಾ ಸೂಳಾದಿ", genre: "ಸೂಳಾದಿ", caption: "ವಿಜಯದಾಸರ ದುರ್ಗಾಂತರ್ಗತ ಹರಿ ಸ್ತುತಿ", query: "ದುರ್ಗಾ ದುರ್ಗೆಯೆ ಮಹಾದುಷ್ಟಜನ ಸಂಹಾರೆ ದುರ್ಗಾಂತರ್ಗತ ದುರ್ಗೆ ದುರ್ಲಭೆ ಸುಲಭೆ ಶ್ರೀ ದುರ್ಗಾ ಸೂಳಾದಿ ವಿಜಯದಾಸರು" },
+    { title: "ಶ್ರೀ ವೆಂಕಟೇಶ ಸೂಳಾದಿ", genre: "ಸೂಳಾದಿ", caption: "ಗೋಪಾಲದಾಸರ ತಿರುಪತಿ ಶ್ರೀನಿವಾಸ ಸ್ತುತಿ", query: "ಶ್ರೀ ವೆಂಕಟೇಶ ನಾರಾಯಣ ಪರಮಪುರುಷ ಗೋಪಾಲವಿಠ್ಠಲ ಸೂಳಾದಿ" },
     { title: "ತಾರಕ್ಕ ಬಿಂದಿಗೆ", genre: "ಮುಂಡಿಗೆ", caption: "ಪುರಂದರದಾಸರ ಕಾಯ-ಯೋಗ ಗೂಢಾರ್ಥ", query: "ತಾರಕ್ಕ ಬಿಂದಿಗೆ ನೀರಿಗೆ ಹೋಗೋಣ ಬಾರೆ ಚೆಲುವೆ ಬಿಂದಿಗೆ ಒಡೆದರೆ ಒಂಬತ್ತು ತೂತು" },
     { title: "ಮಾನವ ಜನ್ಮ ದೊಡ್ಡದು", genre: "ದೇವರನಾಮ", caption: "ಪುರಂದರದಾಸರ ಪರಮ ವೈರಾಗ್ಯ ಗೀತೆ", query: "ಮಾನವ ಜನ್ಮ ದೊಡ್ಡದು ಇದನು ಹಾನಿ ಮಾಡಲಿಬೇಡಿ ಹುಚ್ಚಪ್ಪಗಳಿರಾ" },
+    { title: "ಯಾರಿಗೆ ಯಾರುಂಟು", genre: "ದೇವರನಾಮ", caption: "ಕನಕದಾಸರ ಸಂಸಾರ ನೀತಿ ಬೋಧೆ", query: "ಯಾರಿಗೆ ಯಾರುಂಟು ಎರವಿನ ಸಂಸಾರ ಕಾಗಿನೆಲೆಯಾದಿಕೇಶವ ಕನಕದಾಸರು" },
   ];
 
   const stopListening = () => {
@@ -254,29 +256,72 @@ export default function Home() {
     <div className="min-h-screen bg-[#FDFBF7] text-stone-900 flex flex-col font-sans antialiased">
       <header className="border-b border-stone-200/75 bg-[#FDFBF7]/90 backdrop-blur-md sticky top-0 z-40">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-          <h1 className="text-base font-serif font-bold text-stone-900">ದಾಸ ಬೋಧಿನಿ • Dāsa Bodhini</h1>
-          <button onClick={() => setShowFeedbackModal(true)} className="text-xs bg-white border border-stone-200 px-3 py-1.5 rounded-full">Feedback</button>
+          <div className="flex items-center gap-2">
+            <h1 className="text-base font-serif font-bold text-stone-900">ದಾಸ ಬೋಧಿನಿ</h1>
+            <span className="text-xs text-stone-500 uppercase tracking-widest">| Dāsa Bodhini</span>
+          </div>
+          <button onClick={() => setShowFeedbackModal(true)} className="text-xs bg-white border border-stone-200 px-3 py-1.5 rounded-full cursor-pointer">Feedback</button>
         </div>
       </header>
 
       <main className="max-w-5xl mx-auto px-4 py-6 flex-1 space-y-6 w-full">
         <section ref={searchConsoleRef} className="bg-white rounded-2xl border border-stone-200 p-5 space-y-4 shadow-xs">
-          <textarea
-            ref={textareaRef}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="ಕೃತಿಯ ಪಲ್ಲವಿ ಅಥವಾ ಸಾಲುಗಳನ್ನು ಇಲ್ಲಿ ನಮೂದಿಸಿ..."
-            rows={3}
-            className="w-full text-base p-4 rounded-xl border border-stone-200 bg-[#FCFBF9] focus:outline-none font-serif"
-          />
+          <div className="relative group">
+            <textarea
+              ref={textareaRef}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="ಕೃತಿಯ ಪಲ್ಲವಿ ಅಥವಾ ಸಾಲುಗಳನ್ನು ಇಲ್ಲಿ ನಮೂದಿಸಿ..."
+              rows={3}
+              className="w-full text-base p-4 pr-12 rounded-xl border border-stone-200 bg-[#FCFBF9] focus:bg-white focus:outline-none font-serif resize-none"
+            />
+            {/* Microphone Button */}
+            <button
+              type="button"
+              onClick={toggleMic}
+              title={isListening ? "ನಿಲ್ಲಿಸಿ" : "ಧ್ವನಿಯ ಮೂಲಕ ಹುಡುಕಿ"}
+              className={`absolute right-3.5 bottom-3.5 p-2 rounded-lg transition cursor-pointer ${
+                isListening ? "bg-red-600 text-white animate-pulse" : "bg-white hover:bg-stone-100 text-stone-600 border border-stone-200"
+              }`}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+              </svg>
+            </button>
+          </div>
+
           <div className="flex items-center justify-between">
             <button
               onClick={() => handleDecode(input, false)}
               disabled={loading || !input.trim()}
-              className="px-6 py-2.5 rounded-xl bg-amber-950 text-amber-50 text-xs font-semibold cursor-pointer"
+              className="px-6 py-2.5 rounded-xl bg-amber-950 text-amber-50 text-xs font-semibold cursor-pointer disabled:bg-stone-200 disabled:text-stone-400"
             >
               {loading ? "ವಿಶ್ಲೇಷಿಸಲಾಗುತ್ತಿದೆ..." : "ಸಂಪೂರ್ಣ ಕೃತಿ ವಿಶ್ಲೇಷಿಸಿ (Decode Full Song)"}
             </button>
+            {input && (
+              <button onClick={() => setInput("")} className="text-xs text-stone-500 hover:text-stone-800 cursor-pointer">ತೆರವುಗೊಳಿಸಿ</button>
+            )}
+          </div>
+
+          {/* Quick Presets Section */}
+          <div className="pt-3 border-t border-stone-100 space-y-2">
+            <span className="text-[11px] font-semibold text-stone-500 uppercase tracking-wider block">ಪ್ರಮುಖ ಕೃತಿಗಳ ಸಂಕಲನ (Quick Presets):</span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+              {PRESET_SONGS.map((p) => (
+                <button
+                  key={p.title}
+                  type="button"
+                  onClick={() => handleDecode(p.query, false)}
+                  className="p-2.5 rounded-xl bg-[#FAF8F5] hover:bg-amber-50 border border-stone-200 text-left transition cursor-pointer flex flex-col justify-between gap-1"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-serif font-bold text-xs text-stone-900">{p.title}</span>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-900/10 text-amber-900">{p.genre}</span>
+                  </div>
+                  <span className="text-[11px] text-stone-500 italic">{p.caption}</span>
+                </button>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -285,7 +330,7 @@ export default function Home() {
             <p className="font-serif font-bold text-amber-950 text-xs">ಹಲವಾರು ಕೃತಿಗಳು ಲಭ್ಯವಿವೆ. ಸರಿಯಾದದ್ದನ್ನು ಆಯ್ಕೆಮಾಡಿ:</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {possibleMatches.map((m, idx) => (
-                <button key={idx} onClick={() => handleDecode(m.query, false)} className="p-2.5 bg-white border border-amber-200 rounded-lg text-left text-xs font-serif font-bold">
+                <button key={idx} onClick={() => handleDecode(m.query, false)} className="p-2.5 bg-white border border-amber-200 rounded-lg text-left text-xs font-serif font-bold cursor-pointer">
                   {m.title} ({m.composer})
                 </button>
               ))}
@@ -293,33 +338,38 @@ export default function Home() {
           </div>
         )}
 
+        {error && (
+          <div className="bg-red-50 text-red-900 p-4 rounded-xl text-xs border border-red-200">{error}</div>
+        )}
+
         <div ref={resultsRef}>
           {result && (
             <div className="space-y-6">
               <section className="bg-white rounded-2xl border border-stone-200 p-5 space-y-4 shadow-xs">
-                <div className="flex justify-between items-start">
+                <div className="flex flex-wrap justify-between items-start gap-3">
                   <div>
                     <span className="px-2 py-0.5 rounded bg-amber-900/10 text-amber-950 text-xs">{result.compositionType}</span>
                     <h2 className="text-2xl font-serif font-bold text-stone-900 mt-1">{result.titleKannada}</h2>
                     <p className="text-xs text-stone-500">{result.composerKannada} | ಅಂಕಿತ: {result.ankitaKannada}</p>
                   </div>
-                  {/* Automatic Next Matching / Alternative Song Retry Button */}
+                  {/* Automatic Next Matching Retry Button */}
                   <button
+                    type="button"
                     onClick={() => handleDecode(input, true)}
-                    className="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 border border-amber-900/30 text-amber-950 text-xs rounded-lg font-medium flex items-center gap-1.5 cursor-pointer"
+                    className="px-3.5 py-1.5 bg-amber-50 hover:bg-amber-100 border border-amber-900/30 text-amber-950 text-xs rounded-lg font-medium flex items-center gap-1.5 cursor-pointer shadow-2xs"
                   >
-                    🔄 ತಪ್ಪಾದ ಕೃತಿಯೇ? ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಬೇರೆ ಕೃತಿ ಹುಡುಕಿ (Next Match)
+                    <span>🔄 ತಪ್ಪಾದ ಕೃತಿಯೇ? ಬೇರೆ ಕೃತಿ ಹುಡುಕಿ (Next Match)</span>
                   </button>
                 </div>
               </section>
 
               <div className="flex flex-wrap gap-2 border-b border-stone-200 pb-2 items-center justify-between">
-                <div className="flex gap-2">
-                  <button onClick={() => setActiveTab("lyrics")} className={`px-4 py-2 rounded-xl text-xs font-semibold ${activeTab === "lyrics" ? "bg-amber-950 text-amber-50" : "bg-white border"}`}>ಸಂಪೂರ್ಣ ಸಾಹಿತ್ಯ (Complete Lyrics)</button>
-                  <button onClick={() => setActiveTab("summary")} className={`px-4 py-2 rounded-xl text-xs font-semibold ${activeTab === "summary" ? "bg-amber-950 text-amber-50" : "bg-white border"}`}>ಸಾರಾಂಶ (Summary)</button>
-                  <button onClick={() => setActiveTab("anvaya")} className={`px-4 py-2 rounded-xl text-xs font-semibold ${activeTab === "anvaya" ? "bg-amber-950 text-amber-50" : "bg-white border"}`}>ಅನ್ವಯ (Anvaya)</button>
+                <div className="flex flex-wrap gap-2">
+                  <button onClick={() => setActiveTab("lyrics")} className={`px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer ${activeTab === "lyrics" ? "bg-amber-950 text-amber-50" : "bg-white border text-stone-600"}`}>ಸಂಪೂರ್ಣ ಸಾಹಿತ್ಯ (Complete Lyrics)</button>
+                  <button onClick={() => setActiveTab("summary")} className={`px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer ${activeTab === "summary" ? "bg-amber-950 text-amber-50" : "bg-white border text-stone-600"}`}>ಸಾರಾಂಶ (Summary)</button>
+                  <button onClick={() => setActiveTab("anvaya")} className={`px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer ${activeTab === "anvaya" ? "bg-amber-950 text-amber-50" : "bg-white border text-stone-600"}`}>ಅನ್ವಯ (Anvaya)</button>
                 </div>
-                <button onClick={handleToggleSarvamVoice} className="px-3.5 py-2 border rounded-xl text-xs font-semibold bg-white text-amber-950 border-amber-900/30 flex items-center gap-1.5 cursor-pointer">
+                <button type="button" onClick={handleToggleSarvamVoice} className="px-3.5 py-2 border rounded-xl text-xs font-semibold bg-white text-amber-950 border-amber-900/30 flex items-center gap-1.5 cursor-pointer shadow-2xs">
                   <span>{isPlayingAudio ? "ನಿಲ್ಲಿಸಿ (Stop)" : "ಆಲಿಸಿ (Listen Audio)"}</span>
                 </button>
               </div>
