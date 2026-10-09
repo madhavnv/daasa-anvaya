@@ -182,7 +182,7 @@ export async function POST(req: Request) {
       return NextResponse.json(PRECACHED_MASTERPIECES.tarakka);
     }
     if (qLower.includes("ಮಾನವ ಜನ್ಮ") || qLower.includes("ಹುಚ್ಚಪ್ಪಗಳಿರಾ") || qLower.includes("manava")) {
-      return NextResponse.json(PRECACH_MASTERPIECES.manava);
+      return NextResponse.json(PRECACHED_MASTERPIECES.manava);
     }
 
     const apiKey = process.env.GEMINI_API_KEY;
@@ -286,7 +286,6 @@ Return ONLY valid JSON matching this exact schema:
       );
     }
 
-    // Comprehensive JSON sanitization to prevent parsing crashes
     let cleanedContent = rawContent.trim();
     if (cleanedContent.startsWith("```json")) {
       cleanedContent = cleanedContent.replace(/^```json\s*/i, "");
