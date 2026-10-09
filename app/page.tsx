@@ -156,6 +156,7 @@ export default function Home() {
     }
   };
 
+  // WIRED EXCLUSIVELY TO /api/tts
   const handleToggleSarvamVoice = async () => {
     if (isPlayingAudio && audioRef.current) {
       audioRef.current.pause();
@@ -192,7 +193,7 @@ export default function Home() {
 
       const contentType = res.headers.get("content-type") || "";
       if (!contentType.includes("application/json")) {
-        throw new Error("API endpoint returned non-JSON response (Check route deployment).");
+        throw new Error("TTS route returned non-JSON response.");
       }
 
       const data = await res.json();
@@ -224,6 +225,7 @@ export default function Home() {
     }
   };
 
+  // WIRED EXCLUSIVELY TO /api/decode
   const handleDecode = async (overrideInput?: string) => {
     const textToQuery = (typeof overrideInput === "string" ? overrideInput : input).trim();
 
