@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "interface" in window ? {} : {}; // standard types below
+import React, { useState, useRef, useEffect } from "react";
 
 interface StanzaBreakdown {
   stanzaNumber: number;
@@ -167,7 +167,6 @@ export default function Home() {
       return;
     }
 
-    // Dynamically build text based on the active tab user is viewing
     let textToRead = "";
     if (activeTab === "summary") {
       textToRead = `${result.titleKannada}. ಕರ್ತೃ ${result.composerKannada}. ಸಾರಾಂಶ: ${result.comprehensiveSummaryKannada}. ಇಂದಿನ ಸಂದೇಶ: ${result.modernTakeawayKannada}`.trim();
@@ -198,7 +197,7 @@ export default function Home() {
         body: JSON.stringify({
           text: textToRead,
           language_code: "kn-IN",
-          speaker: "priya", // Verified female voice
+          speaker: "priya",
         }),
       });
 
