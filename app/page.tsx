@@ -190,6 +190,11 @@ export default function Home() {
         }),
       });
 
+      const contentType = res.headers.get("content-type") || "";
+      if (!contentType.includes("application/json")) {
+        throw new Error("API endpoint returned non-JSON response (Check route deployment).");
+      }
+
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "TTS generation failed.");
 
@@ -242,6 +247,11 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query: textToQuery, input: textToQuery }),
       });
+
+      const contentType = res.headers.get("content-type") || "";
+      if (!contentType.includes("application/json")) {
+        throw new Error("Decode route returned non-JSON response.");
+      }
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "ವಿಶ್ಲೇಷಣೆ ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ.");
